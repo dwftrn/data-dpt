@@ -25,6 +25,8 @@ import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
 import ChartSection from '@/features/components/ChartSection'
+import { Button } from '@/components/ui/button'
+import { X } from 'lucide-react'
 
 const filterLabels = ['PROVINSI', 'KABUPATEN/KOTA', 'KECAMATAN', 'KELURAHAN', 'TPS']
 
@@ -247,6 +249,22 @@ export function DptPage() {
                 </Select>
               ))}
               <Input placeholder='Search...' value={search} onChange={(e) => setSearch(e.target.value)} />
+              <Button
+                variant='outline'
+                title='Bersihkan Filter'
+                onClick={() => {
+                  setSearch('')
+                  setSelections({
+                    province: selections.province,
+                    city: '',
+                    district: '',
+                    subdistrict: '',
+                    tps: ''
+                  })
+                }}
+              >
+                <X />
+              </Button>
             </div>
           </div>
           <div className='mt-4 space-y-4'>
