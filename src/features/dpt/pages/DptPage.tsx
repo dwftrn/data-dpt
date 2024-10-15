@@ -132,11 +132,11 @@ export function DptPage() {
           per_page: perPage,
           name: debounceSearch,
           jenis_kelamin: '',
-          id_provinsi: selections.city ? '' : selections.province,
-          id_kota: selections.district ? '' : selections.city,
-          id_kecamatan: selections.subdistrict ? '' : selections.district,
-          id_kelurahan: selections.tps ? '' : selections.subdistrict,
-          id_tps: selections.tps
+          id_provinsi: selections.city === '0' && selections.province !== '0' ? selections.province : '',
+          id_kota: selections.district === '0' && selections.city !== '0' ? selections.city : '',
+          id_kecamatan: selections.subdistrict === '0' && selections.district !== '0' ? selections.district : '',
+          id_kelurahan: selections.tps === '0' && selections.subdistrict !== '0' ? selections.subdistrict : '',
+          id_tps: selections.tps === '0' ? '' : selections.tps
         }
 
         fetchDPT(query)
@@ -219,6 +219,7 @@ export function DptPage() {
                     <SelectValue placeholder={filterLabels[index]} />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value='0'>Semua</SelectItem>
                     {Boolean(
                       field === 'province'
                         ? provinces
