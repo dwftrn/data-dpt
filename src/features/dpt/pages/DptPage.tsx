@@ -2,10 +2,13 @@ import { DPT, DPTQuery } from '@/api/services'
 import LoadingOverlay from '@/components/LoadingOverlay'
 import { DataTablePagination } from '@/components/table/DataTablePagination'
 import SortableTableHeader from '@/components/table/SortableTableHeader'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import ChartSection from '@/features/components/ChartSection'
 import { useDebounce } from '@/hooks/useDebounce'
 import {
   ColumnDef,
@@ -24,11 +27,8 @@ import useFetchDPT from '../queries/useFetchDPT'
 import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
-import ChartSection from '@/features/components/ChartSection'
-import { Button } from '@/components/ui/button'
-import { X } from 'lucide-react'
 
-const filterLabels = ['PROVINSI', 'KABUPATEN/KOTA', 'KECAMATAN', 'KELURAHAN', 'TPS']
+const filterLabels = ['Provinsi', 'Kabupaten/Kota', 'Kecamatan', 'Kelurahan', 'TPS']
 
 const columns: ColumnDef<DPT>[] = [
   {
@@ -83,11 +83,11 @@ export function DptPage() {
   const [search, setSearch] = React.useState('')
   const debounceSearch = useDebounce(search, 500)
   const [selections, setSelections] = React.useState({
-    province: '',
-    city: '',
-    district: '',
-    subdistrict: '',
-    tps: ''
+    province: '0',
+    city: '0',
+    district: '0',
+    subdistrict: '0',
+    tps: '0'
   })
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -105,23 +105,47 @@ export function DptPage() {
   })
 
   React.useEffect(() => {
-    if (!isLoadingProvinces) setSelections((prev) => ({ ...prev, province: provinces?.at(0)?.id || '' }))
-  }, [isLoadingProvinces, provinces])
-
-  React.useEffect(() => {
     if (selections.province) fetchCities(selections.province)
+    setSelections((prev) => ({
+      province: prev.province,
+      city: '0',
+      district: '0',
+      subdistrict: '0',
+      tps: '0'
+    }))
   }, [fetchCities, selections.province])
 
   React.useEffect(() => {
     if (selections.city) fetchDistricts(selections.city)
+    setSelections((prev) => ({
+      province: prev.province,
+      city: prev.city,
+      district: '0',
+      subdistrict: '0',
+      tps: '0'
+    }))
   }, [fetchDistricts, selections.city])
 
   React.useEffect(() => {
     if (selections.district) fetchSubdistricts(selections.district)
+    setSelections((prev) => ({
+      province: prev.province,
+      city: prev.city,
+      district: prev.district,
+      subdistrict: '0',
+      tps: '0'
+    }))
   }, [fetchSubdistricts, selections.district])
 
   React.useEffect(() => {
     if (selections.subdistrict) fetchTps(selections.subdistrict)
+    setSelections((prev) => ({
+      province: prev.province,
+      city: prev.city,
+      district: prev.district,
+      subdistrict: prev.subdistrict,
+      tps: '0'
+    }))
   }, [fetchTps, selections.subdistrict])
 
   const fetchData = React.useMemo(
@@ -208,64 +232,76 @@ export function DptPage() {
           </CardHeader>
           <ChartSection />
           <div className='space-y-4'>
-            <div className='flex items-center gap-4'>
+            <div className='flex items-end gap-4'>
               {['province', 'city', 'district', 'subdistrict', 'tps'].map((field, index) => (
-                <Select
-                  key={field}
-                  value={selections[field as keyof typeof selections]}
-                  onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
-                >
-                  <SelectTrigger className='w-[180px]'>
-                    <SelectValue placeholder={filterLabels[index]} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='0'>Semua</SelectItem>
-                    {Boolean(
-                      field === 'province'
-                        ? provinces
-                        : field === 'city'
-                        ? cities
-                        : field === 'district'
-                        ? districts
-                        : field === 'subdistrict'
-                        ? subdistricts
-                        : tps
-                    ) === false && <div className='p-2 text-xs'>Pilih filter sebelumnya</div>}
+                <>
+                  <div className='flex flex-col space-y-2'>
+                    <Label className='text-xs capitalize'>{filterLabels[index]}</Label>
+                    <Select
+                      key={field}
+                      value={selections[field as keyof typeof selections]}
+                      onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
+                    >
+                      <SelectTrigger className='capitalize'>
+                        <SelectValue placeholder={filterLabels[index]} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='0'>Semua</SelectItem>
+                        {Boolean(
+                          field === 'province'
+                            ? provinces
+                            : field === 'city'
+                            ? cities
+                            : field === 'district'
+                            ? districts
+                            : field === 'subdistrict'
+                            ? subdistricts
+                            : tps
+                        ) === false && <div className='p-2 text-xs'>Pilih filter sebelumnya</div>}
 
-                    {(field === 'province'
-                      ? provinces
-                      : field === 'city'
-                      ? cities
-                      : field === 'district'
-                      ? districts
-                      : field === 'subdistrict'
-                      ? subdistricts
-                      : tps
-                    )?.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                        {(field === 'province'
+                          ? provinces
+                          : field === 'city'
+                          ? cities
+                          : field === 'district'
+                          ? districts
+                          : field === 'subdistrict'
+                          ? subdistricts
+                          : tps
+                        )?.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
               ))}
-              <Input placeholder='Search...' value={search} onChange={(e) => setSearch(e.target.value)} />
+
               <Button
                 variant='outline'
                 title='Bersihkan Filter'
+                className='text-blue-500'
                 onClick={() => {
                   setSearch('')
                   setSelections({
                     province: selections.province,
-                    city: '',
-                    district: '',
-                    subdistrict: '',
-                    tps: ''
+                    city: '0',
+                    district: '0',
+                    subdistrict: '0',
+                    tps: '0'
                   })
                 }}
               >
-                <X />
+                Reset Filter
               </Button>
+              <Input
+                className='flex-1'
+                placeholder='Search...'
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
           </div>
           <div className='mt-4 space-y-4'>
