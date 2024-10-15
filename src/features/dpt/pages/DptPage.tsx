@@ -1,4 +1,4 @@
-import { DPT } from '@/api/services'
+import { DPT, DPTQuery } from '@/api/services'
 import LoadingOverlay from '@/components/LoadingOverlay'
 import { DataTablePagination } from '@/components/table/DataTablePagination'
 import SortableTableHeader from '@/components/table/SortableTableHeader'
@@ -23,6 +23,7 @@ import useFetchDPT from '../queries/useFetchDPT'
 import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const filterLabels = ['PROVINSI', 'KABUPATEN/KOTA', 'KECAMATAN', 'KELURAHAN', 'TPS']
 
@@ -70,14 +71,14 @@ export function DptPage() {
   const { mutate: fetchDistricts, data: districts, isPending: isLoadingDistricts } = useFetchDistricts()
   const { mutate: fetchSubdistricts, data: subdistricts, isPending: isLoadingSubdistricts } = useFetchSubdistricts()
   const { mutate: fetchTps, data: tps, isPending: isLoadingTps } = useFetchTps()
-  const { data, isPending: isLoadingDpt } = useFetchDPT()
-
-  const dpt = React.useMemo(() => data || [], [data])
+  const { mutate: fetchDPT, data, isPending: isLoadingDpt } = useFetchDPT()
 
   const isLoading =
     isLoadingProvinces || isLoadingCities || isLoadingDistricts || isLoadingSubdistricts || isLoadingTps || isLoadingDpt
 
+  const [perPage, setPerPage] = React.useState(10)
   const [search, setSearch] = React.useState('')
+  const debounceSearch = useDebounce(search, 500)
   const [selections, setSelections] = React.useState({
     province: '',
     city: '',
@@ -88,23 +89,10 @@ export function DptPage() {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
 
-  // Filter function
-  const filteredData = React.useMemo(() => {
-    return dpt.filter((item) => {
-      const matchesSearch = item.nama.toLowerCase().includes(search.toLowerCase())
-      const matchesProvince = selections.province ? item.id_provinsi === selections.province : true
-      const matchesCity = selections.city ? item.id_kota === selections.city : true
-      const matchesDistrict = selections.district ? item.id_kecamatan === selections.district : true
-      const matchesSubdistrict = selections.subdistrict ? item.id_kelurahan === selections.subdistrict : true
-      const matchesTps = selections.tps ? item.id_tps === selections.tps : true
-
-      return matchesSearch && matchesProvince && matchesCity && matchesDistrict && matchesSubdistrict && matchesTps
-    })
-  }, [dpt, search, selections])
-
   const table = useReactTable({
-    data: filteredData, // Use filtered data
+    data: data?.data || [], // Use filtered data
     columns,
+    manualPagination: true,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -132,6 +120,72 @@ export function DptPage() {
   React.useEffect(() => {
     if (selections.subdistrict) fetchTps(selections.subdistrict)
   }, [fetchTps, selections.subdistrict])
+
+  const fetchData = React.useMemo(
+    () =>
+      ({ page, perPage }: { page: number; perPage: number }) => {
+        const query: DPTQuery = {
+          page: page,
+          per_page: perPage,
+          name: debounceSearch,
+          jenis_kelamin: '',
+          id_provinsi: selections.city ? '' : selections.province,
+          id_kota: selections.district ? '' : selections.city,
+          id_kecamatan: selections.subdistrict ? '' : selections.district,
+          id_kelurahan: selections.tps ? '' : selections.subdistrict,
+          id_tps: selections.tps
+        }
+
+        fetchDPT(query)
+      },
+    [
+      debounceSearch,
+      fetchDPT,
+      selections.city,
+      selections.district,
+      selections.province,
+      selections.subdistrict,
+      selections.tps
+    ]
+  )
+
+  const onToFirstPage = () => {
+    fetchData({
+      page: 1,
+      perPage: perPage
+    })
+  }
+
+  const onToLastPage = () => {
+    fetchData({
+      page: data?.total_pages || 1,
+      perPage: perPage
+    })
+  }
+
+  const onNextPage = () => {
+    const page = data?.current_page
+    const lastPage = page === data?.total_pages
+    if (lastPage) return
+
+    fetchData({
+      page: page ? page + 1 : 1,
+      perPage: perPage
+    })
+  }
+
+  const onPrevPage = () => {
+    const page = data?.current_page
+    if (page === 1) return
+    fetchData({
+      page: page ? page - 1 : 1,
+      perPage: perPage
+    })
+  }
+
+  React.useEffect(() => {
+    fetchData({ page: 1, perPage: 10 })
+  }, [fetchData])
 
   const handleSelectionChange = (field: keyof typeof selections, value: string) => {
     setSelections((prev) => ({ ...prev, [field]: value }))
@@ -184,7 +238,7 @@ export function DptPage() {
                       : tps
                     )?.map((item) => (
                       <SelectItem key={item.id} value={item.id}>
-                        {item.name}
+                        {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -226,7 +280,16 @@ export function DptPage() {
                 )}
               </TableBody>
             </Table>
-            <DataTablePagination table={table} />
+            <DataTablePagination
+              table={table}
+              page={data?.current_page}
+              totalPage={data?.total_pages}
+              onToFirstPage={onToFirstPage}
+              onToLastPage={onToLastPage}
+              onNext={onNextPage}
+              onPrev={onPrevPage}
+              setPerPage={setPerPage}
+            />
           </div>
         </CardContent>
       </Card>

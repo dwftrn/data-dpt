@@ -6,5 +6,5 @@ export const ENDPOINTS = {
   FETCH_DISTRICTS: BASE_URL + '/getkecamatanbyidkota',
   FETCH_SUBDISTRICTS: BASE_URL + '/getkelurahanbyidkecamatan',
   FETCH_TPS: BASE_URL + '/gettpsbyidkelurahan',
-  FETCH_DPT: BASE_URL + '/getalldpt'
+  FETCH_DPT: BASE_URL + '/getalldpt2'
 }
