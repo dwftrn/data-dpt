@@ -19,41 +19,13 @@ import {
 import * as React from 'react'
 import useFetchCities from '../queries/useFetchCities'
 import useFetchDistricts from '../queries/useFetchDistricts'
+import useFetchDPT from '../queries/useFetchDPT'
 import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
+import useSearchParams from '@/hooks/useSearchParams'
 
 const filterLabels = ['PROVINSI', 'KABUPATEN/KOTA', 'KECAMATAN', 'KELURAHAN', 'TPS']
-
-const data: DPT[] = [
-  {
-    id: 'm5gr84i9',
-    nama: 'ATANASIUS ARTESIS XAVIER HANDARU',
-    jenis_kelamin: 'L',
-    usia: 19,
-    alamat: 'JL. PADAT KARYA KP. PASIR KUNTUL',
-    rt: 1,
-    rw: 1
-  },
-  {
-    id: 'm5gr84i8',
-    nama: 'ATANASIUS ARTESIS XAVIER HANDARU',
-    jenis_kelamin: 'L',
-    usia: 19,
-    alamat: 'JL. PADAT KARYA KP. PASIR KUNTUL',
-    rt: 1,
-    rw: 1
-  },
-  {
-    id: 'm5gr84i7',
-    nama: 'ATANASIUS ARTESIS XAVIER HANDARU',
-    jenis_kelamin: 'L',
-    usia: 19,
-    alamat: 'JL. PADAT KARYA KP. PASIR KUNTUL',
-    rt: 1,
-    rw: 1
-  }
-]
 
 const columns: ColumnDef<DPT>[] = [
   {
@@ -94,14 +66,22 @@ const columns: ColumnDef<DPT>[] = [
 ]
 
 export function DptPage() {
+  const [searchParams, setsearchParams] = useSearchParams()
+  const q = searchParams.get('q') || ''
+
   const { data: provinces, isLoading: isLoadingProvinces } = useFetchProvinces()
   const { mutate: fetchCities, data: cities, isPending: isLoadingCities } = useFetchCities()
   const { mutate: fetchDistricts, data: districts, isPending: isLoadingDistricts } = useFetchDistricts()
   const { mutate: fetchSubdistricts, data: subdistricts, isPending: isLoadingSubdistricts } = useFetchSubdistricts()
   const { mutate: fetchTps, data: tps, isPending: isLoadingTps } = useFetchTps()
+  const { data, isPending: isLoadingDpt } = useFetchDPT()
 
-  const isLoading = isLoadingProvinces || isLoadingCities || isLoadingDistricts || isLoadingSubdistricts || isLoadingTps
+  const dpt: DPT[] = data || []
 
+  const isLoading =
+    isLoadingProvinces || isLoadingCities || isLoadingDistricts || isLoadingSubdistricts || isLoadingTps || isLoadingDpt
+
+  const [search, setSearch] = React.useState(q)
   const [selections, setSelections] = React.useState({
     province: '',
     city: '',
@@ -113,10 +93,9 @@ export function DptPage() {
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const table = useReactTable({
-    data,
+    data: dpt,
     columns,
     onSortingChange: setSorting,
-
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -143,6 +122,21 @@ export function DptPage() {
   React.useEffect(() => {
     if (selections.subdistrict) fetchTps(selections.subdistrict)
   }, [fetchTps, selections.subdistrict])
+
+  const onSearch = (event: React.FormEvent) => {
+    event.preventDefault()
+    setsearchParams({ q: search })
+  }
+
+  React.useEffect(() => {
+    if (search) return
+
+    setsearchParams({ q: search })
+  }, [search, setsearchParams])
+
+  React.useEffect(() => {
+    table.setGlobalFilter(q)
+  }, [q, table])
 
   const handleSelectionChange = (field: keyof typeof selections, value: string) => {
     setSelections((prev) => ({ ...prev, [field]: value }))
@@ -201,7 +195,10 @@ export function DptPage() {
                   </SelectContent>
                 </Select>
               ))}
-              <Input placeholder='Cari nama...' />
+              <form onSubmit={onSearch}>
+                <Input placeholder='Cari nama...' value={search} onChange={(e) => setSearch(e.target.value)} />
+                <button type='submit' className='hidden' />
+              </form>
             </div>
             <div className='rounded-md border'>
               <Table>

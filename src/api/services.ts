@@ -18,13 +18,23 @@ export type TPS = {
 }
 
 export type DPT = {
-  id: string
-  nama: string
-  usia: number
-  jenis_kelamin: 'L' | 'P'
   alamat: string
+  id: string
+  id_kecamatan: string
+  id_kelurahan: string
+  id_kota: string
+  id_provinsi: string
+  id_tps: string
+  jenis_kelamin: 'L' | 'P'
+  kecamatan: string
+  kelurahan: string
+  kota: string
+  nama: string
+  no_tps: number
+  provinsi: string
   rt: number
   rw: number
+  usia: number
 }
 
 export const fetchProvinces = (): Promise<CommonResponse<IdNameType[]>> => {
@@ -47,6 +57,6 @@ export const fetchTps = (id: string): Promise<CommonResponse<IdNameType[]>> => {
   return fetcher(ENDPOINTS.FETCH_TPS, { id_kelurahan: id }, 'POST')
 }
 
-export const fetchDPT = (id: string): Promise<CommonResponse<DPT[]>> => {
-  return fetcher(ENDPOINTS.FETCH_DPT, { id_tps: id }, 'POST')
+export const fetchDPT = (): Promise<CommonResponse<DPT[]>> => {
+  return fetcher(ENDPOINTS.FETCH_DPT, {}, 'GET')
 }
