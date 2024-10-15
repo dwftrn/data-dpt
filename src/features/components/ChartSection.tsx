@@ -14,7 +14,7 @@ const ChartSection = () => {
       height: 350,
       type: 'pie'
     },
-    labels: Object.keys(genderChart || {}),
+    labels: ['Laki-laki', 'Perempuan'],
     colors: ['#8CD5EB', '#f07070'],
     responsive: [
       {
