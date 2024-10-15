@@ -80,3 +80,15 @@ export const fetchTps = (id: string): Promise<CommonResponse<IdNameType[]>> => {
 export const fetchDPT = (query?: Partial<DPTQuery>): Promise<CommonResponse<PaginatedData<DPT>>> => {
   return fetcher(ENDPOINTS.FETCH_DPT, query, 'GET')
 }
+
+export const fetchChart = (): Promise<
+  CommonResponse<{
+    gender: {
+      L: number
+      P: number
+    }
+    generation: Record<string, number>
+  }>
+> => {
+  return fetcher(ENDPOINTS.FETCH_CHART, {}, 'GET')
+}

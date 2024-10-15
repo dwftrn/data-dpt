@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useDebounce } from '@/hooks/useDebounce'
 import {
   ColumnDef,
   SortingState,
@@ -23,7 +24,7 @@ import useFetchDPT from '../queries/useFetchDPT'
 import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
-import { useDebounce } from '@/hooks/useDebounce'
+import ChartSection from '@/features/components/ChartSection'
 
 const filterLabels = ['PROVINSI', 'KABUPATEN/KOTA', 'KECAMATAN', 'KELURAHAN', 'TPS']
 
@@ -203,6 +204,7 @@ export function DptPage() {
               2024
             </CardDescription>
           </CardHeader>
+          <ChartSection />
           <div className='space-y-4'>
             <div className='flex items-center gap-4'>
               {['province', 'city', 'district', 'subdistrict', 'tps'].map((field, index) => (
@@ -288,7 +290,10 @@ export function DptPage() {
               onToLastPage={onToLastPage}
               onNext={onNextPage}
               onPrev={onPrevPage}
-              setPerPage={setPerPage}
+              setPerPage={(perPage) => {
+                setPerPage(perPage)
+                fetchData({ page: data?.current_page || 1, perPage })
+              }}
             />
           </div>
         </CardContent>
