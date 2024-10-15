@@ -249,39 +249,43 @@ export function DptPage() {
               <Input placeholder='Search...' value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
           </div>
-          <div className='mt-4'>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <React.Fragment key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <TableHead key={header.id}>
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
+          <div className='mt-4 space-y-4'>
+            <div className='border rounded'>
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={columns.length} className='text-center'>
-                      Data tidak ditemukan
-                    </TableCell>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <React.Fragment key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <TableHead key={header.id}>
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </React.Fragment>
+                    ))}
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className='text-center'>
+                        Data tidak ditemukan
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
             <DataTablePagination
               table={table}
               page={data?.current_page}
