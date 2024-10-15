@@ -23,7 +23,6 @@ import useFetchDPT from '../queries/useFetchDPT'
 import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
-import useSearchParams from '@/hooks/useSearchParams'
 
 const filterLabels = ['PROVINSI', 'KABUPATEN/KOTA', 'KECAMATAN', 'KELURAHAN', 'TPS']
 
@@ -66,9 +65,6 @@ const columns: ColumnDef<DPT>[] = [
 ]
 
 export function DptPage() {
-  const [searchParams, setsearchParams] = useSearchParams()
-  const q = searchParams.get('q') || ''
-
   const { data: provinces, isLoading: isLoadingProvinces } = useFetchProvinces()
   const { mutate: fetchCities, data: cities, isPending: isLoadingCities } = useFetchCities()
   const { mutate: fetchDistricts, data: districts, isPending: isLoadingDistricts } = useFetchDistricts()
@@ -76,12 +72,12 @@ export function DptPage() {
   const { mutate: fetchTps, data: tps, isPending: isLoadingTps } = useFetchTps()
   const { data, isPending: isLoadingDpt } = useFetchDPT()
 
-  const dpt: DPT[] = data || []
+  const dpt = React.useMemo(() => data || [], [data])
 
   const isLoading =
     isLoadingProvinces || isLoadingCities || isLoadingDistricts || isLoadingSubdistricts || isLoadingTps || isLoadingDpt
 
-  const [search, setSearch] = React.useState(q)
+  const [search, setSearch] = React.useState('')
   const [selections, setSelections] = React.useState({
     province: '',
     city: '',
@@ -92,8 +88,22 @@ export function DptPage() {
 
   const [sorting, setSorting] = React.useState<SortingState>([])
 
+  // Filter function
+  const filteredData = React.useMemo(() => {
+    return dpt.filter((item) => {
+      const matchesSearch = item.nama.toLowerCase().includes(search.toLowerCase())
+      const matchesProvince = selections.province ? item.id_provinsi === selections.province : true
+      const matchesCity = selections.city ? item.id_kota === selections.city : true
+      const matchesDistrict = selections.district ? item.id_kecamatan === selections.district : true
+      const matchesSubdistrict = selections.subdistrict ? item.id_kelurahan === selections.subdistrict : true
+      const matchesTps = selections.tps ? item.id_tps === selections.tps : true
+
+      return matchesSearch && matchesProvince && matchesCity && matchesDistrict && matchesSubdistrict && matchesTps
+    })
+  }, [dpt, search, selections])
+
   const table = useReactTable({
-    data: dpt,
+    data: filteredData, // Use filtered data
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -122,21 +132,6 @@ export function DptPage() {
   React.useEffect(() => {
     if (selections.subdistrict) fetchTps(selections.subdistrict)
   }, [fetchTps, selections.subdistrict])
-
-  const onSearch = (event: React.FormEvent) => {
-    event.preventDefault()
-    setsearchParams({ q: search })
-  }
-
-  React.useEffect(() => {
-    if (search) return
-
-    setsearchParams({ q: search })
-  }, [search, setsearchParams])
-
-  React.useEffect(() => {
-    table.setGlobalFilter(q)
-  }, [q, table])
 
   const handleSelectionChange = (field: keyof typeof selections, value: string) => {
     setSelections((prev) => ({ ...prev, [field]: value }))
@@ -188,56 +183,49 @@ export function DptPage() {
                       ? subdistricts
                       : tps
                     )?.map((item) => (
-                      <SelectItem key={item.id} value={item.id} className='uppercase'>
-                        {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               ))}
-              <form onSubmit={onSearch}>
-                <Input placeholder='Cari nama...' value={search} onChange={(e) => setSearch(e.target.value)} />
-                <button type='submit' className='hidden' />
-              </form>
+              <Input placeholder='Search...' value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
-            <div className='rounded-md border'>
-              <Table>
-                <TableHeader>
+          </div>
+          <div className='mt-4'>
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                          </TableHead>
-                        )
-                      })}
-                    </TableRow>
+                    <React.Fragment key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <TableHead key={header.id}>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </TableHead>
+                      ))}
+                    </React.Fragment>
                   ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows?.length ? (
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={columns.length} className='h-24 text-center'>
-                        No results.
-                      </TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      ))}
                     </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className='text-center'>
+                      Data tidak ditemukan
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
             <DataTablePagination table={table} />
           </div>
         </CardContent>
