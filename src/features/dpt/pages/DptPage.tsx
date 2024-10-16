@@ -286,7 +286,7 @@ export function DptPage() {
                 onClick={() => {
                   setSearch('')
                   setSelections({
-                    province: selections.province,
+                    province: '0',
                     city: '0',
                     district: '0',
                     subdistrict: '0',
