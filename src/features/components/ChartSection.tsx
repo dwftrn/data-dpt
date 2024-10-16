@@ -44,8 +44,9 @@ const ChartSection = () => {
         horizontal: true
       }
     },
+    colors: ['#f07070'],
     dataLabels: {
-      enabled: false
+      enabled: true
     },
     xaxis: {
       categories: Object.keys(generationChart || {})
