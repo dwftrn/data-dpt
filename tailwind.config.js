@@ -15,6 +15,15 @@ export default {
         sm: 'calc(var(--radius) - 4px)'
       },
       colors: {
+        'coral-pink': 'hsl(var(--coral-pink))',
+        rasberry: 'hsl(var(--rasberry))',
+        mauve: 'hsl(var(--mauve))',
+        'dark-lavender': 'hsl(var(--dark-lavender))',
+        'slate-blue': 'hsl(var(--slate-blue))',
+        'deep-teal': 'hsl(var(--deep-teal))',
+        'error-50': 'hsl(var(--error-50))',
+        'light-green': 'hsl(var(--light-green))',
+        'grey-bg': 'hsl(var(--grey-bg))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -55,6 +64,9 @@ export default {
           4: 'hsl(var(--chart-4))',
           5: 'hsl(var(--chart-5))'
         }
+      },
+      boxShadow: {
+        custom: '0px 2px 4px 0px hsla(0, 0%, 0%, 0.25)'
       }
     }
   },

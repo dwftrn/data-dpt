@@ -8,7 +8,7 @@ function App() {
       <Sidebar />
       <div className='relative flex min-h-0 flex-col'>
         <SidebarMobile />
-        <div className='flex h-dvh max-h-dvh min-h-0 flex-1 flex-col overflow-hidden'>
+        <div className='flex h-dvh max-h-dvh min-h-0 flex-1 flex-col overflow-hidden bg-grey-bg'>
           <main className='flex-1 overflow-y-auto'>
             <div className='flex flex-col gap-4 pt-20 px-4 lg:gap-6 lg:p-6 2xl:p-8'>
               <Outlet />
