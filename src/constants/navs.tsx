@@ -13,6 +13,11 @@ export const navs: TSidebarItem[] = [
     href: '/'
   },
   {
+    label: 'Data DPT',
+    icon: <UsersRound />,
+    href: '/dpt'
+  },
+  {
     label: 'Pemilu',
     icon: <UsersRound />,
     href: '/pemilu'
