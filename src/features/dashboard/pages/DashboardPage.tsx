@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 
@@ -39,7 +40,7 @@ const kontl = [
 
 const DashboardPage = () => {
   return (
-    <section className='flex flex-col gap-4'>
+    <section className='flex flex-col gap-6'>
       <div className='flex items-center justify-between'>
         <h1 className='font-semibold text-lg'>Quick Count Pemilihan Walikota Cimahi</h1>
         <Select>
@@ -54,8 +55,8 @@ const DashboardPage = () => {
       <div>
         <Card className='rounded-t-xl rounded-b-none p-6'>
           <CardContent className='p-0 flex justify-evenly gap-4'>
-            {kontl.map(() => (
-              <div className={cn('flex items-center gap-4 justify-center', { 'flex-col': kontl.length > 3 })}>
+            {kontl.map((_, i) => (
+              <div key={i} className={cn('flex items-center gap-4 justify-center', { 'flex-col': kontl.length > 3 })}>
                 <div className='relative'>
                   <img
                     alt='paslon'
@@ -81,7 +82,7 @@ const DashboardPage = () => {
             ))}
           </CardContent>
         </Card>
-        <div className='h-10 rounded-b-xl grid grid-cols-2'>
+        <div className='rounded-b-xl grid grid-cols-2'>
           <div className='bg-green-600 rounded-bl-xl flex items-center justify-between px-8 py-4'>
             <span>Suara Sah Masuk</span>
             <span>200.000.000</span>
@@ -91,6 +92,19 @@ const DashboardPage = () => {
             <span>200.000.000</span>
           </div>
         </div>
+      </div>
+      <div className='flex items-center gap-4'>
+        <Label>Filter</Label>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Select key={index}>
+            <SelectTrigger className='capitalize w-1/4'>
+              <SelectValue placeholder='Pilih Pemilu' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='0'>Semua</SelectItem>
+            </SelectContent>
+          </Select>
+        ))}
       </div>
     </section>
   )
