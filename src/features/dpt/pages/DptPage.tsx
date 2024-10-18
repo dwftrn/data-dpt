@@ -234,32 +234,20 @@ export function DptPage() {
           <div className='space-y-4'>
             <div className='flex items-end gap-4'>
               {['province', 'city', 'district', 'subdistrict', 'tps'].map((field, index) => (
-                <>
-                  <div className='flex flex-col space-y-2'>
-                    <Label className='text-xs capitalize'>{filterLabels[index]}</Label>
-                    <Select
-                      key={field}
-                      value={selections[field as keyof typeof selections]}
-                      onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
-                    >
-                      <SelectTrigger className='capitalize'>
-                        <SelectValue placeholder={filterLabels[index]} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='0'>Semua</SelectItem>
-                        {Boolean(
-                          field === 'province'
-                            ? provinces
-                            : field === 'city'
-                            ? cities
-                            : field === 'district'
-                            ? districts
-                            : field === 'subdistrict'
-                            ? subdistricts
-                            : tps
-                        ) === false && <div className='p-2 text-xs'>Pilih filter sebelumnya</div>}
-
-                        {(field === 'province'
+                <div key={index} className='flex flex-col space-y-2'>
+                  <Label className='text-xs capitalize'>{filterLabels[index]}</Label>
+                  <Select
+                    key={field}
+                    value={selections[field as keyof typeof selections]}
+                    onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
+                  >
+                    <SelectTrigger className='capitalize'>
+                      <SelectValue placeholder={filterLabels[index]} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='0'>Semua</SelectItem>
+                      {Boolean(
+                        field === 'province'
                           ? provinces
                           : field === 'city'
                           ? cities
@@ -268,15 +256,25 @@ export function DptPage() {
                           : field === 'subdistrict'
                           ? subdistricts
                           : tps
-                        )?.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
+                      ) === false && <div className='p-2 text-xs'>Pilih filter sebelumnya</div>}
+
+                      {(field === 'province'
+                        ? provinces
+                        : field === 'city'
+                        ? cities
+                        : field === 'district'
+                        ? districts
+                        : field === 'subdistrict'
+                        ? subdistricts
+                        : tps
+                      )?.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               ))}
 
               <Button
