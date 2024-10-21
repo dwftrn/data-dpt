@@ -28,7 +28,7 @@ function App() {
         <Sidebar />
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={80} minSize={30} className='bg-grey-bg'>
-          <div className='h-dvh overflow-y-auto p-4 md:p-6 2xl:p-8 '>
+          <div className='h-dvh overflow-y-auto p-4 md:p-6 2xl:p-8'>
             <Outlet />
           </div>
         </ResizablePanel>
