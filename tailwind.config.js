@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require('tailwindcss/defaultTheme')
 
 export default {
   darkMode: ['class'],
@@ -7,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', ...defaultTheme.fontFamily.sans]
+        manrope: ['Manrope', 'sans-serif']
       },
       borderRadius: {
         lg: 'var(--radius)',
