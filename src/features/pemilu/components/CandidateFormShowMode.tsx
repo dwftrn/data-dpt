@@ -14,7 +14,12 @@ type Props = {
 const CandidateFormShowMode = ({ form, index, onEdit }: Props) => {
   return (
     <div className='flex items-start gap-2'>
-      <Card className='flex flex-1 gap-4 items-start bg-white rounded-xl p-6 border justify-between'>
+      <Card
+        className='flex flex-1 gap-4 items-start bg-white rounded-xl p-6 border justify-between border-b-8'
+        style={{
+          borderBottomColor: form.getValues(`candidate.${index}.color`)
+        }}
+      >
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2'>
             <Label>No. Urut</Label>
