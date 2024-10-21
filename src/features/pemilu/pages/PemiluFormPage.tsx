@@ -48,7 +48,15 @@ const PemiluFormPage = () => {
       type: '',
       province: '',
       city: '',
-      candidate: []
+      candidate: [
+        {
+          no: '',
+          color: '',
+          candidateName: '',
+          viceCandidateName: '',
+          image: ''
+        }
+      ]
     }
   })
 

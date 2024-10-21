@@ -3,8 +3,10 @@ import { Card, CardContent } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Check, Image, X } from 'lucide-react'
+import { useState } from 'react'
 import { UseFieldArrayReturn, UseFormReturn } from 'react-hook-form'
 import { PemiluFormType } from '../pages/PemiluFormPage'
+import CandidateFormShowMode from './CandidateFormShowMode'
 
 type Props = {
   form: UseFormReturn<PemiluFormType>
@@ -13,6 +15,10 @@ type Props = {
 }
 
 const CandidateForm = ({ form, fieldArray, index }: Props) => {
+  const [isEdit, setIsEdit] = useState(true)
+
+  if (!isEdit) return <CandidateFormShowMode form={form} index={index} onEdit={() => setIsEdit(true)} />
+
   return (
     <div className='flex items-start gap-2'>
       <Card className='p-6 rounded-md flex-1'>
@@ -61,7 +67,7 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
                     <FormItem>
                       <FormLabel className='truncate'>No. Urut</FormLabel>
                       <FormControl>
-                        <Input className='w-12' {...field} />
+                        <Input className='w-12' placeholder='No' {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -89,7 +95,7 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
         </CardContent>
       </Card>
       <div className='flex flex-col gap-2'>
-        <Button type='button' size='icon' variant='outline' className='p-0 size-8'>
+        <Button type='button' size='icon' variant='outline' className='p-0 size-8' onClick={() => setIsEdit(false)}>
           <Check role='button' className='size-4 text-green-500' />
         </Button>
         <Button
