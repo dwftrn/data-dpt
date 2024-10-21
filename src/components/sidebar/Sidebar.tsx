@@ -3,7 +3,7 @@ import SidebarItem from './SidebarItem'
 import { ResizablePanel } from '../ui/resizable'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Box } from 'lucide-react'
+import { Box, LogOut } from 'lucide-react'
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -50,11 +50,20 @@ const Sidebar = () => {
         </a>
         {!isCollapsed && <p className='text-xs'>v.1.0.0</p>}
       </div>
-      <nav className='group grid items-start px-2 text-sm font-medium lg:px-4'>
-        {navs.map((nav) => (
-          <SidebarItem key={nav.label} nav={nav} isCollapsed={isCollapsed} />
-        ))}
-      </nav>
+      <div className='flex flex-col justify-between h-full'>
+        <nav className='group grid items-start px-2 text-sm font-medium lg:px-4'>
+          {navs.map((nav) => (
+            <SidebarItem key={nav.label} nav={nav} isCollapsed={isCollapsed} />
+          ))}
+        </nav>
+        <div
+          role='button'
+          className='flex items-center gap-3 rounded-lg px-5 pb-10 transition-all [&>svg]:size-4 group-data-[mobile=true]:[&>svg]:size-5 text-sm text-red-500'
+        >
+          <LogOut />
+          {!isCollapsed && 'Logout'}
+        </div>
+      </div>
     </ResizablePanel>
   )
 }
