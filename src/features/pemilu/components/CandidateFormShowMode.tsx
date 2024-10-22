@@ -12,6 +12,7 @@ type Props = {
 }
 
 const CandidateFormShowMode = ({ form, index, onEdit }: Props) => {
+  const image = form.getValues(`candidate.${index}.image`)
   return (
     <div className='flex items-start gap-2'>
       <Card
@@ -35,7 +36,16 @@ const CandidateFormShowMode = ({ form, index, onEdit }: Props) => {
           </div>
         </div>
         <div className='rounded-full flex items-center justify-center bg-gray-400 text-white size-24 lg:size-28'>
-          <Image className='size-10' />
+          {image instanceof File ? (
+            <img
+              alt='avatar'
+              src={URL.createObjectURL(image)}
+              draggable={false}
+              className='rounded-full size-24 lg:size-28 object-cover'
+            />
+          ) : (
+            <Image className='size-10' />
+          )}
         </div>
       </Card>
       <div className='flex flex-col gap-2'>
