@@ -14,6 +14,7 @@ export const ENDPOINTS = {
   PEMILU: {
     FETCH_LIST: BASE_URL + '/getpemilu',
     FETCH_TYPE: BASE_URL + '/getjenispemilu',
-    INSERT: BASE_URL + '/insertpemilu'
+    INSERT: BASE_URL + '/insertpemilu',
+    INSERT_CANDIDATE: BASE_URL + '/insertpaslon'
   }
 }

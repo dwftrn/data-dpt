@@ -50,7 +50,7 @@ const Sidebar = () => {
         </a>
         {!isCollapsed && <p className='text-xs'>v.1.0.0</p>}
       </div>
-      <div className='flex flex-col justify-between h-full'>
+      <div className='flex flex-1 flex-col justify-between h-full'>
         <nav className='group grid items-start px-2 text-sm font-medium lg:px-4'>
           {navs.map((nav) => (
             <SidebarItem key={nav.label} nav={nav} isCollapsed={isCollapsed} />
