@@ -3,8 +3,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
+import md5 from 'md5'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { z } from 'zod'
+import useSignIn from '../queries/useSignIn'
 
 const formSchema = z.object({
   username: z.string().trim().min(1, 'Tidak boleh kosong!'),
@@ -14,10 +18,9 @@ const formSchema = z.object({
 type FormType = z.infer<typeof formSchema>
 
 const SignInForm = () => {
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
-  // const { mutateAsync: signIn, isPending: isLoading } = useSignIn()
-  const isLoading = false
+  const { mutateAsync: signIn, isPending: isLoading } = useSignIn()
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
@@ -27,12 +30,32 @@ const SignInForm = () => {
     }
   })
 
-  const onSubmit = (values: FormType) => {
+  const onSubmit = async (values: FormType) => {
     console.log({ values })
-    // signIn({
-    //   ...values,
-    //   password: md5(values.password).toString()
-    // }).then(redirectToHome)
+    try {
+      const res = await signIn({
+        ...values,
+        password: md5(values.password).toString()
+      })
+
+      const { access_token } = res.data
+      localStorage.setItem('access_token', access_token)
+
+      navigate('/')
+    } catch (error) {
+      if (typeof error !== 'object' || error === null) {
+        toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
+        return
+      }
+
+      if ('message' in error) {
+        if (typeof error.message === 'string' && error.message.toLowerCase().includes('invalid')) {
+          form.setError('password', { type: 'custom', message: 'Nama pengguna atau kata sandi salah' })
+        } else {
+          toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
+        }
+      }
+    }
   }
 
   return (

@@ -7,5 +7,8 @@ export const ENDPOINTS = {
   FETCH_SUBDISTRICTS: BASE_URL + '/getkelurahanbyidkecamatan',
   FETCH_TPS: BASE_URL + '/gettpsbyidkelurahan',
   FETCH_DPT: BASE_URL + '/getalldpt2',
-  FETCH_CHART: BASE_URL + '/chart-data'
+  FETCH_CHART: BASE_URL + '/chart-data',
+  AUTH: {
+    SIGN_IN: BASE_URL + '/login'
+  }
 }
