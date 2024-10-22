@@ -10,5 +10,10 @@ export const ENDPOINTS = {
   FETCH_CHART: BASE_URL + '/chart-data',
   AUTH: {
     SIGN_IN: BASE_URL + '/login'
+  },
+  PEMILU: {
+    FETCH_LIST: BASE_URL + '/getpemilu',
+    FETCH_TYPE: BASE_URL + '/getjenispemilu',
+    INSERT: BASE_URL + '/insertpemilu'
   }
 }

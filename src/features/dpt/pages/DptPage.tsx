@@ -21,10 +21,10 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 import * as React from 'react'
-import useFetchCities from '../queries/useFetchCities'
+import useFetchCities from '../../../queries/useFetchCities'
+import useFetchProvinces from '../../../queries/useFetchProvinces'
 import useFetchDistricts from '../queries/useFetchDistricts'
 import useFetchDPT from '../queries/useFetchDPT'
-import useFetchProvinces from '../queries/useFetchProvinces'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
 

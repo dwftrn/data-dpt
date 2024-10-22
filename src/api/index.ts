@@ -1,5 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, Method } from 'axios'
 
+function getToken(): string {
+  return 'Bearer ' + localStorage.getItem('access_token') || ''
+}
+
 export const fetcher = async <T = unknown>(
   endpoint: string,
   params: unknown,
@@ -7,6 +11,7 @@ export const fetcher = async <T = unknown>(
   optHeader: AxiosRequestConfig['headers'] = {}
 ): Promise<T> => {
   const headers = {
+    Authorization: getToken(),
     'Content-Type': 'application/json',
     ...optHeader
   }

@@ -13,29 +13,31 @@ const formSchema = z.object({
   type: z.string().trim().min(1, 'Tidak boleh kosong!'),
   province: z.string().trim().min(1, 'Tidak boleh kosong!'),
   city: z.string(),
-  candidate: z.array(
-    z.object({
-      no: z
-        .string()
-        .trim()
-        .min(1, 'Tidak boleh kosong!')
-        .refine((val) => !isNaN(Number(val)), { message: 'Harus berupa angka!' }),
-      color: z.string().trim().min(1, 'Tidak boleh kosong!'),
-      image: z
-        .union([z.instanceof(File), z.string()])
-        .optional()
-        .refine(
-          (file) => {
-            if (file === undefined) return false
-            if (typeof file === 'string') return true
-            return file.size > 0
-          },
-          { message: 'Pilih Foto' }
-        ),
-      candidateName: z.string().trim().min(1, 'Tidak boleh kosong!'),
-      viceCandidateName: z.string().trim().min(1, 'Tidak boleh kosong!')
-    })
-  )
+  candidate: z
+    .array(
+      z.object({
+        no: z
+          .string()
+          .trim()
+          .min(1, 'Tidak boleh kosong!')
+          .refine((val) => !isNaN(Number(val)), { message: 'Harus berupa angka!' }),
+        color: z.string().trim().min(1, 'Tidak boleh kosong!'),
+        image: z
+          .union([z.instanceof(File), z.string()])
+          .optional()
+          .refine(
+            (file) => {
+              if (file === undefined) return false
+              if (typeof file === 'string') return true
+              return file.size > 0
+            },
+            { message: 'Pilih Foto' }
+          ),
+        candidateName: z.string().trim().min(1, 'Tidak boleh kosong!'),
+        viceCandidateName: z.string().trim().min(1, 'Tidak boleh kosong!')
+      })
+    )
+    .nonempty('Tidak boleh kosong!')
 })
 
 export type PemiluFormType = z.infer<typeof formSchema>
@@ -65,10 +67,14 @@ const PemiluFormPage = () => {
     name: 'candidate'
   })
 
+  const onSubmit = (values: PemiluFormType) => {
+    console.log({ values })
+  }
+
   return (
     <section className='flex flex-col -m-4 md:-m-6 2xl:-m-8'>
       <Form {...form}>
-        <form className='flex flex-col relative'>
+        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col relative'>
           <div className='h-14 lg:h-[60px] flex items-center justify-between bg-white absolute top-0 inset-x-0 px-4 md:px-6 2xl:px-8 shadow'>
             <h1 className='font-semibold'>Tambah Pemilu</h1>
             <Button className='gap-2'>
@@ -84,7 +90,7 @@ const PemiluFormPage = () => {
               {fieldArray.fields.map((field, index) => (
                 <CandidateForm key={field.id} form={form} fieldArray={fieldArray} index={index} />
               ))}
-              <AddCandidateButton fieldArray={fieldArray} />
+              <AddCandidateButton form={form} fieldArray={fieldArray} />
             </div>
           </div>
         </form>

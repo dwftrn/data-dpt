@@ -21,7 +21,7 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
 
   return (
     <div className='flex items-start gap-2'>
-      <Card className='p-6 rounded-md flex-1'>
+      <Card className='p-6 rounded-xl flex-1'>
         <CardContent className='p-0 flex items-start gap-6'>
           <div className='flex flex-1 gap-4'>
             <div className='w-full space-y-4'>

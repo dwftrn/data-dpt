@@ -2,15 +2,45 @@ import { Card, CardContent } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import useFetchCities from '@/queries/useFetchCities'
+import useFetchProvinces from '@/queries/useFetchProvinces'
 import { Select } from '@radix-ui/react-select'
+import { Loader2 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { PemiluFormType } from '../pages/PemiluFormPage'
+import useFetchPemiluType from '../queries/useFetchPemiluType'
 
 type Props = {
   form: UseFormReturn<PemiluFormType>
 }
 
 const PemiluTypeForm = ({ form }: Props) => {
+  const { data: pemiluTypes, isLoading: isLoadingType } = useFetchPemiluType()
+  const { data: provinces, isLoading: isLoadingProvinces } = useFetchProvinces()
+  const { mutate: fetchCities, data: cities, isPending: isLoadingCities } = useFetchCities()
+
+  const isLoading = isLoadingType || isLoadingProvinces || isLoadingCities
+
+  const [showCity, setShowCity] = useState(false)
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name !== 'province') return
+      if (type !== 'change') return
+
+      fetchCities(value.province || '')
+    })
+    return () => subscription.unsubscribe()
+  }, [fetchCities, form])
+
+  if (isLoading)
+    return (
+      <Card className='p-6 rounded-xl flex items-center justify-center h-[400px]'>
+        <Loader2 className='animate-spin' />
+      </Card>
+    )
+
   return (
     <Card className='p-6 rounded-xl'>
       <CardContent className='p-0 space-y-4'>
@@ -29,20 +59,33 @@ const PemiluTypeForm = ({ form }: Props) => {
         />
         <FormField
           control={form.control}
-          name='name'
+          name='type'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Jenis Pemilu</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value)
+                  if (pemiluTypes?.find((item) => item.id === value)?.tipe === 1) {
+                    setShowCity(true)
+                  } else {
+                    form.setValue('city', '')
+                    setShowCity(false)
+                  }
+                }}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select a verified email to display' />
+                    <SelectValue placeholder='Pilih Tipe Pemilu' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                  <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                  <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                  {pemiluTypes?.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -51,48 +94,55 @@ const PemiluTypeForm = ({ form }: Props) => {
         />
         <FormField
           control={form.control}
-          name='name'
+          name='province'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Provinsi</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select a verified email to display' />
+                    <SelectValue placeholder='Pilih Provinsi' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                  <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                  <SelectItem value='m@support.com'>m@support.com</SelectItem>
+                  {provinces?.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name='name'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Kabupaten/Kota</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Select a verified email to display' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                  <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                  <SelectItem value='m@support.com'>m@support.com</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
+        {showCity && (
+          <FormField
+            control={form.control}
+            name='city'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Kabupaten/Kota</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Pilih Kabupaten/Kota' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {cities?.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
       </CardContent>
     </Card>
   )
