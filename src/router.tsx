@@ -25,7 +25,7 @@ export const router = createBrowserRouter([
         element: <PemiluPage />
       },
       {
-        path: '/pemilu/form',
+        path: '/pemilu/form/:id?',
         element: <PemiluFormPage />
       },
       {

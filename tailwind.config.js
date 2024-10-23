@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        manrope: ['Manrope', 'sans-serif']
+        'merriweather-sans': ['Merriweather Sans', 'sans']
       },
       borderRadius: {
         lg: 'var(--radius)',

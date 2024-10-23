@@ -22,7 +22,6 @@ const VotePage = () => {
                   <TableHead className='text-center'>02</TableHead>
                   <TableHead className='text-center'>03</TableHead>
                   <TableHead className='text-center'>04</TableHead>
-                  <TableHead className='text-center'>Total</TableHead>
                   <TableHead className='text-center'>DPT</TableHead>
                   <TableHead className='text-center'>Sah</TableHead>
                   <TableHead className='text-center'>Tidak Sah</TableHead>

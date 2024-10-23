@@ -15,7 +15,6 @@ const VoteItem = () => {
       <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : '100'}</TableCell>
       <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : '100'}</TableCell>
       <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : '100'}</TableCell>
-      <TableCell className='text-center'>400</TableCell>
       <TableCell className='text-center'>3120</TableCell>
       <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : '100'}</TableCell>
       <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : '100'}</TableCell>
