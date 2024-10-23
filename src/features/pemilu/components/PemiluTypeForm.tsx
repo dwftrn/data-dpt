@@ -1,3 +1,4 @@
+import LoadingOverlay from '@/components/LoadingOverlay'
 import { Card, CardContent } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -5,7 +6,6 @@ import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/compone
 import useFetchCities from '@/queries/useFetchCities'
 import useFetchProvinces from '@/queries/useFetchProvinces'
 import { Select } from '@radix-ui/react-select'
-import { Loader2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { PemiluFormType } from '../pages/PemiluFormPage'
@@ -34,104 +34,49 @@ const PemiluTypeForm = ({ form }: Props) => {
     return () => subscription.unsubscribe()
   }, [fetchCities, form])
 
-  if (isLoading)
-    return (
-      <Card className='p-6 rounded-xl flex items-center justify-center h-[400px]'>
-        <Loader2 className='animate-spin' />
-      </Card>
-    )
-
   return (
-    <Card className='p-6 rounded-xl'>
-      <CardContent className='p-0 space-y-4'>
-        <FormField
-          control={form.control}
-          name='name'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nama Pemilu</FormLabel>
-              <FormControl>
-                <Input placeholder='Ketikkan nama pemilu...' {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='type'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Jenis Pemilu</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value)
-                  if (pemiluTypes?.find((item) => item.id === value)?.tipe === 1) {
-                    setShowCity(true)
-                  } else {
-                    form.setValue('city', '')
-                    setShowCity(false)
-                  }
-                }}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Pilih Tipe Pemilu' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {pemiluTypes?.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name='province'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Provinsi</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Pilih Provinsi' />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {provinces?.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {showCity && (
+    <>
+      {isLoading && <LoadingOverlay />}
+      <Card className='p-6 rounded-xl'>
+        <CardContent className='p-0 space-y-4'>
           <FormField
             control={form.control}
-            name='city'
+            name='name'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Kabupaten/Kota</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormLabel>Nama Pemilu</FormLabel>
+                <FormControl>
+                  <Input placeholder='Ketikkan nama pemilu...' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='type'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Jenis Pemilu</FormLabel>
+                <Select
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    if (pemiluTypes?.find((item) => item.id === value)?.tipe === 1) {
+                      setShowCity(true)
+                    } else {
+                      form.setValue('city', '')
+                      setShowCity(false)
+                    }
+                  }}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder='Pilih Kabupaten/Kota' />
+                      <SelectValue placeholder='Pilih Tipe Pemilu' />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {cities?.map((item) => (
+                    {pemiluTypes?.map((item) => (
                       <SelectItem key={item.id} value={item.id}>
                         {item.name}
                       </SelectItem>
@@ -142,9 +87,60 @@ const PemiluTypeForm = ({ form }: Props) => {
               </FormItem>
             )}
           />
-        )}
-      </CardContent>
-    </Card>
+          <FormField
+            control={form.control}
+            name='province'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Provinsi</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Pilih Provinsi' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {provinces?.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {showCity && (
+            <FormField
+              control={form.control}
+              name='city'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kabupaten/Kota</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Pilih Kabupaten/Kota' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cities?.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+        </CardContent>
+      </Card>
+    </>
   )
 }
 

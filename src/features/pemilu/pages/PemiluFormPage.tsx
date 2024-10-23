@@ -7,6 +7,12 @@ import { z } from 'zod'
 import AddCandidateButton from '../components/AddCandidateButton'
 import CandidateForm from '../components/CandidateForm'
 import PemiluTypeForm from '../components/PemiluTypeForm'
+import useInsertPemilu from '../queries/useInsertPemilu'
+import { useQueryClient } from '@tanstack/react-query'
+import { PemiluType } from '../service/pemilu.service'
+import useInsertCandidate from '../queries/useInsertCandidate'
+import { useNavigate } from 'react-router-dom'
+import LoadingOverlay from '@/components/LoadingOverlay'
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Tidak boleh kosong!'),
@@ -43,6 +49,13 @@ const formSchema = z.object({
 export type PemiluFormType = z.infer<typeof formSchema>
 
 const PemiluFormPage = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { mutateAsync: insertPemilu, isPending: isLoadingPemilu } = useInsertPemilu()
+  const { mutateAsync: insertCandidate, isPending: isLoadingCandidate } = useInsertCandidate()
+
+  const isLoading = isLoadingPemilu || isLoadingCandidate
+
   const form = useForm<PemiluFormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,12 +80,44 @@ const PemiluFormPage = () => {
     name: 'candidate'
   })
 
-  const onSubmit = (values: PemiluFormType) => {
-    console.log({ values })
+  const onSubmit = async (values: PemiluFormType) => {
+    const types = queryClient.getQueryData(['pemilu-type']) as PemiluType[]
+    if (types.find((item) => item.id === values.type)?.tipe === 1 && !values.city) {
+      form.setError('city', { type: 'custom', message: 'Tidak boleh kosong!' })
+      return
+    }
+    try {
+      const res = await insertPemilu({
+        name: values.name,
+        id_jenis_pemilu: values.type,
+        id_provinsi: values.province,
+        id_kab_kota: values.city
+      })
+
+      const { id_pemilu } = res.data
+      console.log({ id_pemilu })
+
+      await Promise.all(
+        values.candidate.map((item) =>
+          insertCandidate({
+            id_pemilu,
+            no_urut: Number(item.no),
+            name: item.candidateName,
+            vice_name: item.viceCandidateName,
+            warna: item.color,
+            foto: item.image as File
+          })
+        )
+      )
+      navigate('/pemilu')
+    } catch (error) {
+      console.error({ error })
+    }
   }
 
   return (
     <section className='flex flex-col -m-4 md:-m-6 2xl:-m-8'>
+      {isLoading && <LoadingOverlay />}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col relative'>
           <div className='h-14 lg:h-[60px] flex items-center justify-between bg-white absolute top-0 inset-x-0 px-4 md:px-6 2xl:px-8 shadow'>

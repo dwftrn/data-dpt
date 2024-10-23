@@ -15,7 +15,7 @@ type Props = {
   index: number
 }
 
-const MAX_FILE_SIZE = 300
+const MAX_FILE_SIZE = 1000
 
 const CandidateForm = ({ form, fieldArray, index }: Props) => {
   const [isEdit, setIsEdit] = useState(true)
