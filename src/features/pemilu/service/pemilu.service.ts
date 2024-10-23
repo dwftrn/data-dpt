@@ -24,6 +24,24 @@ export type InsertCandidateParams = {
   foto: File
 }
 
+export type Pemilu = {
+  _id: string
+  id_jenis_pemilu: string
+  id_kab_kota: string
+  id_provinsi: string
+  jenis_pemilu_name: string
+  name: string
+  provinsi_name: string
+  kab_kota_name?: string
+}
+
+export type PemiluCandidate = {
+  foto: string
+  no_urut: string
+}
+
+export type PemiluWithCandidate = Pemilu & { paslon: PemiluCandidate[] }
+
 export const fetchPemiluType = (): Promise<CommonResponse<PemiluType[]>> => {
   return fetcher(ENDPOINTS.PEMILU.FETCH_TYPE, {}, 'GET')
 }
@@ -34,4 +52,8 @@ export const insertPemilu = (payload: InsertPemiluParams): Promise<CommonRespons
 
 export const insertCandidate = (payload: InsertCandidateParams): Promise<CommonResponse<null>> => {
   return fetcher(ENDPOINTS.PEMILU.INSERT_CANDIDATE, payload, 'POST', { 'Content-Type': 'multipart/form-data' })
+}
+
+export const fetchPemiluWithCandidate = (): Promise<CommonResponse<PemiluWithCandidate[]>> => {
+  return fetcher(ENDPOINTS.PEMILU.FETCH_LIST_WITH_CANDIDATE, {}, 'GET')
 }

@@ -11,26 +11,24 @@ import { showConfirm } from '@/lib/alert'
 import { Ellipsis, MapPin, SquarePen, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import CandidateAvatar from './CandidateAvatar'
+import { PemiluWithCandidate } from '../service/pemilu.service'
 
-const PemiluListCard = () => {
-  const id = '123'
+const PemiluListCard = ({ pemilu }: { pemilu: PemiluWithCandidate }) => {
   return (
     <Card className='rounded-xl py-8 px-12 shadow-lg bg-gradient-to-b from-white to-gray-100 relative'>
       <CardContent className='flex gap-16 p-0 items-center justify-between'>
         <div className='space-y-4 w-[40%]'>
-          <CardTitle className='text-base lg:text-2xl leading-8 font-bold'>
-            Pemilihan Walikota dan Wakil Walikota Kota Cimahi Provinsi Jawa Barat Tahun 2024
-          </CardTitle>
+          <CardTitle className='text-base lg:text-2xl leading-8 font-bold'>{pemilu.name}</CardTitle>
           <div className='flex items-center gap-2'>
             <MapPin />
-            Kota Cimahi, Jawa Barat
+            {'kab_kota_name' in pemilu && `${pemilu.kab_kota_name}, `}
+            {pemilu.provinsi_name}
           </div>
         </div>
         <div className='flex items-center gap-4'>
-          <CandidateAvatar />
-          <CandidateAvatar />
-          <CandidateAvatar />
-          <CandidateAvatar />
+          {pemilu.paslon.map((item) => (
+            <CandidateAvatar key={item.no_urut} candidate={item} />
+          ))}
         </div>
       </CardContent>
 
@@ -42,14 +40,14 @@ const PemiluListCard = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuGroup>
-            <Link to={`/pemilu/form/${id}`}>
+            <Link to={`/pemilu/form/${pemilu._id}`}>
               <DropdownMenuItem className='cursor-pointer'>
                 <SquarePen />
                 <span>Sunting</span>
               </DropdownMenuItem>
             </Link>
             <DropdownMenuItem
-              className='cursor-pointer'
+              className='cursor-pointer text-destructive'
               onClick={() => {
                 showConfirm({
                   title: 'Hapus Pemilu',

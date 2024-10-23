@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_BASE_URL
+export const BASE_URL = import.meta.env.VITE_BASE_URL
 
 export const ENDPOINTS = {
   FETCH_PROVINCES: BASE_URL + '/getprovinsi',
@@ -12,7 +12,7 @@ export const ENDPOINTS = {
     SIGN_IN: BASE_URL + '/login'
   },
   PEMILU: {
-    FETCH_LIST: BASE_URL + '/getpemilu',
+    FETCH_LIST_WITH_CANDIDATE: BASE_URL + '/getpemiluwithpaslon',
     FETCH_TYPE: BASE_URL + '/getjenispemilu',
     INSERT: BASE_URL + '/insertpemilu',
     INSERT_CANDIDATE: BASE_URL + '/insertpaslon'

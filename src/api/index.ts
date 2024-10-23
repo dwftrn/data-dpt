@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, Method } from 'axios'
 
-function getToken(): string {
+export function getToken(): string {
   return 'Bearer ' + localStorage.getItem('access_token') || ''
 }
 
