@@ -1,4 +1,4 @@
-import useFetchPemilu from '@/queries/useFetchPemilu'
+import useFetchPemilu from '@/features/pemilu/queries/useFetchPemilu'
 import { useState } from 'react'
 import LoadingOverlay from './LoadingOverlay'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'

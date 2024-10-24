@@ -9,9 +9,20 @@ import LoadingOverlay from './LoadingOverlay'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
+type FilterSelection = {
+  province: string
+  city: string
+  district: string
+  subdistrict: string
+}
+
+type Props = {
+  onChange?(value: FilterSelection, oldValue?: FilterSelection): void
+}
+
 const list = ['province', 'city', 'district', 'subdistrict']
 
-const PageFilter = () => {
+const PageFilter = ({ onChange }: Props) => {
   const { data: provinces, isLoading: isLoadingProvinces } = useFetchProvinces()
   const { mutate: fetchCities, data: cities, isPending: isLoadingCities } = useFetchCities()
   const { mutate: fetchDistricts, data: districts, isPending: isLoadingDistricts } = useFetchDistricts()
@@ -19,7 +30,7 @@ const PageFilter = () => {
 
   const isLoading = isLoadingProvinces || isLoadingCities || isLoadingDistricts || isLoadingSubdistricts
 
-  const [selections, setSelections] = useState({
+  const [selections, setSelections] = useState<FilterSelection>({
     province: '0',
     city: '0',
     district: '0',
@@ -27,7 +38,11 @@ const PageFilter = () => {
   })
 
   const handleSelectionChange = (field: keyof typeof selections, value: string) => {
-    setSelections((prev) => ({ ...prev, [field]: value }))
+    setSelections((prev) => {
+      const newVal = { ...prev, [field]: value }
+      onChange?.(newVal, prev)
+      return newVal
+    })
 
     if (field === 'province') fetchCities(value)
     if (field === 'city') fetchDistricts(value)
