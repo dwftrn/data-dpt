@@ -12,6 +12,7 @@ export const ENDPOINTS = {
     SIGN_IN: BASE_URL + '/login'
   },
   PEMILU: {
+    FETCH_LIST: BASE_URL + '/getpemilu',
     FETCH_LIST_WITH_CANDIDATE: BASE_URL + '/getpemiluwithpaslon',
     FETCH_TYPE: BASE_URL + '/getjenispemilu',
     INSERT: BASE_URL + '/insertpemilu',

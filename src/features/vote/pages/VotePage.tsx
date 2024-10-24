@@ -3,11 +3,22 @@ import PageHeader from '@/components/PageHeader'
 import { Card, CardContent } from '@/components/ui/card'
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import VoteItem from '../components/VoteItem'
+import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { Pemilu } from '@/features/pemilu/service/pemilu.service'
 
 const VotePage = () => {
+  const queryClient = useQueryClient()
+  const pemilu = queryClient.getQueryData(['pemilu']) as Pemilu[]
+
+  const [selectedPemilu, setSelectedPemilu] = useState('')
+
   return (
     <section className='flex flex-col gap-4 py-4'>
-      <PageHeader title='Input Suara Pemilihan Walikota Cimahi' />
+      <PageHeader
+        title={`Input Suara ${selectedPemilu && pemilu.find((e) => e._id === selectedPemilu)?.name}`}
+        onSelected={setSelectedPemilu}
+      />
 
       <PageFilter />
 

@@ -1,3 +1,4 @@
+import { Pemilu } from '@/features/pemilu/service/pemilu.service'
 import { fetcher } from '.'
 import { ENDPOINTS } from './endpoints'
 
@@ -91,4 +92,8 @@ export const fetchChart = (): Promise<
   }>
 > => {
   return fetcher(ENDPOINTS.FETCH_CHART, {}, 'GET')
+}
+
+export const fetchPemilu = (): Promise<CommonResponse<Pemilu[]>> => {
+  return fetcher(ENDPOINTS.PEMILU.FETCH_LIST, {}, 'GET')
 }
