@@ -60,6 +60,10 @@ const Sidebar = () => {
           <div
             role='button'
             className='flex items-center gap-3 rounded-lg px-3 pb-10 transition-all [&>svg]:size-4 group-data-[mobile=true]:[&>svg]:size-5 text-sm text-red-500'
+            onClick={() => {
+              localStorage.clear()
+              location.reload()
+            }}
           >
             <LogOut />
             {!isCollapsed && 'Logout'}
