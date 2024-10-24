@@ -20,14 +20,16 @@ const VoteItem = ({ data, pemilu }: Props) => {
       <TableCell className='text-center font-semibold'>TPS {data.NO}</TableCell>
       {data.data_paslon.length > 0
         ? data.data_paslon.map((item) => (
-            <TableCell className='text-center'>
+            <TableCell key={item.id_paslon} className='text-center'>
               {editMode ? <Input className='max-w-16' value={item.jumlah} /> : item.jumlah}
             </TableCell>
           ))
         : pemilu?.paslon
             .sort((a, b) => Number(a.no_urut) - Number(b.no_urut))
-            .map(() => (
-              <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : '-'}</TableCell>
+            .map((item) => (
+              <TableCell key={item.no_urut} className='text-center'>
+                {editMode ? <Input className='max-w-16' /> : '-'}
+              </TableCell>
             ))}
       <TableCell className='text-center'>3120</TableCell>
       <TableCell className='text-center'>{editMode ? <Input className='max-w-16' /> : data.sah || '-'}</TableCell>

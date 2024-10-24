@@ -2,7 +2,7 @@ import LoadingOverlay from '@/components/LoadingOverlay'
 import PageFilter from '@/components/PageFilter'
 import PageHeader from '@/components/PageHeader'
 import { Card, CardContent } from '@/components/ui/card'
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -50,7 +50,9 @@ const VotePage = () => {
                   {pemilu?.paslon
                     .sort((a, b) => Number(a.no_urut) - Number(b.no_urut))
                     .map((item) => (
-                      <TableHead className='text-center'>{item.no_urut}</TableHead>
+                      <TableHead key={item.no_urut} className='text-center'>
+                        {item.no_urut}
+                      </TableHead>
                     ))}
 
                   <TableHead className='text-center'>DPT</TableHead>
@@ -62,9 +64,18 @@ const VotePage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {votes.map((item) => (
-                  <VoteItem key={item.id_tps} data={item} pemilu={pemilu!} />
-                ))}
+                {votes.length > 0 ? (
+                  votes.map((item) => <VoteItem key={item.id_tps} data={item} pemilu={pemilu!} />)
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={1 + (pemilu?.paslon?.length ?? 0) + 7}
+                      className='text-center text-sm text-muted-foreground'
+                    >
+                      Pilih pemilu dan kelurahan untuk menampilkan data.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
