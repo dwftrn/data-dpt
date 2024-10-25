@@ -9,8 +9,9 @@ export type Vote = {
   id_suara: string
   id_tps: string
   sah: string
-  status: string
+  status: string | (0 | 1 | 2)
   tidak_sah: string
+  count_dpt: number
 }
 
 type VoteCandidate = {
