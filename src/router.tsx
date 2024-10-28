@@ -34,7 +34,7 @@ export const router = createBrowserRouter([
         element: <PemiluFormPage />
       },
       {
-        path: '/input-vote',
+        path: '/input-vote/:id?',
         element: <VotePage />
       }
     ]

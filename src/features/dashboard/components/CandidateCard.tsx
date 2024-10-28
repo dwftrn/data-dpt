@@ -14,11 +14,11 @@ const CandidateCard = () => {
       <div className='rounded-b-xl grid grid-cols-2 border border-t-0 font-semibold text-xs'>
         <div className='bg-light-green rounded-bl-xl flex items-center justify-between px-8 py-4'>
           <span>Suara Sah Masuk</span>
-          <span>200.000.000</span>
+          <span>200.000.000(20.9%)</span>
         </div>
         <div className='bg-error-50 rounded-br-xl flex items-center justify-between px-8 py-4'>
           <span>Suara Tidak Masuk</span>
-          <span>200.000.000</span>
+          <span>200.000.000(10%)</span>
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ export const ENDPOINTS = {
     FETCH_TYPE: BASE_URL + '/getjenispemilu',
     INSERT: BASE_URL + '/insertpemilu',
     INSERT_CANDIDATE: BASE_URL + '/insertpaslon',
-    FETCH_INPUT_VOTE: BASE_URL + '/getinsertsuara'
+    FETCH_INPUT_VOTE: BASE_URL + '/getinsertsuara',
+    INPUT_VOTE: BASE_URL + '/insertsuara'
   }
 }
