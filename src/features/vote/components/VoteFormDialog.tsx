@@ -69,6 +69,10 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
 
   const onSubmit = (values: FormType) => {
     console.log({ values })
+    if (!file) {
+      setFileError('Pilih Formulir C1')
+      return
+    }
   }
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
