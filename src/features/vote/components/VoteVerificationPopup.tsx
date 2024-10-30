@@ -3,13 +3,15 @@ import PemiluLogo from '@/assets/pemilu-logo.svg'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
+import useSearchParams from '@/hooks/useSearchParams'
 import { Check, ChevronLeft, ChevronRight, UserRound, X } from 'lucide-react'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
 
 const VoteVerificationPopup = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const [isOpen, setIsOpen] = useState(false)
   const [containerWidth, setContainerWidth] = useState('auto')
@@ -21,9 +23,16 @@ const VoteVerificationPopup = () => {
     setContainerWidth(`${width}px`)
   }
 
+  const handleNavigate = () => {
+    navigate({
+      pathname: `/input-vote`,
+      search: createSearchParams(searchParams).toString()
+    })
+  }
+
   const handleClose = () => {
     setIsOpen(false)
-    navigate('/input-vote')
+    handleNavigate()
   }
 
   useEffect(() => {
@@ -38,7 +47,7 @@ const VoteVerificationPopup = () => {
         onOpenChange={(open) => {
           setIsOpen(open)
           if (!open) {
-            navigate('/input-vote')
+            handleNavigate()
           }
         }}
       >

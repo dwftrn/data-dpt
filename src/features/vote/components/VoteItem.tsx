@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
+import useSearchParams from '@/hooks/useSearchParams'
 import { cn } from '@/lib/utils'
-import { useNavigate } from 'react-router-dom'
+import { createSearchParams, useNavigate } from 'react-router-dom'
 import { Vote } from '../service/vote.service'
 import C1Preview from './C1Preview'
 import VoteFormDialog from './VoteFormDialog'
@@ -14,6 +15,7 @@ type Props = {
 
 const VoteItem = ({ data, pemilu }: Props) => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   return (
     <>
@@ -57,7 +59,12 @@ const VoteItem = ({ data, pemilu }: Props) => {
               type='button'
               variant='secondary'
               className='p-2 h-fit bg-orange-500 hover:bg-orange-500/90 text-white text-xs'
-              onClick={() => navigate(`/input-vote/${data.id_suara}`)}
+              onClick={() =>
+                navigate({
+                  pathname: `/input-vote/${data.id_suara}`,
+                  search: createSearchParams(searchParams).toString()
+                })
+              }
             >
               Verifikasi
             </Button>
