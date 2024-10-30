@@ -1,9 +1,10 @@
+import Logo from '@/assets/logo.svg'
 import { navs } from '@/constants/navs'
-import SidebarItem from './SidebarItem'
-import { ResizablePanel } from '../ui/resizable'
-import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { Box, LogOut } from 'lucide-react'
+import { LogOut } from 'lucide-react'
+import { useState } from 'react'
+import { ResizablePanel } from '../ui/resizable'
+import SidebarItem from './SidebarItem'
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -44,9 +45,15 @@ const Sidebar = () => {
         'min-w-[3.125rem] transition-all duration-300 ease-in-out items-center': isCollapsed
       })}
     >
-      <div className='flex h-14 items-center justify-between border-b px-4 lg:h-[60px] lg:px-6'>
+      <div
+        className={cn('flex h-14 items-center justify-between border-b px-4 lg:h-[60px] lg:px-6', {
+          'p-0': isCollapsed
+        })}
+      >
         <a href='/' className='flex items-center gap-2 font-semibold'>
-          {isCollapsed ? <Box /> : 'Qitara'}
+          {/* {isCollapsed ? <Box /> : 'Qitara'} */}
+          <img alt='logo' src={Logo} className='object-cover size-6' />
+          {!isCollapsed && 'Qitara'}
         </a>
         {!isCollapsed && <p className='text-xs'>v.1.0.0</p>}
       </div>

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import useFetchCities from '@/queries/useFetchCities'
 import useFetchProvinces from '@/queries/useFetchProvinces'
 import { FilterX } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import LoadingOverlay from './LoadingOverlay'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
@@ -25,7 +25,6 @@ const list = ['province', 'city', 'district', 'subdistrict']
 
 const PageFilter = ({ onChange }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const isInitialized = useRef(false)
 
   const province = searchParams.get('province') || '0'
   const city = searchParams.get('city') || '0'
@@ -45,18 +44,6 @@ const PageFilter = ({ onChange }: Props) => {
     district: district,
     subdistrict: subdistrict
   })
-
-  // const handleSelectionChange = (field: keyof typeof selections, value: string) => {
-  //   setSelections((prev) => {
-  //     const newVal = { ...prev, [field]: value }
-  //     onChange?.(newVal, prev)
-  //     return newVal
-  //   })
-
-  //   if (field === 'province' && value !== '0') fetchCities(value)
-  //   if (field === 'city' && value !== '0') fetchDistricts(value)
-  //   if (field === 'district' && value !== '0') fetchSubdistricts(value)
-  // }
 
   const handleSelectionChange = (field: keyof typeof selections, value: string) => {
     // Calculate new selections
@@ -120,28 +107,14 @@ const PageFilter = ({ onChange }: Props) => {
   }, [province, city, district, subdistrict])
 
   useEffect(() => {
-    if (!isInitialized.current) {
-      const fetchData = async () => {
-        try {
-          if (province !== '0') {
-            await fetchCities(province)
-
-            if (city !== '0') {
-              await fetchDistricts(city)
-
-              if (district !== '0') {
-                await fetchSubdistricts(district)
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching nested data:', error)
+    if (province !== '0') {
+      fetchCities(province)
+      if (city !== '0') {
+        fetchDistricts(city)
+        if (district !== '0') {
+          fetchSubdistricts(district)
         }
-
-        isInitialized.current = true
       }
-
-      fetchData()
     }
   }, [province, city, district, fetchCities, fetchDistricts, fetchSubdistricts])
 

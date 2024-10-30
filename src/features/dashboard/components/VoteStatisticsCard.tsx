@@ -1,5 +1,6 @@
 import useSearchParams from '@/hooks/useSearchParams'
 import { QuickCountCard, REGION_CODE } from '../services/dashboard.service'
+import { cn } from '@/lib/utils'
 
 const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: REGION_CODE }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -8,6 +9,7 @@ const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: RE
     .sort((a, b) => b.jumlah_suara - a.jumlah_suara)
     .slice(0, 1)
     .at(0)?.warna
+  const isAll0Percent = data.votes.every((item) => item.jumlah_suara === 0)
 
   const handleClick = () => {
     // Create an object with the new params and nullify dependent fields
@@ -44,8 +46,10 @@ const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: RE
   return (
     <div
       role='button'
-      className='rounded-xl shadow-custom bg-white p-4 space-y-4 border-t-4 border-mauve'
-      style={{ borderColor: color }}
+      className={cn('rounded-xl shadow-custom bg-white p-4 space-y-4 border-t-[6px] border-mauve', {
+        'opacity-50': isAll0Percent
+      })}
+      style={{ borderColor: isAll0Percent ? '#E0E0E0' : color }}
       onClick={handleClick}
     >
       <h1 className='text-sm font-semibold'>{data.name}</h1>
