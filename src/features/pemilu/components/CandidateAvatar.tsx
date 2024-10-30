@@ -1,11 +1,10 @@
-import AuthorizedImage from '@/components/AuthorizedImage'
 import { PemiluCandidate } from '../service/pemilu.service'
 
 const CandidateAvatar = ({ candidate }: { candidate: PemiluCandidate }) => {
   return (
     <div className='flex flex-col gap-4 items-center relative'>
-      <AuthorizedImage
-        fileName={candidate.foto}
+      <img
+        src={candidate.foto}
         alt='avatar'
         draggable={false}
         className='size-20 lg:size-32 aspect-square rounded-full border-4 lg:border-8 border-white drop-shadow-lg'

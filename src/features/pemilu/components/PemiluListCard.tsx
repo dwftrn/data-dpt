@@ -26,9 +26,11 @@ const PemiluListCard = ({ pemilu }: { pemilu: PemiluWithCandidate }) => {
           </div>
         </div>
         <div className='flex items-center gap-4'>
-          {pemilu.paslon.map((item) => (
-            <CandidateAvatar key={item.no_urut} candidate={item} />
-          ))}
+          {pemilu.paslon
+            .sort((a, b) => Number(a.no_urut) - Number(b.no_urut))
+            .map((item) => (
+              <CandidateAvatar key={item.no_urut} candidate={item} />
+            ))}
         </div>
       </CardContent>
 
