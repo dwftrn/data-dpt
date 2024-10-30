@@ -12,10 +12,7 @@ const CandidateCardItem = ({ totalData, candidate }: { totalData: number; candid
           className='rounded-xl size-[110px] aspect-square object-cover border-[3px] border-blue-400'
           style={{ borderColor: candidate.warna }}
         />
-        <div
-          className='absolute bottom-2 right-2 bg-blue-400 text-white size-5 rounded text-xs flex items-center justify-center'
-          style={{ backgroundColor: candidate.warna }}
-        >
+        <div className='absolute bottom-2 right-2 bg-red-500 text-white size-5 rounded text-xs flex items-center justify-center'>
           {candidate.no_urut}
         </div>
       </div>

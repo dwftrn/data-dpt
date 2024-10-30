@@ -1,5 +1,6 @@
 import useFetchDistricts from '@/features/dpt/queries/useFetchDistricts'
 import useFetchSubdistricts from '@/features/dpt/queries/useFetchSubdistricts'
+import useSearchParams from '@/hooks/useSearchParams'
 import { cn } from '@/lib/utils'
 import useFetchCities from '@/queries/useFetchCities'
 import useFetchProvinces from '@/queries/useFetchProvinces'
@@ -8,7 +9,6 @@ import { useEffect, useRef, useState } from 'react'
 import LoadingOverlay from './LoadingOverlay'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import useSearchParams from '@/hooks/useSearchParams'
 
 type FilterSelection = {
   province: string
@@ -46,13 +46,44 @@ const PageFilter = ({ onChange }: Props) => {
     subdistrict: subdistrict
   })
 
-  const handleSelectionChange = (field: keyof typeof selections, value: string) => {
-    setSelections((prev) => {
-      const newVal = { ...prev, [field]: value }
-      onChange?.(newVal, prev)
-      return newVal
-    })
+  // const handleSelectionChange = (field: keyof typeof selections, value: string) => {
+  //   setSelections((prev) => {
+  //     const newVal = { ...prev, [field]: value }
+  //     onChange?.(newVal, prev)
+  //     return newVal
+  //   })
 
+  //   if (field === 'province' && value !== '0') fetchCities(value)
+  //   if (field === 'city' && value !== '0') fetchDistricts(value)
+  //   if (field === 'district' && value !== '0') fetchSubdistricts(value)
+  // }
+
+  const handleSelectionChange = (field: keyof typeof selections, value: string) => {
+    // Calculate new selections
+    const newSelections = { ...selections, [field]: value }
+
+    // Clear dependent fields when parent field changes
+    if (field === 'province') {
+      newSelections.city = '0'
+      newSelections.district = '0'
+      newSelections.subdistrict = '0'
+    } else if (field === 'city') {
+      newSelections.district = '0'
+      newSelections.subdistrict = '0'
+    } else if (field === 'district') {
+      newSelections.subdistrict = '0'
+    }
+
+    // Update selections state
+    setSelections(newSelections)
+
+    // Update search params
+    setSearchParams(newSelections)
+
+    // Trigger onChange callback
+    onChange?.(newSelections, selections)
+
+    // Fetch dependent data
     if (field === 'province' && value !== '0') fetchCities(value)
     if (field === 'city' && value !== '0') fetchDistricts(value)
     if (field === 'district' && value !== '0') fetchSubdistricts(value)
@@ -69,17 +100,24 @@ const PageFilter = ({ onChange }: Props) => {
   }
 
   const resetFilter = () => {
-    setSelections({
+    const newSelections = {
       province: '0',
       city: '0',
       district: '0',
       subdistrict: '0'
-    })
+    }
+    setSelections(newSelections)
+    setSearchParams(newSelections)
   }
 
   useEffect(() => {
-    setSearchParams(selections)
-  }, [selections, setSearchParams])
+    setSelections({
+      province,
+      city,
+      district,
+      subdistrict
+    })
+  }, [province, city, district, subdistrict])
 
   useEffect(() => {
     if (!isInitialized.current) {

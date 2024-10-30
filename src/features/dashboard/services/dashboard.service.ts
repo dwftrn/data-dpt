@@ -21,6 +21,30 @@ export type QuickCountCandidate = {
   warna: string
 }
 
+export enum REGION_CODE {
+  ALL = 0,
+  PROVINCE = 1,
+  CITY = 2,
+  DISTRICT = 3,
+  SUBDISTRICT = 4
+}
+
+export type QuickCountCardParams = {
+  id_pemilu: string
+  id_wilayah: string
+  kode_wilayah: REGION_CODE
+}
+
+export type QuickCountCard = {
+  id_region: string
+  name: string
+  votes: (Omit<QuickCountCandidate, 'foto' | 'nama' | 'nama_vice'> & { name: string; vice_name: string })[]
+}
+
 export const fetchQuickCount = (params: { id_pemilu: string }): Promise<CommonResponse<QuickCount>> => {
   return fetcher(ENDPOINTS.QUICK_COUNT.FETCH, params, 'POST')
+}
+
+export const fetchCards = (params: QuickCountCardParams): Promise<CommonResponse<QuickCountCard[]>> => {
+  return fetcher(ENDPOINTS.QUICK_COUNT.FETCH_CARDS, params, 'POST')
 }

@@ -1,7 +1,7 @@
 import PageFilter from '@/components/PageFilter'
 import PageHeader from '@/components/PageHeader'
 import CandidateCard from '../components/CandidateCard'
-import VoteStatisticsCard from '../components/VoteStatisticsCard'
+import VoteStatisticsCardList from '../components/VoteStatisticsCardList'
 
 const DashboardPage = () => {
   return (
@@ -11,20 +11,8 @@ const DashboardPage = () => {
       <CandidateCard />
 
       <PageFilter />
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-        <VoteStatisticsCard />
-      </div>
+
+      <VoteStatisticsCardList />
     </section>
   )
 }
