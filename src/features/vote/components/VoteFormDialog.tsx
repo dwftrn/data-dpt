@@ -53,8 +53,10 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
   const [file, setFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState('')
 
-  const { mutateAsync: inputVote } = useInputVote()
-  const { mutateAsync: inputC1 } = useInputC1()
+  const { mutateAsync: inputVote, isPending: isLoadingInsert } = useInputVote()
+  const { mutateAsync: inputC1, isPending: isLoadingC1 } = useInputC1()
+
+  const isLoading = isLoadingInsert || isLoadingC1
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
@@ -208,6 +210,7 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
               accept='image/png, image/jpeg'
               className='hidden'
               onChange={handleFileChange}
+              disabled={isLoading}
             />
           </div>
           <div className='border-l flex flex-col'>
@@ -252,6 +255,7 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
                                 type='number'
                                 placeholder='Input Suara'
                                 {...field}
+                                disabled={isLoading}
                                 onKeyDown={(e) => {
                                   // Prevent 'e', '+', '-' and other non-numeric keys
                                   if (
@@ -290,6 +294,7 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
                         <Input
                           placeholder='Ketikkan suara tidak sah...'
                           {...field}
+                          disabled={isLoading}
                           onKeyDown={(e) => {
                             // Prevent 'e', '+', '-' and other non-numeric keys
                             if (
@@ -318,13 +323,17 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
           <p className='text-sm font-medium text-destructive flex-1'>{fileError}</p>
           <div className='space-x-3'>
             <DialogClose asChild>
-              <Button variant='outline'>Batal</Button>
+              <Button variant='outline' disabled={isLoading}>
+                Batal
+              </Button>
             </DialogClose>
             <Button
               form='vote-form'
               onClick={() => {
                 if (!file) setFileError('Pilih Formulir C1')
               }}
+              isLoading={isLoading}
+              disabled={isLoading}
             >
               Simpan
             </Button>
