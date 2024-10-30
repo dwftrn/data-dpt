@@ -8,9 +8,9 @@ export type Vote = {
   data_paslon: VoteCandidate[]
   id_suara: string
   id_tps: string
-  sah: string
+  sah: string | number
   status: string | (0 | 1 | 2)
-  tidak_sah: string
+  tidak_sah: string | number
   count_dpt: number
 }
 
@@ -29,6 +29,10 @@ export const fetchInputVote = (params: {
   return fetcher(ENDPOINTS.PEMILU.FETCH_INPUT_VOTE, params, 'POST')
 }
 
-export const inputVote = (params: InputVote): Promise<CommonResponse<null>> => {
+export const inputVote = (params: InputVote): Promise<CommonResponse<{ id_suara: string }>> => {
   return fetcher(ENDPOINTS.PEMILU.INPUT_VOTE, params, 'POST')
+}
+
+export const inputC1 = (params: { id: string; c1: File }): Promise<CommonResponse<null>> => {
+  return fetcher(ENDPOINTS.PEMILU.INSERT_C1, params, 'POST', { 'Content-Type': 'multipart/form-data' })
 }

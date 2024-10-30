@@ -19,6 +19,8 @@ import { Pen, Plus, X } from 'lucide-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import useInputC1 from '../queries/useInputC1'
+import useInputVote from '../queries/useInputVote'
 import { Vote } from '../service/vote.service'
 
 type Props = {
@@ -51,12 +53,15 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
   const [file, setFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState('')
 
+  const { mutateAsync: inputVote } = useInputVote()
+  const { mutateAsync: inputC1 } = useInputC1()
+
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       data_paslon: [],
-      id_pemilu: '',
-      id_tps: '',
+      id_pemilu: pemilu._id,
+      id_tps: data.id_tps,
       sah: '',
       tidak_sah: ''
     }
@@ -67,12 +72,37 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
     name: 'data_paslon'
   })
 
+  const currentValues = form.watch('data_paslon')
+
+  const sahTotal = () => {
+    return currentValues.reduce((sum, item) => {
+      const jumlah = parseInt(item.jumlah || '0')
+      const total = sum + (isNaN(jumlah) ? 0 : jumlah)
+      form.setValue('sah', total + '')
+      return total
+    }, 0)
+  }
+
   const onSubmit = (values: FormType) => {
     console.log({ values })
     if (!file) {
       setFileError('Pilih Formulir C1')
       return
     }
+
+    inputVote({
+      data_paslon: values.data_paslon.map((item) => ({ ...item, jumlah: +item.jumlah, no_urut: +item.no_urut })),
+      id_pemilu: values.id_pemilu,
+      id_tps: values.id_tps,
+      sah: +values.sah,
+      tidak_sah: +values.tidak_sah
+    }).then((res) => {
+      const { id_suara } = res.data
+      inputC1({
+        id: id_suara,
+        c1: file
+      }).then(() => location.reload())
+    })
   }
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +135,12 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
   useEffect(() => {
     // Only run once on mount
     if (!isInitialized.current) {
+      if (data.c1) {
+        setFileBlobUrl(data.c1)
+      }
+
+      form.setValue('tidak_sah', data.tidak_sah.toString())
+
       if (data.data_paslon.length > 0) {
         const formattedData = data.data_paslon.map((item) => ({
           ...item,
@@ -121,7 +157,10 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
       }
       isInitialized.current = true
     }
-  }, [data.data_paslon, fieldArray, pemilu.paslon])
+
+    form.setValue('id_pemilu', pemilu._id)
+    form.setValue('id_tps', data.id_tps)
+  }, [data.c1, data.data_paslon, data.id_tps, data.tidak_sah, fieldArray, form, pemilu._id, pemilu.paslon])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -209,7 +248,25 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
                               <FormLabel className='text-white'>{item.no_urut}</FormLabel>
                             </div>
                             <FormControl>
-                              <Input placeholder='Input Suara' {...field} />
+                              <Input
+                                type='number'
+                                placeholder='Input Suara'
+                                {...field}
+                                onKeyDown={(e) => {
+                                  // Prevent 'e', '+', '-' and other non-numeric keys
+                                  if (
+                                    !/^\d$/.test(e.key) &&
+                                    !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+                                  ) {
+                                    e.preventDefault()
+                                  }
+                                }}
+                                onChange={(e) => {
+                                  // Remove any non-numeric characters and update the field
+                                  const value = e.target.value.replace(/\D/g, '')
+                                  field.onChange(value)
+                                }}
+                              />
                             </FormControl>
                           </div>
                           <FormMessage />
@@ -219,7 +276,7 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
                   ))}
                   <div className='flex justify-between bg-[#E6F4F0] -mx-4 p-4 font-bold items-center'>
                     <h1 className='text-xs'>Total Suara Sah</h1>
-                    <p className='text-lg'>370</p>
+                    <p className='text-lg'>{sahTotal()}</p>
                   </div>
                 </div>
 
@@ -230,7 +287,24 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
                     <FormItem>
                       <FormLabel>Suara Tidak Sah</FormLabel>
                       <FormControl>
-                        <Input placeholder='Ketikkan suara tidak sah...' {...field} />
+                        <Input
+                          placeholder='Ketikkan suara tidak sah...'
+                          {...field}
+                          onKeyDown={(e) => {
+                            // Prevent 'e', '+', '-' and other non-numeric keys
+                            if (
+                              !/^\d$/.test(e.key) &&
+                              !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+                            ) {
+                              e.preventDefault()
+                            }
+                          }}
+                          onChange={(e) => {
+                            // Remove any non-numeric characters and update the field
+                            const value = e.target.value.replace(/\D/g, '')
+                            field.onChange(value)
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

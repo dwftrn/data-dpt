@@ -19,27 +19,21 @@ const VoteItem = ({ data, pemilu }: Props) => {
     <>
       <TableRow
         className={cn(
-          '[&>*:not(:first-child):not(:last-child)]:border [&>*:not(:first-child):not(:last-child)]:border-b-0'
+          '[&>*:not(:first-child):not(:last-child)]:border [&>*:not(:first-child):not(:last-child)]:border-b-0 [&>*]:text-center'
         )}
       >
-        <TableCell className='text-center font-semibold'>TPS {data.NO}</TableCell>
+        <TableCell className='font-semibold'>TPS {data.NO}</TableCell>
         {data.data_paslon.length > 0
-          ? data.data_paslon.map((item) => (
-              <TableCell key={item.id_paslon} className='text-center'>
-                {item.jumlah}
-              </TableCell>
-            ))
+          ? data.data_paslon.map((item) => <TableCell key={item.id_paslon}>{item.jumlah}</TableCell>)
           : pemilu?.paslon
               .sort((a, b) => Number(a.no_urut) - Number(b.no_urut))
-              .map((item) => (
-                <TableCell key={item.no_urut} className='text-center'>
-                  -
-                </TableCell>
-              ))}
-        <TableCell className='text-center'>{data.count_dpt}</TableCell>
-        <TableCell className='text-center'>{data.sah || '-'}</TableCell>
-        <TableCell className='text-center'>{data.tidak_sah || '-'}</TableCell>
-        <TableCell className='text-center'>
+              .map((item) => <TableCell key={item.no_urut}>-</TableCell>)}
+        <TableCell>{data.count_dpt}</TableCell>
+        <TableCell className={cn({ 'text-destructive': Number(data.sah) > Number(data.count_dpt) })}>
+          {data.sah || '-'}
+        </TableCell>
+        <TableCell>{data.tidak_sah || '-'}</TableCell>
+        <TableCell>
           <C1Preview data={data} />
         </TableCell>
         <TableCell
