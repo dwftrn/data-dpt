@@ -22,6 +22,12 @@ const PageHeader = ({ title, onSelected }: Props) => {
     setSearchParams({ pemilu: selected })
   }, [selected, setSearchParams])
 
+  useEffect(() => {
+    if (!selected) {
+      setSelected(data?.at(0)?._id || pemilu)
+    }
+  }, [data, pemilu, selected])
+
   if (isLoading) return <LoadingOverlay />
 
   return (
