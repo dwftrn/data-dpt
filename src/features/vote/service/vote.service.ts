@@ -20,7 +20,9 @@ type VoteCandidate = {
   no_urut: number
 }
 
-type InputVote = Pick<Vote, 'data_paslon' | 'id_tps' | 'sah' | 'tidak_sah'> & { id_pemilu: string }
+export type InputVote = Pick<Vote, 'data_paslon' | 'id_tps' | 'sah' | 'tidak_sah'> & { id_pemilu: string }
+
+export type UpdateVote = { id: string; data_paslon?: VoteCandidate[]; sah?: number; tidak_sah?: number }
 
 export const fetchInputVote = (params: {
   id_pemilu: string
@@ -31,6 +33,10 @@ export const fetchInputVote = (params: {
 
 export const inputVote = (params: InputVote): Promise<CommonResponse<{ id_suara: string }>> => {
   return fetcher(ENDPOINTS.PEMILU.INPUT_VOTE, params, 'POST')
+}
+
+export const updateVote = (params: UpdateVote): Promise<CommonResponse<{ id_suara: string }>> => {
+  return fetcher(ENDPOINTS.PEMILU.UPDATE_VOTE, params, 'POST')
 }
 
 export const inputC1 = (params: { id: string; c1: File }): Promise<CommonResponse<null>> => {

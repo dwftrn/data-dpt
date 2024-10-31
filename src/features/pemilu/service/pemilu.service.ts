@@ -51,8 +51,20 @@ export const insertPemilu = (payload: InsertPemiluParams): Promise<CommonRespons
   return fetcher(ENDPOINTS.PEMILU.INSERT, payload, 'POST')
 }
 
+export const updatePemilu = (
+  payload: { id: string } & Partial<InsertPemiluParams>
+): Promise<CommonResponse<{ id_pemilu: string }>> => {
+  return fetcher(ENDPOINTS.PEMILU.UPDATE, payload, 'POST')
+}
+
 export const insertCandidate = (payload: InsertCandidateParams): Promise<CommonResponse<null>> => {
   return fetcher(ENDPOINTS.PEMILU.INSERT_CANDIDATE, payload, 'POST', { 'Content-Type': 'multipart/form-data' })
+}
+
+export const updateCandidate = (
+  payload: { id: string } & Partial<InsertCandidateParams>
+): Promise<CommonResponse<null>> => {
+  return fetcher(ENDPOINTS.PEMILU.UPDATE_CANDIDATE, payload, 'PUT', { 'Content-Type': 'multipart/form-data' })
 }
 
 export const fetchPemiluWithCandidate = (): Promise<CommonResponse<PemiluWithCandidate[]>> => {

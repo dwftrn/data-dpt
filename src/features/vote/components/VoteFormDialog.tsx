@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
 import { compressImage } from '@/lib/compress-image'
+import { areArraysEqual } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Pen, Plus, X } from 'lucide-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -21,7 +22,8 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import useInputC1 from '../queries/useInputC1'
 import useInputVote from '../queries/useInputVote'
-import { Vote } from '../service/vote.service'
+import useUpdateVote from '../queries/useUpdateVote'
+import { UpdateVote, Vote } from '../service/vote.service'
 
 type Props = {
   data: Vote
@@ -54,9 +56,10 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
   const [fileError, setFileError] = useState('')
 
   const { mutateAsync: inputVote, isPending: isLoadingInsert } = useInputVote()
+  const { mutateAsync: updateVote, isPending: isLoadingUpdate } = useUpdateVote()
   const { mutateAsync: inputC1, isPending: isLoadingC1 } = useInputC1()
 
-  const isLoading = isLoadingInsert || isLoadingC1
+  const isLoading = isLoadingInsert || isLoadingUpdate || isLoadingC1
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
@@ -87,24 +90,49 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
 
   const onSubmit = (values: FormType) => {
     console.log({ values })
-    if (!file) {
+    if (!file && !fileBlobUrl) {
       setFileError('Pilih Formulir C1')
       return
     }
 
-    inputVote({
-      data_paslon: values.data_paslon.map((item) => ({ ...item, jumlah: +item.jumlah, no_urut: +item.no_urut })),
-      id_pemilu: values.id_pemilu,
-      id_tps: values.id_tps,
-      sah: +values.sah,
-      tidak_sah: +values.tidak_sah
-    }).then((res) => {
-      const { id_suara } = res.data
-      inputC1({
-        id: id_suara,
-        c1: file
-      }).then(() => location.reload())
-    })
+    if (data.status === '') {
+      inputVote({
+        data_paslon: values.data_paslon.map((item) => ({ ...item, jumlah: +item.jumlah, no_urut: +item.no_urut })),
+        id_pemilu: values.id_pemilu,
+        id_tps: values.id_tps,
+        sah: +values.sah,
+        tidak_sah: +values.tidak_sah
+      }).then((res) => {
+        const { id_suara } = res.data
+        if (file) {
+          inputC1({
+            id: id_suara,
+            c1: file
+          }).then(() => location.reload())
+        } else {
+          location.reload()
+        }
+      })
+    } else {
+      const params: UpdateVote = {
+        id: data.id_suara
+      }
+
+      if (values.sah !== data.sah) params.sah = +values.sah
+      if (values.tidak_sah !== data.tidak_sah) params.tidak_sah = +values.sah
+
+      const parsedDataPaslon = values.data_paslon.map((item) => ({
+        ...item,
+        jumlah: +item.jumlah,
+        no_urut: +item.no_urut
+      }))
+
+      if (!areArraysEqual(data.data_paslon, parsedDataPaslon)) {
+        params.data_paslon = parsedDataPaslon
+      }
+
+      updateVote(params).then(() => location.reload())
+    }
   }
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -330,7 +358,7 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
             <Button
               form='vote-form'
               onClick={() => {
-                if (!file) setFileError('Pilih Formulir C1')
+                if (!file && !fileBlobUrl) setFileError('Pilih Formulir C1')
               }}
               isLoading={isLoading}
               disabled={isLoading}
