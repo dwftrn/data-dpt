@@ -7,6 +7,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom'
 import { Vote } from '../service/vote.service'
 import C1Preview from './C1Preview'
 import VoteFormDialog from './VoteFormDialog'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 type Props = {
   data: Vote
@@ -32,12 +33,19 @@ const VoteItem = ({ data, pemilu }: Props) => {
               .map((item) => <TableCell key={item.no_urut}>-</TableCell>)}
         <TableCell>{data.count_dpt}</TableCell>
         <TableCell className={cn({ 'text-destructive': Number(data.sah) > Number(data.count_dpt) })}>
-          {data.sah || '-'}
+          {Number(data.sah) > Number(data.count_dpt) ? (
+            <Tooltip>
+              <TooltipTrigger>{data.sah}</TooltipTrigger>
+              <TooltipContent>
+                <p>Jumlah suara sah lebih banyak dari jumlah DPT</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            data.sah || '-'
+          )}
         </TableCell>
         <TableCell>{data.tidak_sah || '-'}</TableCell>
-        <TableCell>
-          <C1Preview data={data} />
-        </TableCell>
+        <TableCell>{data.c1 ? <C1Preview data={data} /> : '-'}</TableCell>
         <TableCell
           className={cn('text-center text-xs', {
             'text-orange-500': data.status === 0,
@@ -50,7 +58,7 @@ const VoteItem = ({ data, pemilu }: Props) => {
             : data.status === 1
             ? 'Terverifikasi'
             : data.status === 2
-            ? 'Tertolak'
+            ? `Tertolak (${data.alasan_reject})`
             : '-'}
         </TableCell>
         <TableCell className='flex items-center justify-center gap-1'>

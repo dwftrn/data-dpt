@@ -1,20 +1,38 @@
+import { CommonResponse } from '@/api/services'
 import TimeAttack from '@/assets/lets-icons_time-atack.svg'
 import PemiluLogo from '@/assets/pemilu-logo.svg'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
 import useSearchParams from '@/hooks/useSearchParams'
-import { Check, ChevronLeft, ChevronRight, UserRound, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
+import { Check, ChevronLeft, ChevronRight, CircleCheck, UserRound, X, XCircle } from 'lucide-react'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
+import { Vote } from '../service/vote.service'
 
 const VoteVerificationPopup = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
+  const idPemilu = searchParams.get('pemilu')
+  const subdistrict = searchParams.get('subdistrict')
+
   const [isOpen, setIsOpen] = useState(false)
   const [containerWidth, setContainerWidth] = useState('auto')
+  const queryClient = useQueryClient()
+
+  const votes = queryClient.getQueryData(['votes', idPemilu, subdistrict]) as CommonResponse<Vote[]> | undefined
+  const vote = votes?.data.find((vote) => vote.id_suara === id)
+  const pemilus = queryClient.getQueryData(['pemilu-list']) as PemiluWithCandidate[] | undefined
+  const pemilu = pemilus?.find((item) => item._id === idPemilu)
+
+  console.log({ pemilu })
+
   const handleImageLoad = (e: SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement
     // Calculate the width needed while maintaining aspect ratio within the 90vh height constraint
@@ -72,19 +90,49 @@ const VoteVerificationPopup = () => {
               <div className='flex items-center gap-3'>
                 <img alt='logo' src={PemiluLogo} className='size-8' />
                 <DialogTitle className='text-base font-bold'>
-                  TPS 77 <span className='text-xs  font-normal'>(DPT 370)</span>
+                  TPS {vote?.NO} <span className='text-xs  font-normal'>(DPT {vote?.count_dpt})</span>
                 </DialogTitle>
               </div>
-              <DialogDescription className='flex items-center gap-1.5 text-orange-500'>
-                <img alt='icon' src={TimeAttack} />
-                Belum Terverifikasi
+
+              <DialogDescription
+                className={cn('flex items-center gap-1.5 text-orange-500', {
+                  'text-green-500': vote?.status === 1,
+                  'text-red-500': vote?.status === 2
+                })}
+              >
+                {vote?.status === 1 ? (
+                  <CircleCheck className='size-5' />
+                ) : vote?.status === 2 ? (
+                  <XCircle className='size-5' />
+                ) : (
+                  <img alt='icon' src={TimeAttack} />
+                )}
+
+                {vote?.status === 2 ? (
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger>Tertolak</TooltipTrigger>
+                    <TooltipContent side='bottom' className='dark'>
+                      <p>{vote.alasan_reject}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : vote?.status === 1 ? (
+                  'Terverifikasi'
+                ) : (
+                  'Belum Terverifikasi'
+                )}
               </DialogDescription>
             </DialogHeader>
 
             <div className='py-4 space-y-4 border-b border-b-gray-300 px-8 flex-shrink-0'>
               <div>
                 <h1 className='font-bold text-sm'>Kelurahan Cihanjuang • Kecamatan Cimahi Utara</h1>
-                <p className='font-light text-sm'>Kota Cimahi • Provinsi Jawa Barat</p>
+                {pemilu?.kab_kota_name ? (
+                  <p className='font-light text-sm'>
+                    Kota {pemilu.kab_kota_name} • Provinsi {pemilu?.provinsi_name}
+                  </p>
+                ) : (
+                  <p className='font-light text-sm'>Provinsi {pemilu?.provinsi_name}</p>
+                )}
               </div>
               <div className='rounded-full bg-gradient-to-b from-white to-gray-100 shadow-custom px-4 py-2.5 flex items-center gap-3 w-fit text-sm'>
                 <div className='rounded-full bg-gray-900 p-1'>

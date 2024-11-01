@@ -12,6 +12,7 @@ export type Vote = {
   status: string | (0 | 1 | 2)
   tidak_sah: string | number
   count_dpt: number
+  alasan_reject?: string
 }
 
 type VoteCandidate = {

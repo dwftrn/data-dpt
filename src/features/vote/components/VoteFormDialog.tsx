@@ -119,7 +119,7 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
       }
 
       if (values.sah !== data.sah) params.sah = +values.sah
-      if (values.tidak_sah !== data.tidak_sah) params.tidak_sah = +values.sah
+      if (values.tidak_sah !== data.tidak_sah) params.tidak_sah = +values.tidak_sah
 
       const parsedDataPaslon = values.data_paslon.map((item) => ({
         ...item,
@@ -131,7 +131,16 @@ const VoteFormDialog = ({ data, pemilu }: Props) => {
         params.data_paslon = parsedDataPaslon
       }
 
-      updateVote(params).then(() => location.reload())
+      updateVote(params).then(() => {
+        if (file) {
+          inputC1({
+            id: data.id_suara,
+            c1: file
+          }).then(() => location.reload())
+        } else {
+          location.reload()
+        }
+      })
     }
   }
 

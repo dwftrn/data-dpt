@@ -6,7 +6,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
 import useSearchParams from '@/hooks/useSearchParams'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import VoteItem from '../components/VoteItem'
 import VoteVerificationPopup from '../components/VoteVerificationPopup'
 import useFetchVote from '../queries/useFetchVote'
@@ -20,16 +19,10 @@ const VotePage = () => {
   const queryClient = useQueryClient()
   const pemiluData = queryClient.getQueryData(['pemilu-list']) as PemiluWithCandidate[]
 
-  const { mutate: fetchVotes, data, isPending: isLoading } = useFetchVote()
+  const { data, isLoading } = useFetchVote({ id_pemilu: selectedPemilu, id_kelurahan: subdistrict })
 
   const votes = data?.data || []
   const pemilu = pemiluData?.find((item) => item._id === selectedPemilu)
-
-  useEffect(() => {
-    if (subdistrict && selectedPemilu) {
-      fetchVotes({ id_kelurahan: subdistrict, id_pemilu: selectedPemilu })
-    }
-  }, [fetchVotes, selectedPemilu, subdistrict])
 
   return (
     <>
