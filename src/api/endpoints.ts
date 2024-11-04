@@ -24,7 +24,8 @@ export const ENDPOINTS = {
     UPDATE_VOTE: BASE_URL + '/updatesuara',
     INSERT_C1: BASE_URL + '/insertc1suara',
     FETCH_DETAIL_PEMILU: BASE_URL + '/getdetailpemilu',
-    DELETE_PEMILU: BASE_URL + '/deletepemilu'
+    DELETE_PEMILU: BASE_URL + '/deletepemilu',
+    FETCH_VOTE_DETAIL: BASE_URL + '/getdetailsuara'
   },
   QUICK_COUNT: {
     FETCH: BASE_URL + '/quickcount',

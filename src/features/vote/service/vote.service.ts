@@ -23,7 +23,35 @@ type VoteCandidate = {
 
 export type InputVote = Pick<Vote, 'data_paslon' | 'id_tps' | 'sah' | 'tidak_sah'> & { id_pemilu: string }
 
-export type UpdateVote = { id: string; data_paslon?: VoteCandidate[]; sah?: number; tidak_sah?: number }
+export type UpdateVote = {
+  id: string
+  data_paslon?: VoteCandidate[]
+  sah?: number
+  tidak_sah?: number
+  status?: string | (0 | 1 | 2)
+  alasan_reject?: string
+}
+
+export type VoteDetail = {
+  alasan_reject: string
+  c1: string
+  data_paslon: (VoteCandidate & { foto: string })[]
+  data_petugas: {
+    jabatan: string
+    nama_petugas: string
+    nomor_wa: string
+  }
+  id: string
+  jumlah_dpt_tps: number
+  kecamatan: string
+  kelurahan: string
+  kota_kabupaten: string
+  nama_tps: string
+  provinsi: string
+  sah: number
+  status: number
+  tidak_sah: number
+}
 
 export const fetchInputVote = (params: {
   id_pemilu: string
@@ -42,4 +70,8 @@ export const updateVote = (params: UpdateVote): Promise<CommonResponse<{ id_suar
 
 export const inputC1 = (params: { id: string; c1: File }): Promise<CommonResponse<null>> => {
   return fetcher(ENDPOINTS.PEMILU.INSERT_C1, params, 'POST', { 'Content-Type': 'multipart/form-data' })
+}
+
+export const fetchVoteDetail = (params: { id: string }): Promise<CommonResponse<VoteDetail>> => {
+  return fetcher(ENDPOINTS.PEMILU.FETCH_VOTE_DETAIL, params, 'POST')
 }

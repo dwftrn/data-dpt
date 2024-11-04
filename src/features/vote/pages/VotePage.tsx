@@ -24,6 +24,8 @@ const VotePage = () => {
   const votes = data?.data || []
   const pemilu = pemiluData?.find((item) => item._id === selectedPemilu)
 
+  const unverified = votes.filter((vote) => vote.status === 0)
+
   return (
     <>
       <section className='flex flex-col gap-4 py-4'>
@@ -74,7 +76,7 @@ const VotePage = () => {
             </div>
           </CardContent>
         </Card>
-        <VoteVerificationPopup />
+        <VoteVerificationPopup unverified={unverified} />
       </section>
     </>
   )

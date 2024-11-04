@@ -1,47 +1,64 @@
-import { CommonResponse } from '@/api/services'
 import TimeAttack from '@/assets/lets-icons_time-atack.svg'
 import PemiluLogo from '@/assets/pemilu-logo.svg'
-import { Button } from '@/components/ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
 import useSearchParams from '@/hooks/useSearchParams'
 import { cn } from '@/lib/utils'
-import { useQueryClient } from '@tanstack/react-query'
 import { Check, ChevronLeft, ChevronRight, CircleCheck, UserRound, X, XCircle } from 'lucide-react'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
+import useFetchVoteDetail from '../queries/useFetchVoteDetail'
+import useUpdateVote from '../queries/useUpdateVote'
 import { Vote } from '../service/vote.service'
 
-const VoteVerificationPopup = () => {
+const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
-  const idPemilu = searchParams.get('pemilu')
-  const subdistrict = searchParams.get('subdistrict')
-
   const [isOpen, setIsOpen] = useState(false)
   const [containerWidth, setContainerWidth] = useState('auto')
-  const queryClient = useQueryClient()
 
-  const votes = queryClient.getQueryData(['votes', idPemilu, subdistrict]) as CommonResponse<Vote[]> | undefined
-  const vote = votes?.data.find((vote) => vote.id_suara === id)
-  const pemilus = queryClient.getQueryData(['pemilu-list']) as PemiluWithCandidate[] | undefined
-  const pemilu = pemilus?.find((item) => item._id === idPemilu)
+  const { data } = useFetchVoteDetail({ id: id ?? '' })
+  const { mutate: update } = useUpdateVote()
+
+  const [rejectReason, setRejectReason] = useState('')
+
+  const currentIndex = unverified.findIndex((item) => item.id_suara === id)
 
   const handleImageLoad = (e: SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement
     // Calculate the width needed while maintaining aspect ratio within the 90vh height constraint
     const heightRatio = (90 * window.innerHeight) / 100 / img.naturalHeight
     const width = img.naturalWidth * heightRatio
-    setContainerWidth(`${width}px`)
+
+    console.log({ width })
+    // setContainerWidth(`${width}px`)
+    const halfScreen = (visualViewport?.width || 1280) * 0.5
+    if (width > halfScreen) {
+      setContainerWidth(`${halfScreen}px`)
+    } else {
+      setContainerWidth(`${width}px`)
+    }
   }
 
-  const handleNavigate = () => {
+  const handleNavigate = (id?: string) => {
     navigate({
-      pathname: `/input-vote`,
+      pathname: id ? `/input-vote/${id}` : '/input-vote',
       search: createSearchParams(searchParams).toString()
     })
   }
@@ -51,10 +68,36 @@ const VoteVerificationPopup = () => {
     handleNavigate()
   }
 
+  const handleVerify = async () => {
+    if (!id) return
+
+    update({ id, status: 1 })
+  }
+
+  const handleReject = async () => {
+    if (!id) return
+
+    update({ id, status: 2, alasan_reject: rejectReason })
+  }
+
+  const handleNext = () => {
+    if (currentIndex === unverified.length - 1) return
+
+    handleNavigate(unverified[currentIndex + 1].id_suara)
+  }
+
+  const handlePrev = () => {
+    if (currentIndex === 0) return
+
+    handleNavigate(unverified[currentIndex - 1].id_suara)
+  }
+
   useEffect(() => {
     if (id) setIsOpen(true)
     else setIsOpen(false)
   }, [id])
+
+  if (!data) return <></>
 
   return (
     <>
@@ -74,12 +117,7 @@ const VoteVerificationPopup = () => {
         >
           <div className='h-full w-full flex items-center justify-center bg-black'>
             <div className='relative w-full h-full'>
-              <img
-                alt='c1'
-                src='https://s3-alpha-sig.figma.com/img/33e8/3c2d/1c17dd069d44034fd2abb4730fc71c03?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=XkYxyhIJGUJCXlVH-tthbAm25Y5aI3666WWsebibz6T0I4yjM-7HQO2h8A73RYduQ~W~VuzLncEJR~A3BwcOCgLYX~oaEQq0jgjJO3hxCCgiz76Ls5zI5kcyK8WF8L0l680ZdRKkOY-vhImi4fibhLDArt9uoQR1E6gH4L4xTFY9nmC6eS~sthaQ~W3Akr8ys728S8~qL2cScYnGD6gAozOrpbYwHavcGYo6ddbYYQtmB5Qtjb0p4GdqeipBYa8NuW77N1PSieCfLjRwgvGIC39Ol6~Ulr5XKwlpuhP-qgLn7kxzFX5vDJ6d9idODXNYYAPGpaZnRa6tXcI-qt6gqw__'
-                className='absolute h-full object-contain'
-                onLoad={handleImageLoad}
-              />
+              <img alt='c1' src={data.c1} className='absolute h-full object-contain' onLoad={handleImageLoad} />
             </div>
           </div>
 
@@ -88,32 +126,32 @@ const VoteVerificationPopup = () => {
               <div className='flex items-center gap-3'>
                 <img alt='logo' src={PemiluLogo} className='size-8' />
                 <DialogTitle className='text-base font-bold'>
-                  TPS {vote?.NO} <span className='text-xs  font-normal'>(DPT {vote?.count_dpt})</span>
+                  {data?.nama_tps} <span className='text-xs  font-normal'>(DPT {data.jumlah_dpt_tps})</span>
                 </DialogTitle>
               </div>
 
               <DialogDescription
                 className={cn('flex items-center gap-1.5 text-orange-500', {
-                  'text-green-500': vote?.status === 1,
-                  'text-red-500': vote?.status === 2
+                  'text-green-500': data?.status === 1,
+                  'text-red-500': data?.status === 2
                 })}
               >
-                {vote?.status === 1 ? (
+                {data?.status === 1 ? (
                   <CircleCheck className='size-5' />
-                ) : vote?.status === 2 ? (
+                ) : data?.status === 2 ? (
                   <XCircle className='size-5' />
                 ) : (
                   <img alt='icon' src={TimeAttack} />
                 )}
 
-                {vote?.status === 2 ? (
+                {data?.status === 2 ? (
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger>Tertolak</TooltipTrigger>
                     <TooltipContent side='bottom' className='dark'>
-                      <p>{vote.alasan_reject}</p>
+                      <p>{data.alasan_reject}</p>
                     </TooltipContent>
                   </Tooltip>
-                ) : vote?.status === 1 ? (
+                ) : data?.status === 1 ? (
                   'Terverifikasi'
                 ) : (
                   'Belum Terverifikasi'
@@ -123,22 +161,24 @@ const VoteVerificationPopup = () => {
 
             <div className='py-4 space-y-4 border-b border-b-gray-300 px-8 flex-shrink-0'>
               <div>
-                <h1 className='font-bold text-sm'>Kelurahan Cihanjuang • Kecamatan Cimahi Utara</h1>
-                {pemilu?.kab_kota_name ? (
+                <h1 className='font-bold text-sm'>
+                  {data.kelurahan} • {data.kecamatan}
+                </h1>
+                {data?.kota_kabupaten ? (
                   <p className='font-light text-sm'>
-                    Kota {pemilu.kab_kota_name} • Provinsi {pemilu?.provinsi_name}
+                    Kota {data.kota_kabupaten} • Provinsi {data?.provinsi}
                   </p>
                 ) : (
-                  <p className='font-light text-sm'>Provinsi {pemilu?.provinsi_name}</p>
+                  <p className='font-light text-sm'>Provinsi {data?.provinsi}</p>
                 )}
               </div>
               <div className='rounded-full bg-gradient-to-b from-white to-gray-100 shadow-custom px-4 py-2.5 flex items-center gap-3 w-fit text-sm'>
                 <div className='rounded-full bg-gray-900 p-1'>
                   <UserRound className='fill-white stroke-none size-4' />
                 </div>
-                <div className='font-bold'>Agus Muhtaram</div>
+                <div className='font-bold'>{data.data_petugas.nama_petugas}</div>
                 <div className='text-gray-300'>|</div>
-                <div>Saksi TPS 77</div>
+                <div>Saksi {data.nama_tps}</div>
               </div>
             </div>
 
@@ -146,61 +186,80 @@ const VoteVerificationPopup = () => {
               <div className='py-4 px-8 space-y-4'>
                 <h1 className='text-base font-bold'>Perolehan Suara</h1>
                 <div className='space-y-4'>
-                  <div className='grid grid-cols-[24px_40px_1fr_60px] items-center gap-4'>
-                    <div className='rounded-full size-6 flex items-center justify-center bg-red-500 text-sm text-white'>
-                      1
-                    </div>
-                    <img
-                      src='https://s3-alpha-sig.figma.com/img/27da/0d11/18ddf5afc0eff5a696534679ee799491?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cLFnXc7ui0hwrriTFzyF6gKKDTXWfRstMVc11UFHTTE-mVNnsiVjTu41EvfV9zuVy0zO3KRJxLDgsEKC6OgizFz4GeEMFCM423~6tXuTtow2gcyUNHvLPqZtx7K2~k54g5KJ1Siw85DWGaKQ-XjoDRmfqEN7-vR4wvvGeJe3Su0e~Zp1s~I2iFiMLT3dTHaWVPLqtVp1tzaNpQNOn3mfCzKnRKkTHenpyG5yIcug8YkIloapmthPa~R1hUbn1Cqo5igPlcGF7QZwzf8Gr9mk9~g5E40-urgrV6mC2juWmvOnwOaWVtdRi0b-29AFMFGETZYLQv~n365pR9wDZ60X6Q__'
-                      className='rounded-full size-10 object-cover'
-                    />
-                    <Progress value={80} className='w-full h-[18px]' />
-                    <div className='w-[60px] text-end'>150</div>
-                  </div>
-                  <div className='grid grid-cols-[24px_40px_1fr_60px] items-center gap-4'>
-                    <div className='rounded-full size-6 flex items-center justify-center bg-red-500 text-sm text-white'>
-                      1
-                    </div>
-                    <img
-                      src='https://s3-alpha-sig.figma.com/img/27da/0d11/18ddf5afc0eff5a696534679ee799491?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cLFnXc7ui0hwrriTFzyF6gKKDTXWfRstMVc11UFHTTE-mVNnsiVjTu41EvfV9zuVy0zO3KRJxLDgsEKC6OgizFz4GeEMFCM423~6tXuTtow2gcyUNHvLPqZtx7K2~k54g5KJ1Siw85DWGaKQ-XjoDRmfqEN7-vR4wvvGeJe3Su0e~Zp1s~I2iFiMLT3dTHaWVPLqtVp1tzaNpQNOn3mfCzKnRKkTHenpyG5yIcug8YkIloapmthPa~R1hUbn1Cqo5igPlcGF7QZwzf8Gr9mk9~g5E40-urgrV6mC2juWmvOnwOaWVtdRi0b-29AFMFGETZYLQv~n365pR9wDZ60X6Q__'
-                      className='rounded-full size-10 object-cover'
-                    />
-                    <Progress value={80} className='w-full h-[18px]' />
-                    <div className='w-[60px] text-end'>150</div>
-                  </div>
-                  <div className='grid grid-cols-[24px_40px_1fr_60px] items-center gap-4'>
-                    <div className='rounded-full size-6 flex items-center justify-center bg-red-500 text-sm text-white'>
-                      1
-                    </div>
-                    <img
-                      src='https://s3-alpha-sig.figma.com/img/27da/0d11/18ddf5afc0eff5a696534679ee799491?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=cLFnXc7ui0hwrriTFzyF6gKKDTXWfRstMVc11UFHTTE-mVNnsiVjTu41EvfV9zuVy0zO3KRJxLDgsEKC6OgizFz4GeEMFCM423~6tXuTtow2gcyUNHvLPqZtx7K2~k54g5KJ1Siw85DWGaKQ-XjoDRmfqEN7-vR4wvvGeJe3Su0e~Zp1s~I2iFiMLT3dTHaWVPLqtVp1tzaNpQNOn3mfCzKnRKkTHenpyG5yIcug8YkIloapmthPa~R1hUbn1Cqo5igPlcGF7QZwzf8Gr9mk9~g5E40-urgrV6mC2juWmvOnwOaWVtdRi0b-29AFMFGETZYLQv~n365pR9wDZ60X6Q__'
-                      className='rounded-full size-10 object-cover'
-                    />
-                    <Progress value={80} className='w-full h-[18px]' />
-                    <div className='w-[60px] text-end'>150</div>
-                  </div>
+                  {data.data_paslon
+                    .sort((a, b) => a.no_urut - b.no_urut)
+                    .map((item) => (
+                      <div key={item.id_paslon} className='grid grid-cols-[24px_40px_1fr_60px] items-center gap-4'>
+                        <div className='rounded-full size-6 flex items-center justify-center bg-red-500 text-sm text-white'>
+                          {item.no_urut}
+                        </div>
+                        <img src={item.foto} className='rounded-full size-10 object-cover' />
+                        <Progress value={(item.jumlah * 100) / data.sah} className='w-full h-[18px]' />
+                        <div className='w-[60px] text-end'>{item.jumlah}</div>
+                      </div>
+                    ))}
                 </div>
               </div>
               <div className='flex justify-between bg-[#E6F4F0] p-6 py-4 font-bold items-center'>
                 <h1 className='text-xs'>Total Suara Sah</h1>
-                <p className='text-lg'>370</p>
+                <p className='text-lg'>{data.sah}</p>
               </div>
               <div className='flex justify-between bg-[#FBE6E6] p-6 py-4 font-bold items-center'>
                 <h1 className='text-xs'>Total Suara Tidak Sah</h1>
-                <p className='text-lg'>370</p>
+                <p className='text-lg'>{data.tidak_sah}</p>
               </div>
             </div>
 
             <div className='py-4 px-8 border-t border-t-gray-300 flex justify-between items-center w-full bg-white flex-shrink-0'>
               <div className='items-center flex gap-4'>
-                <Button variant='destructive' className='gap-2'>
-                  <X className='size-4' />
-                  Tolak
-                </Button>
-                <Button className='gap-2 bg-[#20A86B] hover:bg-[#20A86B]/90'>
-                  <Check className='size-4' />
-                  Verifikasi
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant='destructive' className='gap-2' onClick={handleReject}>
+                      <X className='size-4' />
+                      Tolak
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Tolak Data</AlertDialogTitle>
+                      <AlertDialogDescription>Apakah Anda yakin ingin menolak data ini ?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <Input
+                      placeholder='Tuliskan Alasan Penolakan'
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                    />
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Batal</AlertDialogCancel>
+                      <AlertDialogAction
+                        className={cn(buttonVariants({ variant: 'destructive' }))}
+                        onClick={handleReject}
+                      >
+                        Tolak
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className='gap-2 bg-[#20A86B] hover:bg-[#20A86B]/90' onClick={handleVerify}>
+                      <Check className='size-4' />
+                      Verifikasi
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Verifikasi Data</AlertDialogTitle>
+                      <AlertDialogDescription>Apakah Anda yakin ingin memverfikasi data ini ?</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Batal</AlertDialogCancel>
+                      <AlertDialogAction className={cn('bg-[#20A86B] hover:bg-[#20A86B]/90')} onClick={handleReject}>
+                        Verifikasi
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
               <Button variant='secondary' className='gap-2' onClick={handleClose}>
                 Batal
@@ -218,12 +277,23 @@ const VoteVerificationPopup = () => {
               </Button>
             </div>
             <div className='absolute top-1/2 left-5 pointer-events-auto'>
-              <Button className='rounded-full size-10 p-0' variant='secondary'>
+              <Button
+                className='rounded-full size-10 p-0'
+                variant='secondary'
+                disabled={currentIndex === 0}
+                onClick={handlePrev}
+              >
                 <ChevronLeft />
               </Button>
             </div>
             <div className='absolute top-1/2 right-5 pointer-events-auto'>
-              <Button className='rounded-full size-10 p-0' variant='secondary'>
+              <Button
+                type='button'
+                className='rounded-full size-10 p-0'
+                variant='secondary'
+                disabled={currentIndex === unverified.length - 1}
+                onClick={handleNext}
+              >
                 <ChevronRight />
               </Button>
             </div>

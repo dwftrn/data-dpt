@@ -58,7 +58,7 @@ const VoteItem = ({ data, pemilu }: Props) => {
             : data.status === 1
             ? 'Terverifikasi'
             : data.status === 2
-            ? `Tertolak (${data.alasan_reject})`
+            ? `Tertolak ${data.alasan_reject ? `(${data.alasan_reject})` : ''}`
             : '-'}
         </TableCell>
         <TableCell className='flex items-center justify-center gap-1'>
