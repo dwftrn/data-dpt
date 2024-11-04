@@ -22,7 +22,8 @@ export const ENDPOINTS = {
     FETCH_INPUT_VOTE: BASE_URL + '/getinsertsuara',
     INPUT_VOTE: BASE_URL + '/insertsuara',
     UPDATE_VOTE: BASE_URL + '/updatesuara',
-    INSERT_C1: BASE_URL + '/insertc1suara'
+    INSERT_C1: BASE_URL + '/insertc1suara',
+    FETCH_DETAIL_PEMILU: BASE_URL + '/getdetailpemilu'
   },
   QUICK_COUNT: {
     FETCH: BASE_URL + '/quickcount',

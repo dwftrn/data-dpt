@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Check, Image, X } from 'lucide-react'
-import { ChangeEvent, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { UseFieldArrayReturn, UseFormReturn } from 'react-hook-form'
 import { PemiluFormType } from '../pages/PemiluFormPage'
 import CandidateFormShowMode from './CandidateFormShowMode'
@@ -48,6 +48,13 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
       })
     }
   }
+
+  const imageValue = form.watch(`candidate.${index}.image`)
+  useEffect(() => {
+    if (typeof imageValue === 'string') {
+      setFileBlobUrl(imageValue)
+    }
+  }, [imageValue])
 
   if (!isEdit) return <CandidateFormShowMode form={form} index={index} onEdit={() => setIsEdit(true)} />
 
@@ -126,7 +133,22 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
                     <FormItem>
                       <FormLabel className='truncate'>No. Urut</FormLabel>
                       <FormControl>
-                        <Input className='w-12' placeholder='No' {...field} />
+                        <Input
+                          className='w-12'
+                          placeholder='No'
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            if (value === '') {
+                              field.onChange(value)
+                            } else {
+                              const numValue = parseInt(value, 10)
+                              if (!isNaN(numValue) && numValue > 0) {
+                                field.onChange(numValue + '')
+                              }
+                            }
+                          }}
+                        />
                       </FormControl>
                     </FormItem>
                   )}

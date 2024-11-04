@@ -31,8 +31,6 @@ const VoteVerificationPopup = () => {
   const pemilus = queryClient.getQueryData(['pemilu-list']) as PemiluWithCandidate[] | undefined
   const pemilu = pemilus?.find((item) => item._id === idPemilu)
 
-  console.log({ pemilu })
-
   const handleImageLoad = (e: SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.target as HTMLImageElement
     // Calculate the width needed while maintaining aspect ratio within the 90vh height constraint

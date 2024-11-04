@@ -43,6 +43,19 @@ export type PemiluCandidate = {
 
 export type PemiluWithCandidate = Pemilu & { paslon: PemiluCandidate[] }
 
+export type PemiluDetail = {
+  id: string
+  id_jenis_pemilu: string
+  id_kab_kota: string
+  id_provinsi: string
+  name: string
+  name_jenis_pemilu: string
+  name_kab_kota: string
+  name_provinsi: string
+  paslon: (Omit<InsertCandidateParams, 'id_pemilu'> & { id_paslon: string })[]
+  tipe_jenis_pemilu: string
+}
+
 export const fetchPemiluType = (): Promise<CommonResponse<PemiluType[]>> => {
   return fetcher(ENDPOINTS.PEMILU.FETCH_TYPE, {}, 'GET')
 }
@@ -69,4 +82,8 @@ export const updateCandidate = (
 
 export const fetchPemiluWithCandidate = (): Promise<CommonResponse<PemiluWithCandidate[]>> => {
   return fetcher(ENDPOINTS.PEMILU.FETCH_LIST_WITH_CANDIDATE, {}, 'GET')
+}
+
+export const fetchPemiluDetail = (id: string): Promise<CommonResponse<PemiluDetail>> => {
+  return fetcher(ENDPOINTS.PEMILU.FETCH_DETAIL_PEMILU, { id }, 'POST')
 }

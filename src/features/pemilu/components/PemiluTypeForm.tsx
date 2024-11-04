@@ -24,6 +24,20 @@ const PemiluTypeForm = ({ form }: Props) => {
 
   const [showCity, setShowCity] = useState(false)
 
+  const typeValue = form.watch('type')
+  useEffect(() => {
+    if (!typeValue) return
+
+    const selectedType = pemiluTypes?.find((item) => item.id === typeValue)
+    if (selectedType?.tipe === 1) {
+      fetchCities(form.getValues('province') || '')
+      setShowCity(true)
+    } else {
+      form.setValue('city', '')
+      setShowCity(false)
+    }
+  }, [typeValue, pemiluTypes, form, fetchCities])
+
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
       if (name !== 'province') return
@@ -68,7 +82,7 @@ const PemiluTypeForm = ({ form }: Props) => {
                       setShowCity(false)
                     }
                   }}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -93,7 +107,7 @@ const PemiluTypeForm = ({ form }: Props) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Provinsi</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder='Pilih Provinsi' />
@@ -119,7 +133,7 @@ const PemiluTypeForm = ({ form }: Props) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Kabupaten/Kota</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder='Pilih Kabupaten/Kota' />
