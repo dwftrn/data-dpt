@@ -122,6 +122,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
       >
         <DialogContent
           withClose={false}
+          onInteractOutside={(e) => e.preventDefault()}
           className='h-[90vh] w-fit max-w-[90vw] bg-black border-none !rounded-none grid p-0 gap-0'
           style={{ gridTemplateColumns: `${containerWidth} 500px` }}
         >
