@@ -34,7 +34,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
   const [containerWidth, setContainerWidth] = useState('auto')
 
   const { data } = useFetchVoteDetail({ id: id ?? '' })
-  const { mutate: update } = useUpdateVote()
+  const { mutateAsync: update } = useUpdateVote()
 
   const [rejectReason, setRejectReason] = useState('')
 
@@ -71,13 +71,23 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
   const handleVerify = async () => {
     if (!id) return
 
-    update({ id, status: 1 })
+    try {
+      await update({ id, status: 1 })
+      handleClose()
+    } catch (error) {
+      console.log({ error })
+    }
   }
 
   const handleReject = async () => {
     if (!id) return
 
-    update({ id, status: 2, alasan_reject: rejectReason })
+    try {
+      await update({ id, status: 2, alasan_reject: rejectReason })
+      handleClose()
+    } catch (error) {
+      console.log({ error })
+    }
   }
 
   const handleNext = () => {
@@ -214,7 +224,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               <div className='items-center flex gap-4'>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant='destructive' className='gap-2' onClick={handleReject}>
+                    <Button variant='destructive' className='gap-2'>
                       <X className='size-4' />
                       Tolak
                     </Button>
@@ -242,7 +252,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                 </AlertDialog>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button className='gap-2 bg-[#20A86B] hover:bg-[#20A86B]/90' onClick={handleVerify}>
+                    <Button className='gap-2 bg-[#20A86B] hover:bg-[#20A86B]/90'>
                       <Check className='size-4' />
                       Verifikasi
                     </Button>
@@ -254,7 +264,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Batal</AlertDialogCancel>
-                      <AlertDialogAction className={cn('bg-[#20A86B] hover:bg-[#20A86B]/90')} onClick={handleReject}>
+                      <AlertDialogAction className={cn('bg-[#20A86B] hover:bg-[#20A86B]/90')} onClick={handleVerify}>
                         Verifikasi
                       </AlertDialogAction>
                     </AlertDialogFooter>

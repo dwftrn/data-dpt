@@ -2,13 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchInputVote } from '../service/vote.service'
 
 const useFetchVote = ({ id_kelurahan = '', id_pemilu = '' }: { id_pemilu: string; id_kelurahan: string }) => {
-  // return useMutation({
-  //   mutationFn: fetchInputVote,
-  //   onError: () => {
-  //     toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
-  //   }
-  // })
-
   const enabled = Boolean(id_pemilu) && Boolean(id_kelurahan)
 
   return useQuery({
