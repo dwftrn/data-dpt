@@ -3,7 +3,7 @@ import LoadingOverlay from '@/components/LoadingOverlay'
 import { DataTablePagination } from '@/components/table/DataTablePagination'
 import SortableTableHeader from '@/components/table/SortableTableHeader'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -27,6 +27,7 @@ import useFetchDistricts from '../queries/useFetchDistricts'
 import useFetchDPT from '../queries/useFetchDPT'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
+import { Box, Users } from 'lucide-react'
 
 const filterLabels = ['Provinsi', 'Kabupaten/Kota', 'Kecamatan', 'Kelurahan', 'TPS']
 
@@ -65,6 +66,21 @@ const columns: ColumnDef<DPT>[] = [
     accessorKey: 'rw',
     header: ({ column }) => <SortableTableHeader column={column} label='RW' />,
     cell: ({ row }) => <div className='uppercase'>{row.getValue('rw')}</div>
+  },
+  {
+    accessorKey: 'kelurahan',
+    header: ({ column }) => <SortableTableHeader column={column} label='Kelurahan' />,
+    cell: ({ row }) => <div className='uppercase'>{row.getValue('kelurahan')}</div>
+  },
+  {
+    accessorKey: 'kecamatan',
+    header: ({ column }) => <SortableTableHeader column={column} label='Kecamatan' />,
+    cell: ({ row }) => <div className='uppercase'>{row.getValue('kecamatan')}</div>
+  },
+  {
+    accessorKey: 'no_tps',
+    header: ({ column }) => <SortableTableHeader column={column} label='TPS' />,
+    cell: ({ row }) => <div className='uppercase'>TPS {row.getValue('no_tps')}</div>
   }
 ]
 
@@ -219,14 +235,28 @@ export function DptPage() {
   }
 
   return (
-    <section className='flex flex-col gap-4'>
+    <section className='flex flex-col gap-6'>
       {isLoading && <LoadingOverlay />}
 
       <div className='flex flex-col justify-center h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Daftar Pemilih Tetap</h1>
       </div>
 
-      <Card className='p-6'>
+      <Card className='p-6 pt-0 space-y-6'>
+        <CardHeader className='bg-primary-blue-700 -mx-6 rounded-t-lg text-white flex flex-row items-center gap-8 px-6 space-y-0'>
+          <div className='flex items-center text-sm gap-2'>
+            <Users className='size-4' />
+            <p className='font-normal'>
+              Total DPT : <span className='font-bold'>100.000</span>
+            </p>
+          </div>
+          <div className='flex items-center text-sm gap-2'>
+            <Box className='size-5 fill-current stroke-primary-blue-700' />
+            <p className='font-normal'>
+              Total TPS : <span className='font-bold'>100.000</span>
+            </p>
+          </div>
+        </CardHeader>
         <CardContent className='p-0'>
           <ChartSection />
         </CardContent>
@@ -235,22 +265,34 @@ export function DptPage() {
       <Card className='p-6'>
         <CardContent className='p-0'>
           <div className='space-y-4'>
-            <div className='flex items-end gap-4'>
-              {['province', 'city', 'district', 'subdistrict', 'tps'].map((field, index) => (
-                <div key={index} className='flex flex-col space-y-2'>
-                  <Label className='text-xs capitalize'>{filterLabels[index]}</Label>
-                  <Select
-                    key={field}
-                    value={selections[field as keyof typeof selections]}
-                    onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
-                  >
-                    <SelectTrigger className='capitalize'>
-                      <SelectValue placeholder={filterLabels[index]} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='0'>Semua</SelectItem>
-                      {Boolean(
-                        field === 'province'
+            <div className='space-y-4'>
+              <div className='flex items-end gap-4'>
+                {['province', 'city', 'district', 'subdistrict', 'tps'].map((field, index) => (
+                  <div key={index} className='flex flex-col space-y-2'>
+                    <Label className='text-xs capitalize'>{filterLabels[index]}</Label>
+                    <Select
+                      key={field}
+                      value={selections[field as keyof typeof selections]}
+                      onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
+                    >
+                      <SelectTrigger className='capitalize'>
+                        <SelectValue placeholder={filterLabels[index]} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='0'>Semua</SelectItem>
+                        {Boolean(
+                          field === 'province'
+                            ? provinces
+                            : field === 'city'
+                            ? cities
+                            : field === 'district'
+                            ? districts
+                            : field === 'subdistrict'
+                            ? subdistricts
+                            : tps
+                        ) === false && <div className='p-2 text-xs'>Pilih filter sebelumnya</div>}
+
+                        {(field === 'province'
                           ? provinces
                           : field === 'city'
                           ? cities
@@ -259,53 +301,41 @@ export function DptPage() {
                           : field === 'subdistrict'
                           ? subdistricts
                           : tps
-                      ) === false && <div className='p-2 text-xs'>Pilih filter sebelumnya</div>}
+                        )?.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
 
-                      {(field === 'province'
-                        ? provinces
-                        : field === 'city'
-                        ? cities
-                        : field === 'district'
-                        ? districts
-                        : field === 'subdistrict'
-                        ? subdistricts
-                        : tps
-                      )?.map((item) => (
-                        <SelectItem key={item.id} value={item.id}>
-                          {'NO' in item ? (item.NO as number).toString().padStart(3, '0') : item.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
-
-              <Button
-                variant='outline'
-                title='Bersihkan Filter'
-                className='text-blue-500'
-                onClick={() => {
-                  setSearch('')
-                  setSelections({
-                    province: '0',
-                    city: '0',
-                    district: '0',
-                    subdistrict: '0',
-                    tps: '0'
-                  })
-                }}
-              >
-                Reset Filter
-              </Button>
-              <Input
-                className='flex-1'
-                placeholder='Search...'
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+                <Button
+                  variant='outline'
+                  title='Bersihkan Filter'
+                  className='text-blue-500'
+                  onClick={() => {
+                    setSearch('')
+                    setSelections({
+                      province: '0',
+                      city: '0',
+                      district: '0',
+                      subdistrict: '0',
+                      tps: '0'
+                    })
+                  }}
+                >
+                  Reset Filter
+                </Button>
+                <Input
+                  className='flex-1'
+                  placeholder='Search...'
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-          <div className='mt-4 space-y-4'>
             <div className='border rounded'>
               <Table>
                 <TableHeader>

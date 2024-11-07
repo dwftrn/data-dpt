@@ -25,7 +25,7 @@ export function DataTablePagination<TData>({
   setPerPage
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className='flex items-center justify-end px-2'>
+    <div className='flex items-center justify-end'>
       <div className='flex items-center space-x-6 lg:space-x-8'>
         <div className='flex items-center space-x-2'>
           <p className='text-sm font-medium'>Baris perhalaman</p>
