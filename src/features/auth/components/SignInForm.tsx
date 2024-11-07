@@ -60,9 +60,9 @@ const SignInForm = () => {
 
   return (
     <Card className='z-50 w-full max-w-sm rounded-2xl shadow-lg'>
-      <CardHeader className='text-center text-[#37485B]'>
+      <CardHeader className='text-center'>
         <CardTitle className='text-2xl text-[#37485B]'>Masuk</CardTitle>
-        <CardDescription>Masuk dengan nama pengguna dan kata sandi.</CardDescription>
+        <CardDescription className='text-[#37485B]'>Masuk dengan nama pengguna dan kata sandi.</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -72,9 +72,14 @@ const SignInForm = () => {
               name='username'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nama Pengguna</FormLabel>
+                  <FormLabel className='text-[#37485B]'>Nama Pengguna</FormLabel>
                   <FormControl>
-                    <Input placeholder='Ketikkan nama pengguna...' disabled={isLoading} {...field} />
+                    <Input
+                      placeholder='Ketikkan nama pengguna...'
+                      className='bg-background'
+                      disabled={isLoading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,9 +90,15 @@ const SignInForm = () => {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Kata Sandi</FormLabel>
+                  <FormLabel className='text-[#37485B]'>Kata Sandi</FormLabel>
                   <FormControl>
-                    <Input type='password' placeholder='Ketikkan kata sandi...' disabled={isLoading} {...field} />
+                    <Input
+                      type='password'
+                      placeholder='Ketikkan kata sandi...'
+                      className='bg-background'
+                      disabled={isLoading}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

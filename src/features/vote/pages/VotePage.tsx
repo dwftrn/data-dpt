@@ -28,9 +28,9 @@ const VotePage = () => {
 
   return (
     <>
-      <section className='flex flex-col gap-4 py-4'>
+      <section className='flex flex-col gap-4'>
         {isLoading && <LoadingOverlay />}
-        <PageHeader title={`Input Suara ${selectedPemilu && pemilu?.name}`} />
+        <PageHeader title='Input Perolehan Suara' />
 
         <PageFilter />
 

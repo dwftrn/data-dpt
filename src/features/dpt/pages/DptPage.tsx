@@ -3,7 +3,7 @@ import LoadingOverlay from '@/components/LoadingOverlay'
 import { DataTablePagination } from '@/components/table/DataTablePagination'
 import SortableTableHeader from '@/components/table/SortableTableHeader'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -219,18 +219,21 @@ export function DptPage() {
   }
 
   return (
-    <>
+    <section className='flex flex-col gap-4'>
       {isLoading && <LoadingOverlay />}
-      <Card>
-        <CardContent>
-          <CardHeader className='px-0'>
-            <CardTitle>Daftar Pemilih Tetap</CardTitle>
-            <CardDescription className='text-xs'>
-              Pemilihan Gubernur dan Wakil Gubernur Jawa Barat serta Pemilihan Walikota dan Wakil Walikota Cimahi Tahun
-              2024
-            </CardDescription>
-          </CardHeader>
+
+      <div className='flex flex-col justify-center h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
+        <h1 className='font-semibold text-lg'>Daftar Pemilih Tetap</h1>
+      </div>
+
+      <Card className='p-6'>
+        <CardContent className='p-0'>
           <ChartSection />
+        </CardContent>
+      </Card>
+
+      <Card className='p-6'>
+        <CardContent className='p-0'>
           <div className='space-y-4'>
             <div className='flex items-end gap-4'>
               {['province', 'city', 'district', 'subdistrict', 'tps'].map((field, index) => (
@@ -355,6 +358,6 @@ export function DptPage() {
           </div>
         </CardContent>
       </Card>
-    </>
+    </section>
   )
 }

@@ -31,7 +31,7 @@ const PageHeader = ({ title, onSelected }: Props) => {
   if (isLoading) return <LoadingOverlay />
 
   return (
-    <div className='flex items-center justify-between'>
+    <div className='flex items-center justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
       <h1 className='font-semibold text-lg'>{title}</h1>
       <Select
         value={selected}
@@ -40,7 +40,10 @@ const PageHeader = ({ title, onSelected }: Props) => {
           onSelected?.(value)
         }}
       >
-        <SelectTrigger className='capitalize w-1/4 text-left'>
+        <SelectTrigger
+          data-selected={Boolean(selected)}
+          className='data-[selected=true]:ring-2 capitalize w-1/4 text-left'
+        >
           <SelectValue placeholder='Pilih Pemilu' />
         </SelectTrigger>
         <SelectContent>

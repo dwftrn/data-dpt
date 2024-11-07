@@ -132,7 +132,13 @@ const PageFilter = ({ onChange }: Props) => {
               value={selections[field as keyof typeof selections]}
               onValueChange={(value) => handleSelectionChange(field as keyof typeof selections, value)}
             >
-              <SelectTrigger className='capitalize w-full'>
+              <SelectTrigger
+                data-selected={
+                  selections[field as keyof typeof selections] !== '0' &&
+                  Boolean(selections[field as keyof typeof selections])
+                }
+                className='data-[selected=true]:ring-2 capitalize w-full bg-white'
+              >
                 <SelectValue placeholder={`Pilih ${list[index]}`} />
               </SelectTrigger>
               <SelectContent>

@@ -180,7 +180,7 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
           type='button'
           size='icon'
           variant='outline'
-          className='p-0 size-8'
+          className='p-0 size-8 bg-white'
           onClick={() => {
             const candidateName = form.getValues(`candidate.${index}.candidateName`)
             const viceCandidateName = form.getValues(`candidate.${index}.viceCandidateName`)
@@ -199,7 +199,7 @@ const CandidateForm = ({ form, fieldArray, index }: Props) => {
           type='button'
           size='icon'
           variant='outline'
-          className='p-0 size-8'
+          className='p-0 size-8 bg-white'
           onClick={() => fieldArray.remove(index)}
         >
           <X role='button' className='size-4 text-red-500' />

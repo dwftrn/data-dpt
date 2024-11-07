@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
-import { buttonVariants } from '../ui/button'
+import { Button, buttonVariants } from '../ui/button'
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
@@ -58,9 +58,12 @@ const Sidebar = () => {
       })}
     >
       <div
-        className={cn('flex h-14 items-center justify-between border-b px-4 lg:h-[60px] lg:px-6', {
-          '!p-0': isCollapsed
-        })}
+        className={cn(
+          'flex h-14 items-center justify-between border-b border-b-primary-red-500 px-4 lg:h-[60px] lg:px-6',
+          {
+            '!p-0': isCollapsed
+          }
+        )}
       >
         <a href='/' className='flex items-center gap-2 font-semibold'>
           {/* {isCollapsed ? <Box /> : 'Qitara'} */}
@@ -70,7 +73,7 @@ const Sidebar = () => {
         {!isCollapsed && <p className='text-xs'>v.1.0.0</p>}
       </div>
       <div className='flex flex-1 flex-col justify-between h-full'>
-        <nav className='group grid items-start px-2 text-sm font-medium lg:px-4'>
+        <nav className='group grid items-start px-2 text-sm font-medium lg:px-4 py-4'>
           {navs.map((nav) => (
             <SidebarItem key={nav.label} nav={nav} isCollapsed={isCollapsed} />
           ))}
@@ -78,13 +81,17 @@ const Sidebar = () => {
         <div className='px-2 lg:px-4'>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <div
+              {/* <div
                 role='button'
                 className='flex items-center gap-3 rounded-lg px-3 pb-10 transition-all [&>svg]:size-4 group-data-[mobile=true]:[&>svg]:size-5 text-sm text-red-500'
               >
                 <LogOut />
                 {!isCollapsed && 'Logout'}
-              </div>
+              </div> */}
+              <Button variant='destructive' size='sm' className='gap-3 mb-10 justify-start'>
+                <LogOut className='size-4' />
+                {!isCollapsed && 'Logout'}
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>

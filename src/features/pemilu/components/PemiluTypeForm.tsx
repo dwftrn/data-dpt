@@ -85,7 +85,7 @@ const PemiluTypeForm = ({ form }: Props) => {
                   value={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger data-selected={Boolean(field.value)} className='data-[selected=true]:bg-grey-50'>
+                    <SelectTrigger data-selected={Boolean(field.value)} className='data-[selected=true]:ring-2'>
                       <SelectValue placeholder='Pilih Tipe Pemilu' />
                     </SelectTrigger>
                   </FormControl>
@@ -109,7 +109,7 @@ const PemiluTypeForm = ({ form }: Props) => {
                 <FormLabel>Provinsi</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger data-selected={Boolean(field.value)} className='data-[selected=true]:bg-grey-50'>
+                    <SelectTrigger data-selected={Boolean(field.value)} className='data-[selected=true]:ring-2'>
                       <SelectValue placeholder='Pilih Provinsi' />
                     </SelectTrigger>
                   </FormControl>
@@ -135,7 +135,7 @@ const PemiluTypeForm = ({ form }: Props) => {
                   <FormLabel>Kabupaten/Kota</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger data-selected={Boolean(field.value)} className='data-[selected=true]:bg-grey-50'>
+                      <SelectTrigger data-selected={Boolean(field.value)} className='data-[selected=true]:ring-2'>
                         <SelectValue placeholder='Pilih Kabupaten/Kota' />
                       </SelectTrigger>
                     </FormControl>

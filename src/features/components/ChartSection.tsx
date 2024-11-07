@@ -1,62 +1,128 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent
+} from '@/components/ui/chart'
+import { Bar, BarChart, CartesianGrid, LabelList, Pie, PieChart, XAxis, YAxis } from 'recharts'
 import useFetchChart from '../dpt/queries/useFetchChart'
-import ReactApexChart from 'react-apexcharts'
-import { ApexOptions } from 'apexcharts'
+
+export const description = 'A pie chart with a label'
+
+const genderChartConfig = {
+  l: {
+    label: 'Laki-laki',
+    color: 'hsl(var(--chart-1))'
+  },
+  p: {
+    label: 'Perempuan',
+    color: 'hsl(var(--chart-2))'
+  }
+} satisfies ChartConfig
+
+const generationChartConfig = {
+  count: {
+    label: 'Total',
+    color: 'hsl(var(--chart-1))'
+  }
+} satisfies ChartConfig
 
 const ChartSection = () => {
   const { data: chart } = useFetchChart()
 
-  const genderChart = chart?.gender
-  const generationChart = chart?.generation
+  const genderChartData = [
+    { gender: 'l', count: chart?.gender.L || 0, fill: 'var(--color-l)' },
+    { gender: 'p', count: chart?.gender.P || 0, fill: 'var(--color-p)' }
+  ]
 
-  const genderSeries = Object.values(genderChart || {})
-  const genderOptions: ApexOptions = {
-    chart: {
-      height: 350,
-      type: 'pie'
-    },
-    labels: ['Laki-laki', 'Perempuan'],
-    colors: ['#8CD5EB', '#f07070'],
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          },
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    ]
-  }
+  const totalCount = genderChartData.reduce((sum, item) => sum + item.count, 0)
 
-  const generationSeries = [{ data: Object.values(generationChart || {}) }]
-  const generationOptions: ApexOptions = {
-    chart: {
-      type: 'bar',
-      height: 350
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 4,
-        borderRadiusApplication: 'end',
-        horizontal: true
-      }
-    },
-    colors: ['#f07070'],
-    dataLabels: {
-      enabled: true
-    },
-    xaxis: {
-      categories: Object.keys(generationChart || {})
-    }
-  }
+  const generationChartData = Object.keys(chart?.generation || {}).map((key) => ({
+    generation: key,
+    count: chart?.generation[key]
+  }))
 
   return (
-    <div className='flex items-center w-full justify-between mb-6'>
-      <ReactApexChart options={genderOptions} series={genderSeries} type='pie' width={350} />
-      <ReactApexChart options={generationOptions} series={generationSeries} type='bar' width={600} />
+    <div className='grid grid-cols-[.4fr_1fr] items-center gap-4'>
+      <Card className='flex flex-col h-full'>
+        <CardHeader className='items-center pb-2'>
+          <CardTitle className='text-sm'>Persentase Berdasarkan Jenis Kelamin</CardTitle>
+        </CardHeader>
+        <CardContent className='m-auto'>
+          <ChartContainer
+            config={genderChartConfig}
+            className='mx-auto aspect-square min-h-[250px] pb-0 [&_.recharts-pie-label-text]:fill-foreground'
+          >
+            <PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Pie
+                data={genderChartData}
+                dataKey='count'
+                label={({ count }) => Number(count).toLocaleString('id')}
+                nameKey='gender'
+              >
+                <LabelList
+                  dataKey='count'
+                  position='right'
+                  formatter={(value: number) => `${((value / totalCount) * 100).toFixed(1)}%`}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+
+      <Card className='h-full'>
+        <CardHeader className='items-center pb-2'>
+          <CardTitle className='text-sm'>Statistik Berdasarkan Generasi</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={generationChartConfig}>
+            <BarChart
+              accessibilityLayer
+              data={generationChartData}
+              layout='vertical'
+              margin={{
+                right: 16
+              }}
+            >
+              <CartesianGrid horizontal={false} />
+              <YAxis
+                dataKey='generation'
+                type='category'
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 3)}
+                hide
+              />
+              <XAxis dataKey='count' type='number' hide />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent indicator='line' />} />
+              <Bar dataKey='count' layout='vertical' fill='var(--color-count)' radius={4}>
+                <LabelList
+                  dataKey='generation'
+                  position='insideLeft'
+                  offset={8}
+                  className='fill-[--color-label]'
+                  fontSize={12}
+                />
+                <LabelList
+                  dataKey='count'
+                  position='right'
+                  offset={8}
+                  className='fill-foreground'
+                  fontSize={12}
+                  formatter={(value: number) => Number(value).toLocaleString('id')}
+                />
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -5,8 +5,8 @@ import VoteStatisticsCardList from '../components/VoteStatisticsCardList'
 
 const DashboardPage = () => {
   return (
-    <section className='flex flex-col gap-6 -mt-4'>
-      <PageHeader title='Quick Count Pemilihan Walikota Cimahi' />
+    <section className='flex flex-col gap-6'>
+      <PageHeader title='Dashboard Perolehan Suara' />
 
       <CandidateCard />
 

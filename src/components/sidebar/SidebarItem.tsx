@@ -14,7 +14,7 @@ const SidebarItem = ({ nav, isCollapsed }: Props) => {
       className={({ isActive }) =>
         cn(
           'flex items-center gap-3 rounded-lg px-3 py-2 transition-all [&>svg]:size-4 group-data-[mobile=true]:[&>svg]:size-5 opacity-50',
-          { 'opacity-100': isActive }
+          { 'opacity-100': isActive, 'justify-center': isCollapsed }
         )
       }
     >

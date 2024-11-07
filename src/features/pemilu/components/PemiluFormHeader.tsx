@@ -42,9 +42,7 @@ const PemiluFormHeader = () => {
       className='h-14 lg:h-[60px] flex items-center justify-between bg-white fixed top-0 inset-x-0 px-4 md:px-6 2xl:px-8 shadow z-50'
       style={{
         left: `${leftOffset}px`,
-        right: 0,
-        paddingLeft: '1rem',
-        paddingRight: '1rem'
+        right: 0
       }}
     >
       <h1 className='font-semibold'>Tambah Pemilu</h1>

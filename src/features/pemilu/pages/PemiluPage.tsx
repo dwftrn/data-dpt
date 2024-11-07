@@ -11,7 +11,7 @@ const PemiluPage = () => {
   return (
     <section className='flex flex-col gap-4'>
       {isLoading && <LoadingOverlay />}
-      <div className='flex items-center justify-between'>
+      <div className='flex items-center justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Daftar Pemilu</h1>
         <Link to='/pemilu/form'>
           <Button className='gap-2'>
