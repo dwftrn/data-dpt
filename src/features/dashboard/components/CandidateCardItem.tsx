@@ -18,10 +18,10 @@ const CandidateCardItem = ({ totalData, candidate }: { totalData: number; candid
       </div>
       <div className={cn('space-y-1', { 'text-center': totalData > 3 })}>
         <div>
-          <h1 className='font-bold text-3xl text-blue-400' style={{ color: candidate.warna }}>
+          <h1 className='font-bold text-3xl text-dark-700'>
             {Number(candidate.persentase).toLocaleString('id', { maximumFractionDigits: 2 })}%
           </h1>
-          <p className='text-blue-400' style={{ color: candidate.warna }}>
+          <p className='text-dark-700'>
             {Number(candidate.jumlah_suara).toLocaleString('id', { maximumFractionDigits: 2 })}
           </p>
         </div>

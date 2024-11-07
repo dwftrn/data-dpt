@@ -1,12 +1,10 @@
 import LoadingOverlay from '@/components/LoadingOverlay'
-import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { Save } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { z } from 'zod'
 import AddCandidateButton from '../components/AddCandidateButton'
 import CandidateForm from '../components/CandidateForm'
@@ -17,6 +15,7 @@ import useInsertPemilu from '../queries/useInsertPemilu'
 import useUpdateCandidate from '../queries/useUpdateCandidate'
 import useUpdatePemilu from '../queries/useUpdatePemilu'
 import { InsertCandidateParams, InsertPemiluParams, PemiluDetail, PemiluType } from '../service/pemilu.service'
+import PemiluFormHeader from '../components/PemiluFormHeader'
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Tidak boleh kosong!'),
@@ -256,23 +255,10 @@ const PemiluFormPage = () => {
   return (
     <section className='flex flex-col -m-4 md:-m-6 2xl:-m-8'>
       {isLoading && <LoadingOverlay />}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col relative'>
-          <div className='h-14 lg:h-[60px] flex items-center justify-between bg-white absolute top-0 inset-x-0 px-4 md:px-6 2xl:px-8 shadow'>
-            <h1 className='font-semibold'>Tambah Pemilu</h1>
-            <div className='flex items-center gap-4'>
-              <Link to='/pemilu'>
-                <Button type='button' variant='outline' className='gap-2'>
-                  Batal
-                </Button>
-              </Link>
-              <Button className='gap-2'>
-                <Save className='size-4' />
-                Simpan
-              </Button>
-            </div>
-          </div>
+      <PemiluFormHeader />
 
+      <Form {...form}>
+        <form id='pemilu-form' onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col relative'>
           <div className='grid grid-cols-2 gap-4 mt-14 lg:mt-[60px] p-4 md:p-6 2xl:p-8 items-start'>
             <PemiluTypeForm form={form} />
 
