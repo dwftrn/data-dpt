@@ -68,6 +68,7 @@ const ChartSection = () => {
         const match = key.match(/^(.*?) \((\d+)[–-](\d+)\)$/)
         if (!match) return [key, value] // If no match, return the original key-value pair
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [_, label, startAge, endAge] = match
         const shortenedLabel = label
           .replace('Baby Boomer', 'Baby Boom.')

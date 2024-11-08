@@ -28,6 +28,8 @@ import useFetchDPT from '../queries/useFetchDPT'
 import useFetchSubdistricts from '../queries/useFetchSubdistricts'
 import useFetchTps from '../queries/useFetchTps'
 import { Box, Users } from 'lucide-react'
+import useFetchTotalTPS from '../queries/useFetchTotalTPS'
+import useFetchTotalDPT from '../queries/useFetchTotalDPT'
 
 const filterLabels = ['Provinsi', 'Kabupaten/Kota', 'Kecamatan', 'Kelurahan', 'TPS']
 
@@ -91,9 +93,18 @@ export function DptPage() {
   const { mutate: fetchSubdistricts, data: subdistricts, isPending: isLoadingSubdistricts } = useFetchSubdistricts()
   const { mutate: fetchTps, data: tps, isPending: isLoadingTps } = useFetchTps()
   const { mutate: fetchDPT, data, isPending: isLoadingDpt } = useFetchDPT()
+  const { data: countDPT, isLoading: isLoadingCountDPT } = useFetchTotalDPT()
+  const { data: countTPS, isLoading: isLoadingCountTPS } = useFetchTotalTPS()
 
   const isLoading =
-    isLoadingProvinces || isLoadingCities || isLoadingDistricts || isLoadingSubdistricts || isLoadingTps || isLoadingDpt
+    isLoadingProvinces ||
+    isLoadingCities ||
+    isLoadingDistricts ||
+    isLoadingSubdistricts ||
+    isLoadingTps ||
+    isLoadingDpt ||
+    isLoadingCountDPT ||
+    isLoadingCountTPS
 
   const [perPage, setPerPage] = React.useState(10)
   const [search, setSearch] = React.useState('')
@@ -247,13 +258,13 @@ export function DptPage() {
           <div className='flex items-center text-sm gap-2'>
             <Users className='size-4' />
             <p className='font-normal'>
-              Total DPT : <span className='font-bold'>100.000</span>
+              Total DPT : <span className='font-bold'>{Number(countDPT?.jumlah_dpt || 0).toLocaleString('id')}</span>
             </p>
           </div>
           <div className='flex items-center text-sm gap-2'>
             <Box className='size-5 fill-current stroke-primary-blue-700' />
             <p className='font-normal'>
-              Total TPS : <span className='font-bold'>100.000</span>
+              Total TPS : <span className='font-bold'>{Number(countTPS?.jumlah_tps || 0).toLocaleString('id')}</span>
             </p>
           </div>
         </CardHeader>

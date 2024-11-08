@@ -97,3 +97,11 @@ export const fetchChart = (): Promise<
 export const fetchPemilu = (): Promise<CommonResponse<Pemilu[]>> => {
   return fetcher(ENDPOINTS.PEMILU.FETCH_LIST, {}, 'GET')
 }
+
+export const fetchTotaDPT = (): Promise<CommonResponse<{ jumlah_dpt: number }>> => {
+  return fetcher(ENDPOINTS.PEMILU.FETCH_TOTAL_DPT, {}, 'GET')
+}
+
+export const fetchTotaTPS = (): Promise<CommonResponse<{ jumlah_tps: number }>> => {
+  return fetcher(ENDPOINTS.PEMILU.FETCH_TOTAL_TPS, {}, 'GET')
+}

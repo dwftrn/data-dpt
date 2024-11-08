@@ -151,7 +151,7 @@ const PageFilter = ({ onChange }: Props) => {
               </SelectContent>
             </Select>
             {index === list.length - 1 && (
-              <Button variant='outline' onClick={resetFilter}>
+              <Button variant='outline' onClick={resetFilter} className='bg-white'>
                 <span className='hidden lg:block text-blue-500'>Reset Filter</span>
                 <FilterX className='size-4 block lg:hidden' />
               </Button>
