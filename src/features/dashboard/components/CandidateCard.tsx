@@ -1,16 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card'
-import useSearchParams from '@/hooks/useSearchParams'
-import useFetchQuickCount from '../queries/useFetchQuickCount'
+import { QuickCount } from '../services/dashboard.service'
 import CandidateCardItem from './CandidateCardItem'
 
-const CandidateCard = () => {
-  const [searchParams] = useSearchParams()
-  const id = searchParams.get('pemilu') || ''
-
-  const { data } = useFetchQuickCount({ id_pemilu: id })
-
-  const quickCount = data?.data
-
+const CandidateCard = ({ quickCount }: { quickCount: QuickCount }) => {
   return (
     <div>
       <Card className='rounded-t-xl rounded-b-none p-6 border-b-0'>

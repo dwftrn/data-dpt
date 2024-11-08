@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import PemiluListCard from '../components/PemiluListCard'
 import useFetchPemilu from '../queries/useFetchPemilu'
 import LoadingOverlay from '@/components/LoadingOverlay'
+import EmptyPemilu from '@/components/EmptyPemilu'
 
 const PemiluPage = () => {
   const { data, isLoading } = useFetchPemilu()
@@ -21,9 +22,11 @@ const PemiluPage = () => {
         </Link>
       </div>
       <div className='flex flex-col gap-4'>
-        {data?.map((item) => (
-          <PemiluListCard key={item._id} pemilu={item} />
-        ))}
+        {!data || data?.length > 0 ? (
+          data?.map((item) => <PemiluListCard key={item._id} pemilu={item} />)
+        ) : (
+          <EmptyPemilu />
+        )}
       </div>
     </section>
   )

@@ -137,6 +137,7 @@ const PageFilter = ({ onChange }: Props) => {
                   selections[field as keyof typeof selections] !== '0' &&
                   Boolean(selections[field as keyof typeof selections])
                 }
+                disabled={getFieldValue(field)?.length === 0}
                 className='data-[selected=true]:ring-2 capitalize w-full bg-white'
               >
                 <SelectValue placeholder={`Pilih ${list[index]}`} />

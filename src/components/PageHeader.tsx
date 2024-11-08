@@ -42,6 +42,7 @@ const PageHeader = ({ title, onSelected }: Props) => {
       >
         <SelectTrigger
           data-selected={Boolean(selected)}
+          disabled={!data || data?.length === 0}
           className='data-[selected=true]:ring-2 capitalize w-1/4 text-left'
         >
           <SelectValue placeholder='Pilih Pemilu' />
