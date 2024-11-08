@@ -17,10 +17,10 @@ const C1Preview = ({ data }: Props) => {
         </Button>
       </DialogTrigger>
 
-      <DialogContent withClose={false} className='bg-transparent border-none max-w-2xl'>
+      <DialogContent withClose={false} className='bg-transparent border-none max-w-2xl w-fit'>
         <DialogTitle className='sr-only' />
         <DialogDescription className='sr-only' />
-        <img src={data.c1} />
+        <img src={data.c1} className='object-cover max-h-[90vh] m-auto' />
       </DialogContent>
     </Dialog>
   )
