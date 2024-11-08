@@ -325,7 +325,7 @@ export function DptPage() {
                 <Button
                   variant='outline'
                   title='Bersihkan Filter'
-                  className='text-blue-500'
+                  className='text-blue-500 bg-white'
                   onClick={() => {
                     setSearch('')
                     setSelections({

@@ -5,11 +5,12 @@ import { cn } from '@/lib/utils'
 import useFetchCities from '@/queries/useFetchCities'
 import useFetchProvinces from '@/queries/useFetchProvinces'
 import { FilterX } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import LoadingOverlay from './LoadingOverlay'
 import { Button } from './ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { Label } from './ui/label'
+import { useLocation } from 'react-router-dom'
 
 type FilterSelection = {
   province: string
@@ -27,6 +28,8 @@ const list = ['province', 'city', 'district', 'subdistrict']
 
 const PageFilter = ({ onChange }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams()
+  const { pathname } = useLocation()
+  const initialized = useRef(false)
 
   const province = searchParams.get('province') || '0'
   const city = searchParams.get('city') || '0'
@@ -119,6 +122,19 @@ const PageFilter = ({ onChange }: Props) => {
       }
     }
   }, [province, city, district, fetchCities, fetchDistricts, fetchSubdistricts])
+
+  useEffect(() => {
+    if (initialized.current) return
+
+    if (pathname !== '/input-vote') return
+    if (!provinces || provinces?.length === 0) return
+    setSearchParams({ province: provinces.at(0)?.id || '0' })
+
+    if (!cities || cities?.length === 0) return
+    setSearchParams({ city: cities.at(0)?.id || '0' })
+
+    initialized.current = true
+  }, [cities, pathname, provinces, setSearchParams])
 
   if (isLoading) return <LoadingOverlay />
 
