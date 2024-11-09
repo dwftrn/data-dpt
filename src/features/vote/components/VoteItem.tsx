@@ -8,6 +8,7 @@ import { Vote } from '../service/vote.service'
 import C1Preview from './C1Preview'
 import VoteFormDialog from './VoteFormDialog'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Eye } from 'lucide-react'
 
 type Props = {
   data: Vote
@@ -77,7 +78,24 @@ const VoteItem = ({ data, pemilu }: Props) => {
               Verifikasi
             </Button>
           ) : (
-            <VoteFormDialog data={data} pemilu={pemilu} />
+            <>
+              <VoteFormDialog data={data} pemilu={pemilu} />
+              {data.status !== '' && (
+                <Button
+                  type='button'
+                  variant='secondary'
+                  className='p-2 h-fit'
+                  onClick={() =>
+                    navigate({
+                      pathname: `/input-vote/${data.id_suara}`,
+                      search: createSearchParams(searchParams).toString()
+                    })
+                  }
+                >
+                  <Eye className='size-4' />
+                </Button>
+              )}
+            </>
           )}
         </TableCell>
       </TableRow>

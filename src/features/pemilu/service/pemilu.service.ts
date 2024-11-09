@@ -91,3 +91,7 @@ export const fetchPemiluDetail = (id: string): Promise<CommonResponse<PemiluDeta
 export const deletePemilu = (id: string): Promise<CommonResponse<null>> => {
   return fetcher(ENDPOINTS.PEMILU.DELETE_PEMILU, { id }, 'POST')
 }
+
+export const checkPemilu = (id: string): Promise<CommonResponse<boolean>> => {
+  return fetcher(ENDPOINTS.PEMILU.CHECK_PEMILU, { id }, 'POST')
+}

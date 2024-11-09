@@ -1,3 +1,4 @@
+import LoadingOverlay from '@/components/LoadingOverlay'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import {
@@ -9,14 +10,19 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { showConfirm } from '@/lib/alert'
 import { Ellipsis, MapPin, SquarePen, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import CandidateAvatar from './CandidateAvatar'
-import { PemiluWithCandidate } from '../service/pemilu.service'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import useCheckPemilu from '../queries/useCheckPemilu'
 import useDeletePemilu from '../queries/useDeletePemilu'
-import LoadingOverlay from '@/components/LoadingOverlay'
+import { PemiluWithCandidate } from '../service/pemilu.service'
+import CandidateAvatar from './CandidateAvatar'
 
 const PemiluListCard = ({ pemilu }: { pemilu: PemiluWithCandidate }) => {
-  const { mutate, isPending: isLoading } = useDeletePemilu()
+  const navigate = useNavigate()
+  const { mutate, isPending: isLoadingDelete } = useDeletePemilu()
+  const { mutateAsync: check, isPending: isLoadingCheck } = useCheckPemilu()
+
+  const isLoading = isLoadingDelete || isLoadingCheck
 
   const handleDelete = async () => {
     const result = await showConfirm({
@@ -29,6 +35,20 @@ const PemiluListCard = ({ pemilu }: { pemilu: PemiluWithCandidate }) => {
 
     if (result.isConfirmed) {
       mutate(pemilu._id)
+    }
+  }
+
+  const handleCheck = async () => {
+    try {
+      const res = await check(pemilu._id)
+      if (res)
+        return toast.warning('Tidak Dapat Menyunting', {
+          description: 'Pemilu yang memiliki data suara tidak dapat disunting'
+        })
+
+      navigate(`/pemilu/form/${pemilu._id}`)
+    } catch (error) {
+      console.log({ error })
     }
   }
 
@@ -62,12 +82,11 @@ const PemiluListCard = ({ pemilu }: { pemilu: PemiluWithCandidate }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuGroup>
-              <Link to={`/pemilu/form/${pemilu._id}`}>
-                <DropdownMenuItem className='cursor-pointer'>
-                  <SquarePen />
-                  <span>Sunting</span>
-                </DropdownMenuItem>
-              </Link>
+              <DropdownMenuItem className='cursor-pointer' onClick={handleCheck}>
+                <SquarePen />
+                <span>Sunting</span>
+              </DropdownMenuItem>
+
               <DropdownMenuItem className='cursor-pointer text-destructive' onClick={handleDelete}>
                 <Trash2 />
                 <span>Hapus</span>

@@ -18,7 +18,7 @@ import { Progress } from '@/components/ui/progress'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import useSearchParams from '@/hooks/useSearchParams'
 import { cn } from '@/lib/utils'
-import { Check, ChevronLeft, ChevronRight, CircleCheck, UserRound, X, XCircle } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, CircleCheck, Loader2, UserRound, X, XCircle } from 'lucide-react'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
 import useFetchVoteDetail from '../queries/useFetchVoteDetail'
@@ -107,8 +107,6 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
     else setIsOpen(false)
   }, [id])
 
-  if (!data) return <></>
-
   return (
     <>
       <Dialog
@@ -128,7 +126,13 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
         >
           <div className='h-full w-full flex items-center justify-center bg-black'>
             <div className='relative w-full h-full'>
-              <img alt='c1' src={data.c1} className='absolute h-full object-contain' onLoad={handleImageLoad} />
+              {data?.c1 ? (
+                <img alt='c1' src={data?.c1} className='absolute h-full object-contain' onLoad={handleImageLoad} />
+              ) : (
+                <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+                  <Loader2 className='animate-spin text-white size-10' />
+                </div>
+              )}
             </div>
           </div>
 
@@ -137,7 +141,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               <div className='flex items-center gap-3'>
                 <img alt='logo' src={PemiluLogo} className='size-8' />
                 <DialogTitle className='text-base font-bold'>
-                  {data?.nama_tps} <span className='text-xs  font-normal'>(DPT {data.jumlah_dpt_tps})</span>
+                  {data?.nama_tps} <span className='text-xs  font-normal'>(DPT {data?.jumlah_dpt_tps})</span>
                 </DialogTitle>
               </div>
 
@@ -159,7 +163,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger>Tertolak</TooltipTrigger>
                     <TooltipContent side='bottom' className='dark'>
-                      <p>{data.alasan_reject}</p>
+                      <p>{data?.alasan_reject}</p>
                     </TooltipContent>
                   </Tooltip>
                 ) : data?.status === 1 ? (
@@ -173,23 +177,31 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
             <div className='py-4 space-y-4 border-b border-b-gray-300 px-8 flex-shrink-0'>
               <div>
                 <h1 className='font-bold text-sm'>
-                  {data.kelurahan} • {data.kecamatan}
+                  {data?.kelurahan} • {data?.kecamatan}
                 </h1>
                 {data?.kota_kabupaten ? (
                   <p className='font-light text-sm'>
-                    Kota {data.kota_kabupaten} • Provinsi {data?.provinsi}
+                    Kota {data?.kota_kabupaten} • Provinsi {data?.provinsi}
                   </p>
                 ) : (
                   <p className='font-light text-sm'>Provinsi {data?.provinsi}</p>
                 )}
               </div>
-              <div className='rounded-full bg-gradient-to-b from-white to-gray-100 shadow-custom px-4 py-2.5 flex items-center gap-3 w-fit text-sm'>
+              <div
+                role='button'
+                className='rounded-full bg-gradient-to-b from-white to-gray-100 shadow-custom px-4 py-2.5 flex items-center gap-3 w-fit text-sm'
+                onClick={() => {
+                  if (data?.data_petugas.nama_petugas === 'ADMIN') return
+                  if (!data?.data_petugas.nomor_wa) return
+                  window.open(`https://wa.me/${data?.data_petugas.nomor_wa}`, '_blank')
+                }}
+              >
                 <div className='rounded-full bg-gray-900 p-1'>
                   <UserRound className='fill-white stroke-none size-4' />
                 </div>
-                <div className='font-bold'>{data.data_petugas.nama_petugas}</div>
+                <div className='font-bold'>{data?.data_petugas.nama_petugas}</div>
                 <div className='text-gray-300'>|</div>
-                <div>Saksi {data.nama_tps}</div>
+                <div>{data?.data_petugas.jabatan}</div>
               </div>
             </div>
 
@@ -197,7 +209,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               <div className='py-4 px-8 space-y-4'>
                 <h1 className='text-base font-bold'>Perolehan Suara</h1>
                 <div className='space-y-4'>
-                  {data.data_paslon
+                  {data?.data_paslon
                     .sort((a, b) => a.no_urut - b.no_urut)
                     .map((item) => (
                       <div key={item.id_paslon} className='grid grid-cols-[24px_40px_1fr_60px] items-center gap-4'>
@@ -205,7 +217,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                           {item.no_urut}
                         </div>
                         <img src={item.foto} className='rounded-full size-10 object-cover' />
-                        <Progress value={(item.jumlah * 100) / data.sah} className='w-full h-[18px]' />
+                        <Progress value={(item.jumlah * 100) / data?.sah} className='w-full h-[18px]' />
                         <div className='w-[60px] text-end'>{item.jumlah}</div>
                       </div>
                     ))}
@@ -213,65 +225,69 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               </div>
               <div className='flex justify-between bg-[#E6F4F0] p-6 py-4 font-bold items-center'>
                 <h1 className='text-xs'>Total Suara Sah</h1>
-                <p className='text-lg'>{data.sah}</p>
+                <p className='text-lg'>{data?.sah}</p>
               </div>
               <div className='flex justify-between bg-[#FBE6E6] p-6 py-4 font-bold items-center'>
                 <h1 className='text-xs'>Total Suara Tidak Sah</h1>
-                <p className='text-lg'>{data.tidak_sah}</p>
+                <p className='text-lg'>{data?.tidak_sah}</p>
               </div>
             </div>
 
             <div className='py-4 px-8 border-t border-t-gray-300 flex justify-between items-center w-full bg-white flex-shrink-0'>
-              <div className='items-center flex gap-4'>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant='destructive' className='gap-2'>
-                      <X className='size-4' />
-                      Tolak
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Tolak Data</AlertDialogTitle>
-                      <AlertDialogDescription>Apakah Anda yakin ingin menolak data ini ?</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <Input
-                      placeholder='Tuliskan Alasan Penolakan'
-                      value={rejectReason}
-                      onChange={(e) => setRejectReason(e.target.value)}
-                    />
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Batal</AlertDialogCancel>
-                      <AlertDialogAction
-                        className={cn(buttonVariants({ variant: 'destructive' }))}
-                        onClick={handleReject}
-                      >
+              {data?.status === 0 ? (
+                <div className='items-center flex gap-4'>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant='destructive' className='gap-2'>
+                        <X className='size-4' />
                         Tolak
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button className='gap-2 bg-[#20A86B] hover:bg-[#20A86B]/90'>
-                      <Check className='size-4' />
-                      Verifikasi
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Verifikasi Data</AlertDialogTitle>
-                      <AlertDialogDescription>Apakah Anda yakin ingin memverfikasi data ini ?</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Batal</AlertDialogCancel>
-                      <AlertDialogAction className={cn('bg-[#20A86B] hover:bg-[#20A86B]/90')} onClick={handleVerify}>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Tolak Data</AlertDialogTitle>
+                        <AlertDialogDescription>Apakah Anda yakin ingin menolak data ini ?</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <Input
+                        placeholder='Tuliskan Alasan Penolakan'
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                      />
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                          className={cn(buttonVariants({ variant: 'destructive' }))}
+                          onClick={handleReject}
+                        >
+                          Tolak
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className='gap-2 bg-[#20A86B] hover:bg-[#20A86B]/90'>
+                        <Check className='size-4' />
                         Verifikasi
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Verifikasi Data</AlertDialogTitle>
+                        <AlertDialogDescription>Apakah Anda yakin ingin memverfikasi data ini ?</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction className={cn('bg-[#20A86B] hover:bg-[#20A86B]/90')} onClick={handleVerify}>
+                          Verifikasi
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              ) : (
+                <div />
+              )}
               <Button variant='secondary' className='gap-2' onClick={handleClose}>
                 Batal
               </Button>

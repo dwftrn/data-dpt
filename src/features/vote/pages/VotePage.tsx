@@ -24,7 +24,7 @@ const VotePage = () => {
   const votes = data?.data || []
   const pemilu = pemiluData?.find((item) => item._id === selectedPemilu)
 
-  const unverified = votes.filter((vote) => vote.status === 0)
+  const unverified = votes.filter((vote) => vote.status !== '')
 
   return (
     <>

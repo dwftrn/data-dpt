@@ -27,7 +27,8 @@ export const ENDPOINTS = {
     DELETE_PEMILU: BASE_URL + '/deletepemilu',
     FETCH_VOTE_DETAIL: BASE_URL + '/getdetailsuara',
     FETCH_TOTAL_DPT: BASE_URL + '/getcountdpt',
-    FETCH_TOTAL_TPS: BASE_URL + '/getcountalldpt'
+    FETCH_TOTAL_TPS: BASE_URL + '/getcountalldpt',
+    CHECK_PEMILU: BASE_URL + '/cekisexistpemilu'
   },
   QUICK_COUNT: {
     FETCH: BASE_URL + '/quickcount',
