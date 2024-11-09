@@ -10,6 +10,7 @@ export type QuickCount = {
   total_suara_masuk: number
   persentase_suara_sah: number
   persentase_suara_tidak_sah: number
+  total_dpt: number
 }
 
 export type QuickCountCandidate = {

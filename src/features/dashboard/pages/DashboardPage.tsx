@@ -1,34 +1,33 @@
-import PageFilter from '@/components/PageFilter'
-import PageHeader from '@/components/PageHeader'
-import CandidateCard from '../components/CandidateCard'
-import VoteStatisticsCardList from '../components/VoteStatisticsCardList'
-import useSearchParams from '@/hooks/useSearchParams'
-import useFetchQuickCount from '../queries/useFetchQuickCount'
-import EmptyPemilu from '@/components/EmptyPemilu'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import DashboardDesktop from '../components/DashboardDesktop'
+import DashboardMobile from './DashboardMobile'
 
 const DashboardPage = () => {
-  const [searchParams] = useSearchParams()
-  const id = searchParams.get('pemilu') || ''
+  const [isMobile, setIsMobile] = useState(false)
+  const { pathname } = useLocation()
 
-  const { data } = useFetchQuickCount({ id_pemilu: id })
+  useEffect(() => {
+    // Initial check
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768) // 768px is a common breakpoint for mobile
+    }
 
-  return (
-    <section className='flex flex-col gap-6'>
-      <PageHeader title='Dashboard Perolehan Suara' />
+    // Check on mount
+    checkIfMobile()
 
-      {!data ? (
-        <EmptyPemilu />
-      ) : (
-        <>
-          <CandidateCard quickCount={data.data} />
+    // Add resize listener
+    window.addEventListener('resize', checkIfMobile)
 
-          <PageFilter />
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile)
+  }, [])
 
-          <VoteStatisticsCardList />
-        </>
-      )}
-    </section>
-  )
+  if (pathname === '/') return <DashboardDesktop />
+
+  if (isMobile) return <DashboardMobile />
+
+  return <DashboardDesktop />
 }
 
 export default DashboardPage

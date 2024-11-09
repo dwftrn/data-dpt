@@ -40,6 +40,10 @@ export const router = createBrowserRouter([
     ]
   },
   {
+    path: '/quick-count',
+    element: <DashboardPage />
+  },
+  {
     path: '/sign-in',
     element: <SignInPage />
   }
