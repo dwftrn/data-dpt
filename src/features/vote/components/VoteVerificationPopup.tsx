@@ -73,7 +73,6 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
 
     try {
       await update({ id, status: 1 })
-      handleClose()
     } catch (error) {
       console.log({ error })
     }
@@ -84,7 +83,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
 
     try {
       await update({ id, status: 2, alasan_reject: rejectReason })
-      handleClose()
+      setRejectReason('')
     } catch (error) {
       console.log({ error })
     }
@@ -161,7 +160,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
 
                 {data?.status === 2 ? (
                   <Tooltip delayDuration={0}>
-                    <TooltipTrigger>Tertolak</TooltipTrigger>
+                    <TooltipTrigger>Ditolak</TooltipTrigger>
                     <TooltipContent side='bottom' className='dark'>
                       <p>{data?.alasan_reject}</p>
                     </TooltipContent>

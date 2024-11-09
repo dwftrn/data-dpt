@@ -54,13 +54,18 @@ const VoteItem = ({ data, pemilu }: Props) => {
             'text-red-500': data.status === 2
           })}
         >
-          {data.status === 0
-            ? 'Belum Terverifikasi'
-            : data.status === 1
-            ? 'Terverifikasi'
-            : data.status === 2
-            ? `Tertolak ${data.alasan_reject ? `(${data.alasan_reject})` : ''}`
-            : '-'}
+          {data.status === 0 ? (
+            'Belum Terverifikasi'
+          ) : data.status === 1 ? (
+            'Terverifikasi'
+          ) : data.status === 2 ? (
+            <Tooltip>
+              <TooltipTrigger>Ditolak</TooltipTrigger>
+              <TooltipContent className='dark'>{data.alasan_reject || '-'}</TooltipContent>
+            </Tooltip>
+          ) : (
+            '-'
+          )}
         </TableCell>
         <TableCell className='flex items-center justify-center gap-1'>
           {data.status === 0 ? (

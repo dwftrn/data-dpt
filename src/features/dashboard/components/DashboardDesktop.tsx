@@ -13,10 +13,12 @@ const DashboardDesktop = () => {
   const [searchParams] = useSearchParams()
   const id = searchParams.get('pemilu') || ''
 
-  const { data } = useFetchQuickCount({ id_pemilu: id })
+  const { data, isLoading } = useFetchQuickCount({ id_pemilu: id })
 
   const { pathname } = useLocation()
   const isPublic = pathname === '/quick-count'
+
+  console.log({ isLoading })
 
   return (
     <>
@@ -31,11 +33,11 @@ const DashboardDesktop = () => {
       <section data-public={isPublic} className='flex-col gap-6 data-[public=true]:p-8 hidden md:flex'>
         <PageHeader title='Dashboard Perolehan Suara' />
 
-        {!data ? (
+        {!data && !isLoading ? (
           <EmptyPemilu />
         ) : (
           <>
-            <CandidateCard quickCount={data.data} />
+            {data && <CandidateCard quickCount={data.data} />}
 
             <PageFilter />
 

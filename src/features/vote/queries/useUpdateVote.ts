@@ -21,76 +21,92 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { UpdateVote, updateVote, Vote } from '../service/vote.service'
+import { UpdateVote, updateVote, Vote, VoteDetail } from '../service/vote.service'
 import { CommonResponse } from '@/api/services'
+import { useSearchParams } from 'react-router-dom'
 
 const useUpdateVote = () => {
   const queryClient = useQueryClient()
+  const [searchParams] = useSearchParams()
+  const subdistrict = searchParams.get('subdistrict') || ''
+  const pemilu = searchParams.get('pemilu') || ''
+
+  const votesQueryKey = ['votes', pemilu, subdistrict] as const
 
   return useMutation({
     mutationFn: updateVote,
     onMutate: async (newVote: UpdateVote) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({
-        queryKey: ['votes']
-      })
+      await Promise.all([
+        queryClient.cancelQueries({ queryKey: votesQueryKey }),
+        queryClient.cancelQueries({ queryKey: ['votes-detail', newVote.id] })
+      ])
 
-      // Snapshot the previous value
-      const previousVotes = queryClient.getQueryData<CommonResponse<Vote[]>>(['votes'])
+      // Snapshot previous values
+      const previousVotes = queryClient.getQueryData<CommonResponse<Vote[]>>(votesQueryKey)
+      const previousVoteDetail = queryClient.getQueryData<VoteDetail>(['votes-detail', newVote.id])
 
-      // Optimistically update to the new value
+      // Optimistically update votes list
       if (previousVotes) {
-        queryClient.setQueryData<CommonResponse<Vote[]>>(['votes'], (old) => {
-          if (!old) return previousVotes
-
-          const updatedVotes = old.data.map((vote) => {
-            if (vote.id_suara === newVote.id) {
-              // Create updated vote object with optional properties
-              const updatedVote = { ...vote }
-
-              // Only update properties that are provided in newVote
-              if (newVote.data_paslon !== undefined) {
-                updatedVote.data_paslon = newVote.data_paslon
-              }
-              if (newVote.sah !== undefined) {
-                updatedVote.sah = newVote.sah
-              }
-              if (newVote.tidak_sah !== undefined) {
-                updatedVote.tidak_sah = newVote.tidak_sah
-              }
-              if (newVote.status !== undefined) {
-                updatedVote.status = newVote.status
-              }
-              if (newVote.alasan_reject !== undefined) {
-                updatedVote.alasan_reject = newVote.alasan_reject
-              }
-
-              return updatedVote
-            }
-            return vote
-          })
+        queryClient.setQueryData<CommonResponse<Vote[]>>(votesQueryKey, (old) => {
+          if (!old?.data) return previousVotes
 
           return {
             ...old,
-            data: updatedVotes
+            data: old.data.map((vote) => {
+              if (vote.id_suara !== newVote.id) return vote
+
+              const updatedVote = { ...vote }
+              const updateFields: (keyof UpdateVote)[] = ['data_paslon', 'sah', 'tidak_sah', 'status', 'alasan_reject']
+
+              updateFields.forEach((field) => {
+                if (field in newVote && newVote[field] !== undefined) {
+                  // @ts-expect-error - Dynamic property assignment
+                  updatedVote[field] = newVote[field]
+                }
+              })
+
+              return updatedVote
+            })
           }
         })
       }
 
-      return { previousVotes }
+      // Optimistically update vote detail
+      if (previousVoteDetail) {
+        queryClient.setQueryData<VoteDetail>(['votes-detail', newVote.id], (old) => {
+          if (!old) return previousVoteDetail
+
+          const updatedVoteDetail = { ...old }
+          const updateFields: (keyof UpdateVote)[] = ['data_paslon', 'sah', 'tidak_sah', 'status', 'alasan_reject']
+
+          updateFields.forEach((field) => {
+            if (field in newVote && newVote[field] !== undefined) {
+              // @ts-expect-error - Dynamic property assignment
+              updatedVoteDetail[field] = newVote[field]
+            }
+          })
+
+          return updatedVoteDetail
+        })
+      }
+
+      return { previousVotes, previousVoteDetail }
     },
-    onError: (_err, _newVote, context) => {
+    onError: (error, _newVote, context) => {
       // Roll back to the previous state on error
       if (context?.previousVotes) {
         queryClient.setQueryData(['votes'], context.previousVotes)
       }
-      toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
+
+      // Show error message with more specific details if available
+      const errorMessage = error instanceof Error ? error.message : 'Coba lagi dalam beberapa saat'
+      toast.error('Terjadi Kesalahan', { description: errorMessage })
     },
     onSuccess: () => {
       toast.success('Berhasil Menyunting Suara')
-    },
-    onSettled: () => {
-      // Refetch to ensure cache is in sync with server
+
+      // Immediately invalidate to ensure fresh data
       queryClient.invalidateQueries({
         queryKey: ['votes']
       })

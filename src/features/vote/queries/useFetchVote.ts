@@ -8,7 +8,8 @@ const useFetchVote = ({ id_kelurahan = '', id_pemilu = '' }: { id_pemilu: string
     queryKey: ['votes', id_pemilu, id_kelurahan],
     queryFn: () => fetchInputVote({ id_pemilu, id_kelurahan }),
     enabled: enabled,
-    retry: enabled ? 3 : false // Only retry if we have an ID
+    retry: enabled ? 3 : false, // Only retry if we have an ID
+    staleTime: 0
   })
 }
 
