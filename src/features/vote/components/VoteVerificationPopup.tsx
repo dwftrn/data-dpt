@@ -192,7 +192,10 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                 onClick={() => {
                   if (data?.data_petugas.nama_petugas === 'ADMIN') return
                   if (!data?.data_petugas.nomor_wa) return
-                  window.open(`https://wa.me/${data?.data_petugas.nomor_wa}`, '_blank')
+
+                  const phone = data.data_petugas.nomor_wa
+                  const val = phone.startsWith('0') ? phone.replace('0', '62') : phone
+                  window.open(`https://wa.me/${val}`, '_blank')
                 }}
               >
                 <div className='rounded-full bg-gray-900 p-1'>
