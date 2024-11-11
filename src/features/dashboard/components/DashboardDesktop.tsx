@@ -1,6 +1,5 @@
 import Logo from '@/assets/logo-horizontal-white.svg'
 import EmptyPemilu from '@/components/EmptyPemilu'
-import PageFilter from '@/components/PageFilter'
 import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 import useSearchParams from '@/hooks/useSearchParams'
@@ -8,6 +7,9 @@ import { Link, useLocation } from 'react-router-dom'
 import CandidateCard from '../components/CandidateCard'
 import VoteStatisticsCardList from '../components/VoteStatisticsCardList'
 import useFetchQuickCount from '../queries/useFetchQuickCount'
+import CandidateCardSkeleton from './CandidateCardSkeleton'
+import MapContainer from './MapContainer'
+import PageFilter from '@/components/PageFilter'
 
 const DashboardDesktop = () => {
   const [searchParams] = useSearchParams()
@@ -17,8 +19,6 @@ const DashboardDesktop = () => {
 
   const { pathname } = useLocation()
   const isPublic = pathname === '/quick-count'
-
-  console.log({ isLoading })
 
   return (
     <>
@@ -37,7 +37,9 @@ const DashboardDesktop = () => {
           <EmptyPemilu />
         ) : (
           <>
-            {data && <CandidateCard quickCount={data.data} />}
+            {isLoading ? <CandidateCardSkeleton /> : data && <CandidateCard quickCount={data.data} />}
+
+            <MapContainer />
 
             <PageFilter />
 

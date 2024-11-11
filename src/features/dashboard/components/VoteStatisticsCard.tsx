@@ -1,6 +1,6 @@
 import useSearchParams from '@/hooks/useSearchParams'
-import { QuickCountCard, REGION_CODE } from '../services/dashboard.service'
 import { cn } from '@/lib/utils'
+import { QuickCountCard, REGION_CODE } from '../services/dashboard.service'
 
 const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: REGION_CODE }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

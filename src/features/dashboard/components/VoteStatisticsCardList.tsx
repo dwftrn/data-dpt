@@ -2,7 +2,7 @@ import useSearchParams from '@/hooks/useSearchParams'
 import useFetchQuickCountCards from '../queries/useFetchQuickCountCards'
 import { REGION_CODE } from '../services/dashboard.service'
 import VoteStatisticsCard from './VoteStatisticsCard'
-import LoadingOverlay from '@/components/LoadingOverlay'
+import VoteStatisticsSkeleton from './VoteStatisticsSkeleton'
 
 const VoteStatisticsCardList = () => {
   const [searchParams] = useSearchParams()
@@ -41,9 +41,14 @@ const VoteStatisticsCardList = () => {
 
   const cards = data?.data
 
-  return (
+  return isLoading ? (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-      {isLoading && <LoadingOverlay />}
+      {Array.from({ length: 3 }).map((_, index) => (
+        <VoteStatisticsSkeleton key={index} />
+      ))}
+    </div>
+  ) : (
+    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
       {cards?.map((item) => (
         <VoteStatisticsCard key={item.id_region} data={item} region={region} />
       ))}

@@ -23,7 +23,7 @@ const SidebarMobile = () => {
             <span>DATA DPT Cimahi</span>
           </a>
           {navs.map((nav) => (
-            <SidebarItem key={nav.label} nav={nav} />
+            <SidebarItem key={nav.label} nav={nav} isCollapsed={false} />
           ))}
         </nav>
       </SheetContent>

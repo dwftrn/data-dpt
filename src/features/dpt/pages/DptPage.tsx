@@ -86,7 +86,7 @@ const columns: ColumnDef<DPT>[] = [
   }
 ]
 
-export function DptPage() {
+export default function DptPage() {
   const { data: provinces, isLoading: isLoadingProvinces } = useFetchProvinces()
   const { mutate: fetchCities, data: cities, isPending: isLoadingCities } = useFetchCities()
   const { mutate: fetchDistricts, data: districts, isPending: isLoadingDistricts } = useFetchDistricts()

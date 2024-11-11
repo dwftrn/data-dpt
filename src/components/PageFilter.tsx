@@ -6,11 +6,10 @@ import useFetchCities from '@/queries/useFetchCities'
 import useFetchProvinces from '@/queries/useFetchProvinces'
 import { FilterX } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import LoadingOverlay from './LoadingOverlay'
-import { Button } from './ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Label } from './ui/label'
 import { useLocation } from 'react-router-dom'
+import { Button } from './ui/button'
+import { Label } from './ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 type FilterSelection = {
   province: string
@@ -136,8 +135,6 @@ const PageFilter = ({ onChange }: Props) => {
     initialized.current = true
   }, [cities, pathname, provinces, setSearchParams])
 
-  if (isLoading) return <LoadingOverlay />
-
   return (
     <div className='grid grid-cols-4 items-center gap-4'>
       {list.map((field, index) => (
@@ -153,8 +150,8 @@ const PageFilter = ({ onChange }: Props) => {
                   selections[field as keyof typeof selections] !== '0' &&
                   Boolean(selections[field as keyof typeof selections])
                 }
-                disabled={getFieldValue(field)?.length === 0}
-                className='data-[selected=true]:ring-2 capitalize w-full bg-white'
+                disabled={getFieldValue(field)?.length === 0 || isLoading}
+                className={cn('data-[selected=true]:ring-2 capitalize w-full bg-white', { 'animate-pulse': isLoading })}
               >
                 <SelectValue placeholder={`Pilih ${list[index]}`} />
               </SelectTrigger>
@@ -168,7 +165,12 @@ const PageFilter = ({ onChange }: Props) => {
               </SelectContent>
             </Select>
             {index === list.length - 1 && (
-              <Button variant='outline' onClick={resetFilter} className='bg-white'>
+              <Button
+                variant='outline'
+                onClick={resetFilter}
+                disabled={isLoading}
+                className={cn('bg-white', { 'animate-pulse': isLoading })}
+              >
                 <span className='hidden lg:block text-blue-500'>Reset Filter</span>
                 <FilterX className='size-4 block lg:hidden' />
               </Button>

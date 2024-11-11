@@ -1,12 +1,15 @@
+/* eslint-disable react-refresh/only-export-components */
+import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import App from './App'
-import PrivateRoute from './components/PrivateRoute'
-import SignInPage from './features/auth/pages/SignInPage'
-import DashboardPage from './features/dashboard/pages/DashboardPage'
-import { DptPage } from './features/dpt/pages/DptPage'
-import PemiluFormPage from './features/pemilu/pages/PemiluFormPage'
-import PemiluPage from './features/pemilu/pages/PemiluPage'
-import VotePage from './features/vote/pages/VotePage'
+
+const App = lazy(() => import('./App'))
+const PrivateRoute = lazy(() => import('./components/PrivateRoute'))
+const SignInPage = lazy(() => import('./features/auth/pages/SignInPage'))
+const DashboardPage = lazy(() => import('./features/dashboard/pages/DashboardPage'))
+const DptPage = lazy(() => import('./features/dpt/pages/DptPage'))
+const PemiluFormPage = lazy(() => import('./features/pemilu/pages/PemiluFormPage'))
+const PemiluPage = lazy(() => import('./features/pemilu/pages/PemiluPage'))
+const VotePage = lazy(() => import('./features/vote/pages/VotePage'))
 
 export const router = createBrowserRouter([
   {

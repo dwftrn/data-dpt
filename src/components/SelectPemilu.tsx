@@ -1,9 +1,8 @@
 import useFetchPemilu from '@/features/pemilu/queries/useFetchPemilu'
 import useSearchParams from '@/hooks/useSearchParams'
-import { useEffect, useState } from 'react'
-import LoadingOverlay from './LoadingOverlay'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 const SelectPemilu = ({ onSelected, className }: { onSelected?(value: string): void; className?: string }) => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -24,7 +23,6 @@ const SelectPemilu = ({ onSelected, className }: { onSelected?(value: string): v
     }
   }, [data, pemilu, selected])
 
-  if (isLoading) return <LoadingOverlay />
   return (
     <Select
       value={selected}
@@ -35,8 +33,12 @@ const SelectPemilu = ({ onSelected, className }: { onSelected?(value: string): v
     >
       <SelectTrigger
         data-selected={Boolean(selected)}
-        disabled={!data || data?.length === 0}
-        className={cn('data-[selected=true]:ring-2 capitalize w-1/4 text-left', className)}
+        disabled={!data || data?.length === 0 || isLoading}
+        className={cn(
+          'data-[selected=true]:ring-2 capitalize w-1/4 text-left',
+          { 'animate-pulse': isLoading },
+          className
+        )}
       >
         <SelectValue placeholder='Pilih Pemilu' />
       </SelectTrigger>
