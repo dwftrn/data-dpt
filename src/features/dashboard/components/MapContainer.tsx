@@ -7,9 +7,11 @@ const MapContainer = () => {
 
   useEffect(() => {
     districtsData.map((item) => {
+      const higher = item.votes[0]
+      const color = higher.persentase > 0 ? higher.warna : '#E6E6E6'
       document
         .querySelector(`#map-${item.name.replace(' ', '-').toLowerCase()}`)
-        ?.setAttribute('style', `fill: ${item.votes[0].warna}`)
+        ?.setAttribute('style', `fill: ${color}`)
     })
   }, [districtsData])
 

@@ -39,6 +39,7 @@ export type PemiluCandidate = {
   foto: string
   no_urut: string
   id_paslon: string
+  warna: string
 }
 
 export type PemiluWithCandidate = Pemilu & { paslon: PemiluCandidate[] }
