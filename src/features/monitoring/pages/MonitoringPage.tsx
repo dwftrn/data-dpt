@@ -70,7 +70,7 @@ const MonitoringPage = () => {
         <TableBody className='[&>tr:last-child>td:first-child]:rounded-bl-xl [&>tr:last-child>td:last-child]:rounded-br-xl'>
           <TableRow className='bg-white hover:bg-white'>
             <TableCell>
-              <div className='flex flex-col'>
+              <div className='flex flex-col text-xs font-normal'>
                 <span>27 November 2024</span>
                 <span>Pukul 20:00 WIB</span>
               </div>

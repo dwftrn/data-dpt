@@ -40,6 +40,6 @@ export const navs: TSidebarItem[] = [
   {
     label: 'Histori',
     icon: <History />,
-    href: '/histori'
+    href: '/history'
   }
 ]
