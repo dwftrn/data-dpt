@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import MonitoringPage from './features/monitoring/pages/MonitoringPage'
 import HistoryPage from './features/history/pages/HistoryPage'
+import MonitoringPage from './features/monitoring/pages/MonitoringPage'
+import SaksiPage from './features/saksi/pages/SaksiPage'
 
 const App = lazy(() => import('./App'))
 const PrivateRoute = lazy(() => import('./components/PrivateRoute'))
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: '/history',
         element: <HistoryPage />
+      },
+      {
+        path: '/saksi',
+        element: <SaksiPage />
       }
     ]
   },
