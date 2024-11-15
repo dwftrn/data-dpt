@@ -1,4 +1,4 @@
-import { Box, CornerDownRight, LayoutDashboard, UsersRound } from 'lucide-react'
+import { Box, CornerDownRight, History, LayoutDashboard, Tv, UsersRound, View } from 'lucide-react'
 
 export type TSidebarItem = {
   label: string
@@ -26,5 +26,20 @@ export const navs: TSidebarItem[] = [
     label: 'Input Suara',
     icon: <CornerDownRight />,
     href: '/input-vote'
+  },
+  {
+    label: 'Monitoring',
+    icon: <Tv />,
+    href: '/monitoring'
+  },
+  {
+    label: 'Data Saksi',
+    icon: <View />,
+    href: '/saksi'
+  },
+  {
+    label: 'Histori',
+    icon: <History />,
+    href: '/histori'
   }
 ]

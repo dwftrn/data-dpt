@@ -6,5 +6,5 @@ export const signIn = (payload: {
   username: string
   password: string
 }): Promise<CommonResponse<{ access_token: string }>> => {
-  return fetcher(ENDPOINTS.AUTH.SIGN_IN, payload, 'POST')
+  return fetcher(ENDPOINTS.AUTH.SIGN_IN, { ...payload, is_web: 1 }, 'POST')
 }
