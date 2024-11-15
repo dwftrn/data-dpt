@@ -42,7 +42,7 @@ const DashboardMobile = () => {
                       <img
                         alt='icon'
                         src={item.foto}
-                        className='rounded-lg border-4'
+                        className='rounded-lg border-4 aspect-square object-cover'
                         style={{ borderColor: item.warna }}
                       />
                       <div className='bg-red-500 size-6 rounded-md absolute bottom-2 right-2 grid place-content-center text-white'>
