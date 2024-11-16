@@ -8,7 +8,10 @@ const useFetchUnverifiedVotes = (id: string) => {
     queryKey: ['unverified-votes', id],
     queryFn: () => monitoringService.fetchUnverifiedVotes({ id_pemilu: id }),
     enabled,
-    retry: enabled ? 1 : false
+    retry: enabled ? 1 : false,
+    refetchInterval: enabled ? 19000 : false, // Only refetch if on home page and has ID
+    refetchIntervalInBackground: enabled,
+    staleTime: 0 // Consider all data stale immediately for real-time updates
   })
 }
 

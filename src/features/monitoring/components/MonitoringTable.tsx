@@ -46,11 +46,13 @@ const MonitoringTable = () => {
                   <span>
                     {item.kelurahan}, {item.kecamatan}
                   </span>
-                  <span className='text-xs'>Kota Cimahi, Jawa Barat</span>
+                  <span className='text-xs'>
+                    {item.kab_kota}, {item.provinsi}
+                  </span>
                 </div>
               </TableCell>
-              <TableCell>Nanang Darkonang</TableCell>
-              <TableCell>Saksi Luar</TableCell>
+              <TableCell>{item.nama_petugas}</TableCell>
+              <TableCell>{item.jabatan}</TableCell>
               <TableCell>
                 <C1Preview data={item} />
               </TableCell>

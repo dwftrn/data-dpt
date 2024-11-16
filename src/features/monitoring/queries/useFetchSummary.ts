@@ -15,7 +15,10 @@ const useFetchSummary = (id: string) => {
       return res.data
     },
     enabled,
-    retry: enabled ? 1 : false
+    retry: enabled ? 1 : false,
+    refetchInterval: enabled ? 10000 : false, // Only refetch if on home page and has ID
+    refetchIntervalInBackground: enabled,
+    staleTime: 0 // Consider all data stale immediately for real-time updates
   })
 }
 

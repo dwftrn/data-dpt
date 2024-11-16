@@ -18,7 +18,23 @@ export const monitoringService = {
   },
   fetchUnverifiedVotes: (params: {
     id_pemilu: string
-  }): Promise<CommonResponse<(Vote & { kecamatan: string; kelurahan: string })[]>> => {
+  }): Promise<
+    CommonResponse<
+      (Vote & {
+        id_kab_kota: string
+        id_kecamatan: string
+        id_kelurahan: string
+        id_provinsi: string
+        id_suara: string
+        jabatan: string
+        kab_kota: string
+        kecamatan: string
+        kelurahan: string
+        nama_petugas: string
+        provinsi: string
+      })[]
+    >
+  > => {
     return fetcher(ENDPOINTS.MONITORING.FETCH_UNVERIFIED, params, 'POST')
   }
 }
