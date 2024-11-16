@@ -6,6 +6,7 @@ import useQuickCountQueries from '../queries/useQuickCountQueries'
 import { QuickCountCandidate } from '../services/dashboard.service'
 import { summarizeVotes } from '../utils/utils'
 import CimahiMap from './CimahiMap'
+import { toast } from 'sonner'
 
 const chartConfig = {
   jumlah_suara: {
@@ -33,6 +34,11 @@ const MapContainer = () => {
     const votes = data?.votes.map((item) => ({ ...item, fill: item.warna }))
 
     if (!data || !votes) return
+
+    if (votes.every((item) => item.jumlah_suara === 0)) {
+      toast.warning('Belum Ada Data', { description: `Kelurahan ${name} belum memiliki data` })
+      return
+    }
 
     setChartData(votes)
     region.current = data.name
