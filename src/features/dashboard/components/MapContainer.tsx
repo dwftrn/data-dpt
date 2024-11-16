@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { useEffect, useRef, useState } from 'react'
-import { Label, Pie, PieChart } from 'recharts'
+import { Label, LabelList, Pie, PieChart } from 'recharts'
 import useQuickCountQueries from '../queries/useQuickCountQueries'
 import { QuickCountCandidate } from '../services/dashboard.service'
 import { summarizeVotes } from '../utils/utils'
@@ -87,10 +87,19 @@ const MapContainer = () => {
                   data={chartData.map((item) => ({ ...item, label: `${item.name} & ${item.vice_name}` }))}
                   dataKey='jumlah_suara'
                   nameKey='label'
-                  label
+                  label={({ jumlah_suara }) => Number(jumlah_suara).toLocaleString('id', { maximumFractionDigits: 2 })}
                   innerRadius={60}
                   strokeWidth={5}
                 >
+                  <LabelList
+                    dataKey='persentase'
+                    className='fill-current'
+                    stroke='none'
+                    fontSize={16}
+                    formatter={(value: keyof typeof chartConfig) =>
+                      Number(value).toLocaleString('id', { maximumFractionDigits: 2 }) + '%'
+                    }
+                  />
                   <Label
                     content={({ viewBox }) => {
                       if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
