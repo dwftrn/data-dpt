@@ -20,7 +20,7 @@ import useSearchParams from '@/hooks/useSearchParams'
 import { cn } from '@/lib/utils'
 import { Check, ChevronLeft, ChevronRight, CircleCheck, Loader2, UserRound, X, XCircle } from 'lucide-react'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
+import { createSearchParams, useLocation, useNavigate, useParams } from 'react-router-dom'
 import useFetchVoteDetail from '../queries/useFetchVoteDetail'
 import useUpdateVote from '../queries/useUpdateVote'
 import { Vote } from '../service/vote.service'
@@ -29,6 +29,9 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { pathname } = useLocation()
+
+  const loc = pathname.split('/')[1]
 
   const [isOpen, setIsOpen] = useState(false)
   const [containerWidth, setContainerWidth] = useState('auto')
@@ -58,7 +61,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
 
   const handleNavigate = (id?: string) => {
     navigate({
-      pathname: id ? `/input-vote/${id}` : '/input-vote',
+      pathname: id ? `/${loc}/${id}` : `/${loc}`,
       search: createSearchParams(searchParams).toString()
     })
   }

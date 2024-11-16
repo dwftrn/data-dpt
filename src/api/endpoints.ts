@@ -33,5 +33,9 @@ export const ENDPOINTS = {
   QUICK_COUNT: {
     FETCH: BASE_URL + '/quickcount',
     FETCH_CARDS: BASE_URL + '/getcarddetail'
+  },
+  MONITORING: {
+    FETCH_SUMMARY: BASE_URL + '/getsummonitor',
+    FETCH_UNVERIFIED: BASE_URL + '/getinsertsuaraunverif'
   }
 }

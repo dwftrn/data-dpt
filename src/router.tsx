@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
         element: <VotePage />
       },
       {
-        path: '/monitoring',
+        path: '/monitoring/:id?',
         element: <MonitoringPage />
       },
       {

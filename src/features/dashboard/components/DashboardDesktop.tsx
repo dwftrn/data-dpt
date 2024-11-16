@@ -78,7 +78,7 @@ const DashboardDesktop = () => {
                                   item.jumlah_suara
                                 )
                               ).toLocaleString('id', { maximumFractionDigits: 2 })}{' '}
-                              % )
+                              %)
                             </span>
                           </p>
                         </div>
@@ -117,7 +117,7 @@ const DashboardDesktop = () => {
                                 quickCount.total_dpt - quickCount.total_suara_tidak_sah - quickCount.total_suara_masuk
                               )
                             ).toLocaleString('id', { maximumFractionDigits: 2 })}{' '}
-                            % )
+                            %)
                           </span>
                         </p>
                       </div>

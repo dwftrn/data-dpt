@@ -1,29 +1,29 @@
-// import { useMutation, useQueryClient } from '@tanstack/react-query'
-// import { toast } from 'sonner'
-// import { updateVote } from '../service/vote.service'
-
-// const useUpdateVote = () => {
-//   const queryClient = useQueryClient()
-
-//   return useMutation({
-//     mutationFn: updateVote,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ exact: false, queryKey: ['votes'] })
-//       toast.success('Berhasil Menyunting Suara')
-//     },
-//     onError: () => {
-//       toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
-//     }
-//   })
-// }
-
-// export default useUpdateVote
-
+import { CommonResponse } from '@/api/services'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { UpdateVote, updateVote, Vote, VoteDetail } from '../service/vote.service'
-import { CommonResponse } from '@/api/services'
-import { useSearchParams } from 'react-router-dom'
+
+const updateVotes = (old: CommonResponse<Vote[]>, newVote: UpdateVote) => {
+  return {
+    ...old,
+    data: old.data.map((vote) => {
+      if (vote.id_suara !== newVote.id) return vote
+
+      const updatedVote = { ...vote }
+      const updateFields: (keyof UpdateVote)[] = ['data_paslon', 'sah', 'tidak_sah', 'status', 'alasan_reject']
+
+      updateFields.forEach((field) => {
+        if (field in newVote && newVote[field] !== undefined) {
+          // @ts-expect-error - Dynamic property assignment
+          updatedVote[field] = newVote[field]
+        }
+      })
+
+      return updatedVote
+    })
+  }
+}
 
 const useUpdateVote = () => {
   const queryClient = useQueryClient()
@@ -32,6 +32,7 @@ const useUpdateVote = () => {
   const pemilu = searchParams.get('pemilu') || ''
 
   const votesQueryKey = ['votes', pemilu, subdistrict] as const
+  const unverifiedVotesQueryKey = ['unverified-votes', pemilu] as const
 
   return useMutation({
     mutationFn: updateVote,
@@ -39,11 +40,13 @@ const useUpdateVote = () => {
       // Cancel any outgoing refetches
       await Promise.all([
         queryClient.cancelQueries({ queryKey: votesQueryKey }),
+        queryClient.cancelQueries({ queryKey: unverifiedVotesQueryKey }),
         queryClient.cancelQueries({ queryKey: ['votes-detail', newVote.id] })
       ])
 
       // Snapshot previous values
       const previousVotes = queryClient.getQueryData<CommonResponse<Vote[]>>(votesQueryKey)
+      const previousUnverifiedVotes = queryClient.getQueryData<CommonResponse<Vote[]>>(unverifiedVotesQueryKey)
       const previousVoteDetail = queryClient.getQueryData<VoteDetail>(['votes-detail', newVote.id])
 
       // Optimistically update votes list
@@ -51,24 +54,15 @@ const useUpdateVote = () => {
         queryClient.setQueryData<CommonResponse<Vote[]>>(votesQueryKey, (old) => {
           if (!old?.data) return previousVotes
 
-          return {
-            ...old,
-            data: old.data.map((vote) => {
-              if (vote.id_suara !== newVote.id) return vote
+          return updateVotes(old, newVote)
+        })
+      }
 
-              const updatedVote = { ...vote }
-              const updateFields: (keyof UpdateVote)[] = ['data_paslon', 'sah', 'tidak_sah', 'status', 'alasan_reject']
+      if (previousUnverifiedVotes) {
+        queryClient.setQueryData<CommonResponse<Vote[]>>(unverifiedVotesQueryKey, (old) => {
+          if (!old?.data) return previousVotes
 
-              updateFields.forEach((field) => {
-                if (field in newVote && newVote[field] !== undefined) {
-                  // @ts-expect-error - Dynamic property assignment
-                  updatedVote[field] = newVote[field]
-                }
-              })
-
-              return updatedVote
-            })
-          }
+          return updateVotes(old, newVote)
         })
       }
 
@@ -91,12 +85,16 @@ const useUpdateVote = () => {
         })
       }
 
-      return { previousVotes, previousVoteDetail }
+      return { previousVotes, previousUnverifiedVotes, previousVoteDetail }
     },
     onError: (error, _newVote, context) => {
       // Roll back to the previous state on error
       if (context?.previousVotes) {
         queryClient.setQueryData(['votes'], context.previousVotes)
+      }
+
+      if (context?.previousUnverifiedVotes) {
+        queryClient.setQueryData(['unverified-votes'], context.previousUnverifiedVotes)
       }
 
       // Show error message with more specific details if available
