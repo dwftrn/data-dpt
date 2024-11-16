@@ -65,9 +65,14 @@ const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: RE
                 <span className='truncate block w-full overflow-hidden'>{item.name}</span>
                 <span className='truncate block w-full overflow-hidden'>{item.vice_name}</span>
               </div>
-              <span className='font-bold whitespace-nowrap'>
-                {Number(item.persentase).toLocaleString('id', { maximumFractionDigits: 2 })}%
-              </span>
+              <div className='flex flex-col flex-1 text-end gap-1 min-w-0'>
+                <span className='font-bold whitespace-nowrap'>
+                  {Number(item.persentase).toLocaleString('id', { maximumFractionDigits: 2 })}%
+                </span>
+                <span className='font-bold whitespace-nowrap'>
+                  {Number(item.jumlah_suara).toLocaleString('id', { maximumFractionDigits: 2 })}
+                </span>
+              </div>
             </div>
           ))}
       </div>

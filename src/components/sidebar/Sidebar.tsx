@@ -70,7 +70,7 @@ const Sidebar = () => {
           <img alt='logo' src={Logo} className='object-cover size-6' />
           {!isCollapsed && 'Qitara'}
         </a>
-        {!isCollapsed && <p className='text-xs'>v.1.0.0</p>}
+        {!isCollapsed && <p className='text-xs'>v.1.0.1</p>}
       </div>
       <div className='flex flex-1 flex-col justify-between h-full'>
         <nav className='group grid items-start px-2 text-sm font-medium lg:px-4 py-4'>

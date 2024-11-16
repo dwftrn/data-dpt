@@ -1,5 +1,6 @@
 import Logo from '@/assets/logo-horizontal-white.svg'
 import EmptyPemilu from '@/components/EmptyPemilu'
+import PageFilter from '@/components/PageFilter'
 import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 import useSearchParams from '@/hooks/useSearchParams'
@@ -9,7 +10,10 @@ import VoteStatisticsCardList from '../components/VoteStatisticsCardList'
 import useFetchQuickCount from '../queries/useFetchQuickCount'
 import CandidateCardSkeleton from './CandidateCardSkeleton'
 import MapContainer from './MapContainer'
-import PageFilter from '@/components/PageFilter'
+
+const calcPercentage = (total: number, count: number) => {
+  return (count * 100) / total
+}
 
 const DashboardDesktop = () => {
   const [searchParams] = useSearchParams()
@@ -19,6 +23,8 @@ const DashboardDesktop = () => {
 
   const { pathname } = useLocation()
   const isPublic = pathname === '/quick-count'
+
+  const quickCount = data?.data
 
   return (
     <>
@@ -33,11 +39,39 @@ const DashboardDesktop = () => {
       <section data-public={isPublic} className='flex-col gap-6 data-[public=true]:p-8 hidden md:flex'>
         <PageHeader title='Dashboard Perolehan Suara' />
 
-        {!data && !isLoading ? (
+        {!quickCount && !isLoading ? (
           <EmptyPemilu />
         ) : (
           <>
-            {isLoading ? <CandidateCardSkeleton /> : data && <CandidateCard quickCount={data.data} />}
+            {isLoading ? <CandidateCardSkeleton /> : quickCount && <CandidateCard quickCount={quickCount} />}
+
+            {quickCount && (
+              <div className='flex items-center w-full h-[50px] [&>div:first-child]:rounded-l-xl [&>div:last-child]:rounded-r-xl rounded-xl border-grey-500 border'>
+                {quickCount.calon_hasil.map((item) => (
+                  <div
+                    key={item.id_paslon}
+                    style={{
+                      backgroundColor: item.warna,
+                      width:
+                        calcPercentage(quickCount.total_dpt - quickCount.total_suara_tidak_sah, item.jumlah_suara) +
+                        '%',
+                      height: '100%'
+                    }}
+                  ></div>
+                ))}
+
+                <div
+                  className='bg-grey-500 h-full'
+                  style={{
+                    width:
+                      calcPercentage(
+                        quickCount.total_dpt - quickCount.total_suara_tidak_sah,
+                        quickCount.total_dpt - quickCount.total_suara_tidak_sah - quickCount.total_suara_masuk
+                      ) + '%'
+                  }}
+                ></div>
+              </div>
+            )}
 
             <MapContainer />
 
