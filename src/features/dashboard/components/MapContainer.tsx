@@ -109,7 +109,7 @@ const MapContainer = () => {
               <>
                 <ChartContainer
                   config={chartConfig}
-                  className='mx-auto aspect-square [&_.recharts-pie-label-text]:fill-foreground'
+                  className='mx-auto aspect-square size-[232px] [&_.recharts-pie-label-text]:fill-foreground'
                 >
                   <PieChart>
                     <ChartTooltip content={<ChartTooltipContent indicator='line' label='label' />} />
