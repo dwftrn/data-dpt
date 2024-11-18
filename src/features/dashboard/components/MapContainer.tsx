@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { Info } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { Label, Pie, PieChart } from 'recharts'
+import { Label, LabelList, Pie, PieChart } from 'recharts'
 import { toast } from 'sonner'
 import useQuickCountQueries from '../queries/useQuickCountQueries'
 import { QuickCountCandidate } from '../services/dashboard.service'
@@ -89,7 +89,7 @@ const MapContainer = () => {
         </div>
 
         <Card
-          className='flex flex-col h-fit border-0 rounded-2xl border-b-8 py-6 px-10 shadow-[0_4px_4px_-4px_rgba(12,12,13,0.05),0_16px_16px_-8px_rgba(12,12,13,0.1)]'
+          className='flex flex-col h-fit border-0 rounded-2xl border-b-8 py-4 px-10 shadow-[0_4px_4px_-4px_rgba(12,12,13,0.05),0_16px_16px_-8px_rgba(12,12,13,0.1)]'
           style={{
             borderColor: chartData.sort((a, b) => b.jumlah_suara - a.jumlah_suara).at(0)?.fill
           }}
@@ -98,7 +98,6 @@ const MapContainer = () => {
             <CardTitle className='font-bold capitalize leading-9'>
               {region.current ? 'Kelurahan' + ' ' + region.current.toLowerCase() : 'Kota Cimahi'}
             </CardTitle>
-            {/* <CardDescription className='text-sm font-thin capitalize'>Cimahi Utara • Kota Cimahi</CardDescription> */}
           </CardHeader>
           <CardContent className='flex-1 flex items-center justify-center gap-6 p-0'>
             {chartData.every((item) => item.jumlah_suara === 0) ? (
@@ -109,7 +108,7 @@ const MapContainer = () => {
               <>
                 <ChartContainer
                   config={chartConfig}
-                  className='mx-auto aspect-square size-[232px] [&_.recharts-pie-label-text]:fill-foreground'
+                  className='mx-auto aspect-square size-[300px] [&_.recharts-pie-label-text]:fill-foreground'
                 >
                   <PieChart>
                     <ChartTooltip content={<ChartTooltipContent indicator='line' label='label' />} />
@@ -120,6 +119,15 @@ const MapContainer = () => {
                       innerRadius={60}
                       strokeWidth={5}
                     >
+                      <LabelList
+                        dataKey='persentase'
+                        className='fill-current'
+                        stroke='none'
+                        fontSize={16}
+                        formatter={(value: keyof typeof chartConfig) =>
+                          Number(value).toLocaleString('id', { maximumFractionDigits: 2 }) + '%'
+                        }
+                      />
                       <Label
                         content={({ viewBox }) => {
                           if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
@@ -146,9 +154,9 @@ const MapContainer = () => {
                     .map((item) => (
                       <div key={item.no_urut} className='flex items-center gap-3'>
                         <div className='size-2.5 rounded-full' style={{ backgroundColor: item.fill }}></div>
-                        <div className='text-sm'>
-                          <p className='truncate'>{item.name}</p>
-                          <p className='truncate'>{item.vice_name}</p>
+                        <div className='text-sm max-w-[200px]'>
+                          <p className='truncate w-full block'>{item.name}</p>
+                          <p className='truncate w-full block'>{item.vice_name}</p>
                         </div>
                       </div>
                     ))}
