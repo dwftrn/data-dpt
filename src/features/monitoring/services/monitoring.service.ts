@@ -32,6 +32,7 @@ export const monitoringService = {
         kelurahan: string
         nama_petugas: string
         provinsi: string
+        time_vote: string
       })[]
     >
   > => {
