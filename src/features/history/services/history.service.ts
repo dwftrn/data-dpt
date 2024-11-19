@@ -22,15 +22,15 @@ export const historyService = {
     id_pemilu,
     page,
     per_page,
-    search_name
+    search
   }: {
     id_pemilu: string
     page: number
     per_page: number
-    search_name?: string
+    search?: string
   }): Promise<CommonResponse<PaginatedData<History>>> => {
     return fetcher(
-      ENDPOINTS.HISTORY.FETCH_HISTORY + `?page=${page}&per_page=${per_page}&search_name=${search_name}`,
+      ENDPOINTS.HISTORY.FETCH_HISTORY + `?page=${page}&per_page=${per_page}&search=${search}`,
       { id_pemilu },
       'POST'
     )

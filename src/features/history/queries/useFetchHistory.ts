@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { historyService } from '../services/history.service'
 
-const useFetchHistory = (params: { id_pemilu: string; page: number; per_page: number; search_name?: string }) => {
+const useFetchHistory = (params: { id_pemilu: string; page: number; per_page: number; search?: string }) => {
   return useQuery({
     queryKey: ['history', ...Object.values(params)],
     queryFn: async () => {

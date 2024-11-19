@@ -69,7 +69,7 @@ const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: RE
                 <span className='font-bold whitespace-nowrap'>
                   {Number(item.persentase).toLocaleString('id', { maximumFractionDigits: 2 })}%
                 </span>
-                <span className='font-bold whitespace-nowrap'>
+                <span className='font-light whitespace-nowrap'>
                   {Number(item.jumlah_suara).toLocaleString('id', { maximumFractionDigits: 2 })}
                 </span>
               </div>

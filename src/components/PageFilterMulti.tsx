@@ -137,7 +137,6 @@ const PageFilterMulti = () => {
   useEffect(() => {
     if (initialized.current) return
 
-    if (pathname !== '/input-vote') return
     if (!provinces || provinces?.length === 0) return
     setSearchParams({ province: provinces.at(0)?.id || '0' })
 
@@ -185,7 +184,11 @@ const PageFilterMulti = () => {
         <Label className='text-xs capitalize'>{labels[3]}</Label>
         <div className='flex items-center gap-2'>
           <MultiSelect
-            options={subdistricts?.map((item) => ({ label: item.name, value: item.id })) || []}
+            options={
+              selections.district !== '0'
+                ? subdistricts?.map((item) => ({ label: item.name, value: item.id })) || []
+                : []
+            }
             selected={selections.subdistricts.length > 0 ? selections.subdistricts : ['0']}
             onChange={handleSubdistrictsChange}
             placeholder='Pilih Kelurahan'
