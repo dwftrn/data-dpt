@@ -1,25 +1,32 @@
-import SelectPemilu from '@/components/SelectPemilu'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import Pagination from '@/components/Pagination'
+import SearchBar from '@/components/SearchBar'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Search } from 'lucide-react'
+import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import SaksiFormDialog from '../components/SaksiFormDialog'
 import SaksiImportDialog from '../components/SaksiImportDialog'
+import useFetchSaksi from '../queries/useFetchSaksi'
 
 const SaksiPage = () => {
+  const [searchParams] = useSearchParams()
+  // const pemiluId = searchParams.get('pemilu') || ''
+  const q = searchParams.get('q') || ''
+
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
+
+  const { data } = useFetchSaksi({ page, per_page: perPage, search: q })
+
+  const saksi = data?.data || []
+  const totalPage = data?.total_pages || 1
+
   return (
     <section className='flex flex-col gap-4'>
       <div className='flex items-center gap-9 justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Data Saksi</h1>
-        <div className='relative w-[375px]'>
-          <Search className='absolute top-2.5 left-3 size-5' />
-          <Input placeholder='Cari TPS...' className='bg-white border-grey-500 pl-10' />
-          <Button variant='secondary' size='sm' className='absolute top-1.5 right-1 h-[30px] text-xs font-normal'>
-            Cari
-          </Button>
-        </div>
+        <SearchBar placeholder='Cari TPS...' />
         <div className='flex items-center gap-6 justify-end'>
-          <SelectPemilu />
+          {/* <SelectPemilu /> */}
           <SaksiImportDialog />
           <SaksiFormDialog />
         </div>
@@ -37,31 +44,39 @@ const SaksiPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody className='[&>tr:last-child>td:first-child]:rounded-bl-xl [&>tr:last-child>td:last-child]:rounded-br-xl'>
-          <TableRow className='bg-white hover:bg-white'>
-            <TableCell>
-              <div className='flex flex-col'>
-                <span>Nanang Darkonang</span>
-                <span className='text-xs font-normal'>3267127601273897123</span>
-              </div>
-            </TableCell>
-            <TableCell>Saksi Luar</TableCell>
-            <TableCell>085155399566</TableCell>
-            <TableCell>
-              <div className='flex flex-col'>
-                <span>1681269812381723</span>
-                <span className='text-xs font-normal'>Bank BCA</span>
-              </div>
-            </TableCell>
-            <TableCell>TPS 86</TableCell>
-            <TableCell>
-              <div className='flex flex-col'>
-                <span>Cibabat, Cimahi Utara</span>
-                <span className='text-xs font-normal'>Kota Cimahi, Jawa Barat</span>
-              </div>
-            </TableCell>
-          </TableRow>
+          {saksi.map((item) => (
+            <TableRow className='bg-white hover:bg-white'>
+              <TableCell>
+                <div className='flex flex-col'>
+                  <span>{item.nama}</span>
+                  <span className='text-xs font-normal'>{item.nik}</span>
+                </div>
+              </TableCell>
+              <TableCell>{item.is_saksi_luar ? 'Saksi Luar' : 'Saksi Dalam'}</TableCell>
+              <TableCell>{item.no_telepon}</TableCell>
+              <TableCell>
+                <div className='flex flex-col'>
+                  <span>{item.no_rek}</span>
+                  <span className='text-xs font-normal'>{item.nama_bank}</span>
+                </div>
+              </TableCell>
+              <TableCell>TPS {item.tps}</TableCell>
+              <TableCell>
+                <div className='flex flex-col'>
+                  <span>
+                    {item.kelurahan}, {item.kecamatan}
+                  </span>
+                  <span className='text-xs font-normal'>
+                    {item.kab_kota}, {item.provinsi}
+                  </span>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
+
+      <Pagination page={page} perPage={perPage} totalPage={totalPage} setPerPage={setPerPage} onPageChange={setPage} />
     </section>
   )
 }

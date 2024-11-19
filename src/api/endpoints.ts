@@ -40,5 +40,8 @@ export const ENDPOINTS = {
   },
   HISTORY: {
     FETCH_HISTORY: BASE_URL + '/gethistory'
+  },
+  OPERATOR: {
+    FETCH_OPERATORS: BASE_URL + '/getlistsaksi'
   }
 }
