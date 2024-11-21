@@ -23,14 +23,16 @@ import useInsertSaksi from '../queries/useInsertSaksi'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Tidak boleh kosong!'),
-  jabatan: z.string().min(1, 'Tidak boleh kosong!'),
   nik: z.string().min(1, 'Tidak boleh kosong!'),
   phone: z.string().min(1, 'Tidak boleh kosong!'),
   bankAccount: z.string().min(1, 'Tidak boleh kosong!'),
   bankName: z.string().min(1, 'Tidak boleh kosong!'),
   district: z.string().min(1, 'Tidak boleh kosong!'),
   subdistrict: z.string().min(1, 'Tidak boleh kosong!'),
-  tps: z.string().min(1, 'Tidak boleh kosong!')
+  tps: z.string().min(1, 'Tidak boleh kosong!'),
+  address: z.string().min(1, 'Tidak boleh kosong!'),
+  rw: z.string().min(1, 'Tidak boleh kosong!'),
+  recommendation: z.string().min(1, 'Tidak boleh kosong!')
 })
 
 type FormType = z.infer<typeof formSchema>
@@ -45,14 +47,16 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      jabatan: '',
       nik: '',
       phone: '',
       bankAccount: '',
       bankName: '',
       district: '',
       subdistrict: '',
-      tps: ''
+      tps: '',
+      address: '',
+      recommendation: '',
+      rw: ''
     }
   })
 
@@ -67,7 +71,10 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
         nik: values.nik,
         no_rek: values.bankAccount,
         no_telepon: values.phone,
-        tps: values.tps
+        tps: values.tps,
+        alamat: values.address,
+        rekomendasi: values.recommendation,
+        rw: values.rw
       })
     }
   }
@@ -151,6 +158,60 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
                 />
               </div>
 
+              <div className='grid grid-cols-4 items-start gap-4 w-full'>
+                <FormField
+                  control={form.control}
+                  name='address'
+                  render={({ field }) => (
+                    <FormItem className='col-span-2'>
+                      <FormLabel>Alamat</FormLabel>
+                      <FormControl>
+                        <Input placeholder='Alamat' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='rw'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>RW</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='RW'
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            // Only allow valid inputs
+                            if (value === '' || /^\d*$/.test(value)) {
+                              field.onChange(value)
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='recommendation'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Rekomendasi</FormLabel>
+                      <FormControl>
+                        <Input placeholder='Rekomendasi' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <div className='grid grid-cols-2 items-start gap-4 w-full'>
                 <FormField
                   control={form.control}
@@ -159,7 +220,17 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
                     <FormItem>
                       <FormLabel>No. Rekening</FormLabel>
                       <FormControl>
-                        <Input placeholder='No. Rekening' {...field} />
+                        <Input
+                          placeholder='No. Rekening'
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            // Only allow valid inputs
+                            if (value === '' || /^\d*$/.test(value)) {
+                              field.onChange(value)
+                            }
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

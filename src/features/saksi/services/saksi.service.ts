@@ -37,6 +37,8 @@ export const saksiService = {
     )
   },
   insertSaksi: (params: {
+    alamat: string
+    rw: string
     nama: string
     nik: string
     no_rek: string
@@ -44,7 +46,11 @@ export const saksiService = {
     no_telepon: string
     tps: string
     kelurahan: string
+    rekomendasi: string
   }): Promise<CommonResponse<null>> => {
     return fetcher(ENDPOINTS.OPERATOR.INSERT_OPERATOR, params, 'POST')
+  },
+  getLink: (): Promise<CommonResponse<{ link: string }>> => {
+    return fetcher(ENDPOINTS.OPERATOR.GET_LINK, {}, 'GET')
   }
 }

@@ -43,6 +43,7 @@ export const ENDPOINTS = {
   },
   OPERATOR: {
     FETCH_OPERATORS: BASE_URL + '/getlistsaksi',
-    INSERT_OPERATOR: BASE_URL + '/insertpetugas'
+    INSERT_OPERATOR: BASE_URL + '/insertpetugas',
+    GET_LINK: BASE_URL + '/getlinkformat'
   }
 }
