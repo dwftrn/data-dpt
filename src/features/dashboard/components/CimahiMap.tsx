@@ -19,7 +19,7 @@ const CimahiMap = (props: CustomSVGProps) => {
         </feComponentTransfer>
         <feGaussianBlur stdDeviation='4' />
         <feOffset dx='0' dy='5' result='offsetblur' />
-        <feFlood flood-color='rgb(0, 0, 0, 0.5)' result='color' />
+        <feFlood floodColor='rgb(0, 0, 0, 0.5)' result='color' />
         <feComposite in2='offsetblur' operator='in' />
         <feComposite in2='SourceAlpha' operator='in' />
         <feMerge>

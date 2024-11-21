@@ -11,12 +11,15 @@ import {
 } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import useSearchParams from '@/hooks/useSearchParams'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
+import { RefObject } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+import useInsertSaksi from '../queries/useInsertSaksi'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Tidak boleh kosong!'),
@@ -32,7 +35,12 @@ const formSchema = z.object({
 
 type FormType = z.infer<typeof formSchema>
 
-const SaksiFormDialog = () => {
+const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElement> }) => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const id = searchParams.get('id') || ''
+
+  const { mutate: insert } = useInsertSaksi()
+
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,12 +58,28 @@ const SaksiFormDialog = () => {
 
   const onSubmit = (values: FormType) => {
     console.log({ values })
+
+    if (!id) {
+      insert({
+        nama: values.name,
+        kelurahan: values.subdistrict,
+        nama_bank: values.bankName,
+        nik: values.nik,
+        no_rek: values.bankAccount,
+        no_telepon: values.phone,
+        tps: values.tps
+      })
+    }
   }
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (!open) setSearchParams({ id: '' })
+      }}
+    >
       <DialogTrigger asChild>
-        <Button className='gap-3'>
+        <Button ref={triggerRef} className='gap-3'>
           <PlusCircle className='size-5 fill-white stroke-primary-blue-700' />
           Tambah Data
         </Button>
@@ -68,7 +92,11 @@ const SaksiFormDialog = () => {
 
         <div className='py-4 px-6'>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 [&_input]:border-grey-500'>
+            <form
+              id='saksi-form'
+              onSubmit={form.handleSubmit(onSubmit, (err) => console.log({ err }))}
+              className='space-y-4 [&_input]:border-grey-500'
+            >
               <FormField
                 control={form.control}
                 name='name'
@@ -105,7 +133,17 @@ const SaksiFormDialog = () => {
                     <FormItem>
                       <FormLabel>No. Telepon</FormLabel>
                       <FormControl>
-                        <Input placeholder='Ketikkan No. Telepon' {...field} />
+                        <Input
+                          placeholder='Ketikkan No. Telepon'
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            // Only allow valid inputs
+                            if (value === '' || /^\d*$/.test(value)) {
+                              field.onChange(value)
+                            }
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -222,7 +260,9 @@ const SaksiFormDialog = () => {
 
         <DialogFooter className='py-4 px-6 sm:justify-between'>
           <DialogClose className={cn(buttonVariants({ variant: 'secondary' }), 'bg-grey-500/50')}>Batal</DialogClose>
-          <Button className='bg-success-700 hover:bg-success-700/90'>Tambah</Button>
+          <Button form='saksi-form' className='bg-success-700 hover:bg-success-700/90'>
+            Tambah
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

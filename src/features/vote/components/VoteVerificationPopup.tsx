@@ -143,7 +143,8 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               <div className='flex items-center gap-3'>
                 <img alt='logo' src={PemiluLogo} className='size-8' />
                 <DialogTitle className='text-base font-bold'>
-                  {data?.nama_tps} <span className='text-xs  font-normal'>(DPT {data?.jumlah_dpt_tps})</span>
+                  {data?.nama_tps}
+                  {/* <span className='text-xs  font-normal'>(DPT {data?.jumlah_dpt_tps})</span> */}
                 </DialogTitle>
               </div>
 

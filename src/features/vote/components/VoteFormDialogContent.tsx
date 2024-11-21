@@ -281,7 +281,8 @@ const VoteFormDialogContent = ({ data, pemilu, closeDialog, onLoadinChange }: Pr
             <div className='flex items-center gap-3'>
               <img alt='logo' src={PemiluLogo} className='size-8' />
               <DialogTitle className='text-base font-bold'>
-                {detail?.nama_tps} <span className='text-xs  font-normal'>(DPT {detail?.jumlah_dpt_tps})</span>
+                {detail?.nama_tps}
+                {/* <span className='text-xs  font-normal'>(DPT {detail?.jumlah_dpt_tps})</span> */}
               </DialogTitle>
             </div>
             <DialogDescription className='sr-only' />

@@ -42,6 +42,7 @@ export const ENDPOINTS = {
     FETCH_HISTORY: BASE_URL + '/gethistory'
   },
   OPERATOR: {
-    FETCH_OPERATORS: BASE_URL + '/getlistsaksi'
+    FETCH_OPERATORS: BASE_URL + '/getlistsaksi',
+    INSERT_OPERATOR: BASE_URL + '/insertpetugas'
   }
 }

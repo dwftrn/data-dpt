@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { Info } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Label, LabelList, Pie, PieChart } from 'recharts'
 import { toast } from 'sonner'
@@ -79,10 +78,10 @@ const MapContainer = () => {
   return (
     <>
       <h1 className='font-semibold text-lg'>Peta Perolehan Suara</h1>
-      <div className='rounded-full bg-primary-blue-700 text-white text-sm font-thin flex items-center gap-2 p-1 w-fit pr-6'>
+      {/* <div className='rounded-full bg-primary-blue-700 text-white text-sm font-thin flex items-center gap-2 p-1 w-fit pr-6'>
         <Info />
         <h2>Klik salah satu wilayah untuk melihat persentase perolehan suara</h2>
-      </div>
+      </div> */}
       <div data-loading={isLoading} className='w-full grid grid-cols-2 group'>
         <div className='grid place-content-center'>
           <CimahiMap onClick={handleClickMap} data-active={activeMapId.current} />

@@ -16,7 +16,7 @@ export const saksiService = {
         id_kelurahan: string
         id_provinsi: string
         id_tps: string
-        is_saksi_luar: number
+        // is_saksi_luar: number
         kab_kota: string
         kecamatan: string
         kelurahan: string
@@ -35,5 +35,16 @@ export const saksiService = {
       {},
       'POST'
     )
+  },
+  insertSaksi: (params: {
+    nama: string
+    nik: string
+    no_rek: string
+    nama_bank: string
+    no_telepon: string
+    tps: string
+    kelurahan: string
+  }): Promise<CommonResponse<null>> => {
+    return fetcher(ENDPOINTS.OPERATOR.INSERT_OPERATOR, params, 'POST')
   }
 }
