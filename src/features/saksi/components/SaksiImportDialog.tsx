@@ -132,7 +132,7 @@ const SaksiImportDialog = () => {
                     window.open(data?.link, '_blank')
                   }}
                 >
-                  Unduh format dokumen
+                  Lihat format data saksi
                 </Button>
               </form>
             </Form>
