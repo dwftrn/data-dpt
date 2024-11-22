@@ -2,14 +2,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { saksiService } from '../services/saksi.service'
 
-const useInsertSaksi = () => {
+const useUpdateSaksi = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: saksiService.insertSaksi,
+    mutationFn: saksiService.updateSaksi,
     onSuccess: () => {
       queryClient.invalidateQueries({ exact: false, queryKey: ['saksi'] })
-      toast.success('Berhasil Menambah Saksi')
+      toast.success('Berhasil Menyunting Saksi')
     },
     onError: () => {
       toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
@@ -17,4 +17,4 @@ const useInsertSaksi = () => {
   })
 }
 
-export default useInsertSaksi
+export default useUpdateSaksi

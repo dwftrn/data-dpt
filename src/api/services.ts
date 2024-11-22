@@ -70,11 +70,17 @@ export const fetchDistricts = (id: string): Promise<CommonResponse<IdNameType[]>
   return fetcher(ENDPOINTS.FETCH_DISTRICTS, { id_kota_kabupaten: id }, 'POST')
 }
 
+export const fetchAllDistricts = (): Promise<
+  CommonResponse<{ _id: string; id_kota_kabupaten: string; name: string }[]>
+> => {
+  return fetcher(ENDPOINTS.FETCH_ALL_DISTRICTS, {}, 'GET')
+}
+
 export const fetchSubdistricts = (id: string): Promise<CommonResponse<IdNameType[]>> => {
   return fetcher(ENDPOINTS.FETCH_SUBDISTRICTS, { id_kecamatan: id }, 'POST')
 }
 
-export const fetchTps = (id: string): Promise<CommonResponse<IdNameType[]>> => {
+export const fetchTps = (id: string): Promise<CommonResponse<TPS[]>> => {
   return fetcher(ENDPOINTS.FETCH_TPS, { id_kelurahan: id }, 'POST')
 }
 

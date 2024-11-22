@@ -4,6 +4,7 @@ export const ENDPOINTS = {
   FETCH_PROVINCES: BASE_URL + '/getprovinsi',
   FETCH_CITIES: BASE_URL + '/getkotabyidprov',
   FETCH_DISTRICTS: BASE_URL + '/getkecamatanbyidkota',
+  FETCH_ALL_DISTRICTS: BASE_URL + '/getallkecamatan',
   FETCH_SUBDISTRICTS: BASE_URL + '/getkelurahanbyidkecamatan',
   FETCH_TPS: BASE_URL + '/gettpsbyidkelurahan',
   FETCH_DPT: BASE_URL + '/getalldpt2',
@@ -44,6 +45,8 @@ export const ENDPOINTS = {
   OPERATOR: {
     FETCH_OPERATORS: BASE_URL + '/getlistsaksi',
     INSERT_OPERATOR: BASE_URL + '/insertpetugas',
+    UPDATE_OPERATOR: BASE_URL + '/updatepetugas',
+    DELETE_OPERATOR: BASE_URL + '/deletepetugas',
     GET_LINK: BASE_URL + '/getlinkformat'
   }
 }

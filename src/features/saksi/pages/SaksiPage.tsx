@@ -1,4 +1,7 @@
+import CheckIcon from '@/assets/check-icon.svg'
+import CloseIcon from '@/assets/close-icon.svg'
 import Pagination from '@/components/Pagination'
+import SearchBar from '@/components/SearchBar'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,8 +13,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
-
-import SearchBar from '@/components/SearchBar'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -21,6 +22,7 @@ import { MoreHorizontal } from 'lucide-react'
 import { useRef, useState } from 'react'
 import SaksiFormDialog from '../components/SaksiFormDialog'
 import SaksiImportDialog from '../components/SaksiImportDialog'
+import useDeleteSaksi from '../queries/useDeleteSaksi'
 import useFetchSaksi from '../queries/useFetchSaksi'
 
 const SaksiPage = () => {
@@ -33,7 +35,10 @@ const SaksiPage = () => {
   const formRef = useRef<HTMLButtonElement>(null)
   const deleteAlertRef = useRef<HTMLButtonElement>(null)
 
+  const toDeleteRef = useRef('')
+
   const { data } = useFetchSaksi({ page, per_page: perPage, search: q })
+  const { mutateAsync: deleteSaksi } = useDeleteSaksi()
 
   const saksi = data?.data || []
   const totalPage = data?.total_pages || 1
@@ -56,7 +61,7 @@ const SaksiPage = () => {
             <TableHead>No. Telepon</TableHead>
             <TableHead>No. Rekening</TableHead>
             <TableHead>TPS</TableHead>
-            <TableHead>Lokasi TPS</TableHead>
+            <TableHead>Absen</TableHead>
             <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>
@@ -76,16 +81,38 @@ const SaksiPage = () => {
                   <span className='text-xs font-normal'>{item.nama_bank}</span>
                 </div>
               </TableCell>
-              <TableCell>TPS {item.tps}</TableCell>
               <TableCell>
                 <div className='flex flex-col'>
+                  TPS {item.tps}
                   <span>
                     {item.kelurahan}, {item.kecamatan}
                   </span>
-                  <span className='text-xs font-normal'>
-                    {item.kab_kota}, {item.provinsi}
-                  </span>
                 </div>
+              </TableCell>
+              <TableCell>
+                {item.is_absen ? (
+                  <div className='flex items-center gap-2'>
+                    <img alt='icon' src={CheckIcon} draggable={false} className='size-6' />
+                    <div>
+                      <h1 className='font-semibold'>Sudah Absen</h1>
+
+                      <p className='text-xs font-normal'>
+                        {Intl.DateTimeFormat('id', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }).format(new Date(item.waktu_absen))}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className='flex items-center gap-2'>
+                    <img alt='icon' src={CloseIcon} draggable={false} className='size-6' />
+                    <h1 className='font-normal text-grey-700'>Belum Absen</h1>
+                  </div>
+                )}
               </TableCell>
               <TableCell>
                 <DropdownMenu>
@@ -106,7 +133,10 @@ const SaksiPage = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className='cursor-pointer text-destructive'
-                      onClick={() => deleteAlertRef.current?.click()}
+                      onClick={() => {
+                        toDeleteRef.current = item._id
+                        deleteAlertRef.current?.click()
+                      }}
                     >
                       Hapus
                     </DropdownMenuItem>
@@ -131,7 +161,15 @@ const SaksiPage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction className={cn(buttonVariants({ variant: 'destructive' }))}>Hapus</AlertDialogAction>
+            <AlertDialogAction
+              className={cn(buttonVariants({ variant: 'destructive' }))}
+              onClick={async () => {
+                await deleteSaksi({ id: toDeleteRef.current })
+                toDeleteRef.current = ''
+              }}
+            >
+              Hapus
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
