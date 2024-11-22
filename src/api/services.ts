@@ -111,3 +111,19 @@ export const fetchTotaDPT = (): Promise<CommonResponse<{ jumlah_dpt: number }>> 
 export const fetchTotaTPS = (): Promise<CommonResponse<{ jumlah_tps: number }>> => {
   return fetcher(ENDPOINTS.PEMILU.FETCH_TOTAL_TPS, {}, 'GET')
 }
+
+export const checkIsCanAbsen = (): Promise<CommonResponse<{ is_can_absen: 0 | 1 }>> => {
+  return fetcher(ENDPOINTS.KOCAK.IS_CAN_ABSEN, {}, 'GET')
+}
+
+export const setIsCanAbsen = (is_can_absen: 0 | 1): Promise<CommonResponse<null>> => {
+  return fetcher(ENDPOINTS.KOCAK.SET_IS_CAN_ABSEN, { is_can_absen }, 'POST')
+}
+
+export const checkIsCanInput = (): Promise<CommonResponse<{ is_can_input: 0 | 1 }>> => {
+  return fetcher(ENDPOINTS.KOCAK.IS_CAN_INPUT, {}, 'GET')
+}
+
+export const setIsCanInput = (is_can_input: 0 | 1): Promise<CommonResponse<null>> => {
+  return fetcher(ENDPOINTS.KOCAK.SET_IS_CAN_INPUT, { is_can_input }, 'POST')
+}

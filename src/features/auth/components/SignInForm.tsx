@@ -31,15 +31,17 @@ const SignInForm = () => {
   })
 
   const onSubmit = async (values: FormType) => {
-    console.log({ values })
     try {
       const res = await signIn({
         ...values,
         password: md5(values.password).toString()
       })
 
-      const { access_token } = res.data
+      const { access_token, nama, role } = res.data
+
       localStorage.setItem('access_token', access_token)
+      localStorage.setItem('user_name', nama)
+      localStorage.setItem('user_role', role + '')
 
       navigate('/')
     } catch (error) {

@@ -48,5 +48,11 @@ export const ENDPOINTS = {
     UPDATE_OPERATOR: BASE_URL + '/updatepetugas',
     DELETE_OPERATOR: BASE_URL + '/deletepetugas',
     GET_LINK: BASE_URL + '/getlinkformat'
+  },
+  KOCAK: {
+    IS_CAN_ABSEN: BASE_URL + '/cekiscanabsen',
+    SET_IS_CAN_ABSEN: BASE_URL + '/iscanabsen',
+    IS_CAN_INPUT: BASE_URL + '/cekiscaninput',
+    SET_IS_CAN_INPUT: BASE_URL + '/iscaninput'
   }
 }
