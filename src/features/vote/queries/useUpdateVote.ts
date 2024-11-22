@@ -97,6 +97,11 @@ const useUpdateVote = () => {
         queryClient.setQueryData(['unverified-votes'], context.previousUnverifiedVotes)
       }
 
+      if (error.message.includes('Data Sudah')) {
+        toast.error(error.message)
+        return
+      }
+
       // Show error message with more specific details if available
       const errorMessage = error instanceof Error ? error.message : 'Coba lagi dalam beberapa saat'
       toast.error('Terjadi Kesalahan', { description: errorMessage })
@@ -108,6 +113,9 @@ const useUpdateVote = () => {
       queryClient.invalidateQueries({
         queryKey: ['votes']
       })
+    },
+    onSettled: (_, __, newVote) => {
+      queryClient.invalidateQueries({ queryKey: ['votes-detail', newVote.id] })
     }
   })
 }
