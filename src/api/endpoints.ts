@@ -47,7 +47,8 @@ export const ENDPOINTS = {
     INSERT_OPERATOR: BASE_URL + '/insertpetugas',
     UPDATE_OPERATOR: BASE_URL + '/updatepetugas',
     DELETE_OPERATOR: BASE_URL + '/deletepetugas',
-    GET_LINK: BASE_URL + '/getlinkformat'
+    GET_LINK: BASE_URL + '/getlinkformat',
+    IMPORT_OPERATORS: BASE_URL + '/upload-csv'
   },
   KOCAK: {
     IS_CAN_ABSEN: BASE_URL + '/cekiscanabsen',

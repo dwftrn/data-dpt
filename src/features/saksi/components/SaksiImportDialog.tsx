@@ -13,11 +13,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FileText, Import, X } from 'lucide-react'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import useGetLink from '../queries/useGetLink'
 import LoadingOverlay from '@/components/LoadingOverlay'
+import useImportSaksi from '../queries/useImportSaksi'
 
 const formSchema = z.object({
   file: z.instanceof(File).optional()
@@ -27,8 +28,12 @@ type FormType = z.infer<typeof formSchema>
 
 const SaksiImportDialog = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isOpen, setIsOpen] = useState(false)
 
-  const { data, isLoading } = useGetLink()
+  const { data, isLoading: isLoadingLink } = useGetLink()
+  const { mutateAsync: importFile, isPending: isLoadingImport } = useImportSaksi()
+
+  const isLoading = isLoadingLink || isLoadingImport
 
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
@@ -37,8 +42,16 @@ const SaksiImportDialog = () => {
     }
   })
 
-  const onSubmit = (values: FormType) => {
+  const onSubmit = async (values: FormType) => {
     console.log({ values })
+    if (!values.file) return
+
+    try {
+      await importFile(values.file)
+      setIsOpen(false)
+    } catch (error) {
+      console.log({ error })
+    }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,10 +66,18 @@ const SaksiImportDialog = () => {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
+  useEffect(() => {
+    if (!isOpen) {
+      form.reset()
+      clearFile()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
+
   return (
     <>
       {isLoading && <LoadingOverlay />}
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant='outline' className='bg-white gap-3'>
             <Import className='size-5' />
@@ -71,7 +92,7 @@ const SaksiImportDialog = () => {
 
           <div className='py-4 px-6'>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+              <form id='import-form' onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
                 <FormField
                   control={form.control}
                   name='file'
@@ -140,7 +161,9 @@ const SaksiImportDialog = () => {
 
           <DialogFooter className='py-4 px-6 sm:justify-between'>
             <DialogClose className={cn(buttonVariants({ variant: 'secondary' }), 'bg-grey-500/50')}>Batal</DialogClose>
-            <Button className='bg-success-700 hover:bg-success-700/90'>Impor</Button>
+            <Button form='import-form' className='bg-success-700 hover:bg-success-700/90'>
+              Impor
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

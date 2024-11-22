@@ -53,7 +53,7 @@ const Sidebar = () => {
         </nav>
         <SettingsDialog
           trigger={
-            <div className='p-4'>
+            <div className='p-4 lg:p-6'>
               <div className='flex items-center gap-4 text-white'>
                 {!isCollapsed && (
                   <>
@@ -61,7 +61,7 @@ const Sidebar = () => {
                     <h1 className='hidden text-base font-semibold lg:block'>Administrator</h1>
                   </>
                 )}
-                <Settings size={24} role='button' className={cn('ml-auto max-lg:mx-auto', { 'm-auto': isCollapsed })} />
+                <Settings size={24} role='button' className={cn('ml-auto', { 'm-auto': isCollapsed })} />
               </div>
             </div>
           }

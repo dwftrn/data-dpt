@@ -72,5 +72,8 @@ export const saksiService = {
   },
   deleteSaksi: (params: { id: string }): Promise<CommonResponse<null>> => {
     return fetcher(ENDPOINTS.OPERATOR.DELETE_OPERATOR, params, 'POST')
+  },
+  importSaksi: (file: File): Promise<CommonResponse<null>> => {
+    return fetcher(ENDPOINTS.OPERATOR.IMPORT_OPERATORS, { file }, 'POST', { 'Content-Type': 'multipart/form-data' })
   }
 }
