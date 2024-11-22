@@ -1,15 +1,30 @@
 import Logo from '@/assets/logo.svg'
 import UserBoxIcon from '@/assets/user-box-icon.svg'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
 import { navs } from '@/constants/navs'
 import { cn } from '@/lib/utils'
-import { Settings } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import { useState } from 'react'
 import { ResizablePanel } from '../ui/resizable'
 import SettingsDialog from './SettingDialog'
 import SidebarItem from './SidebarItem'
+import { buttonVariants } from '../ui/button'
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  const role = Number(localStorage.getItem('user_role'))
+  const userName = localStorage.getItem('user_name')
 
   return (
     <ResizablePanel
@@ -47,25 +62,63 @@ const Sidebar = () => {
       </div>
       <div className='flex flex-1 flex-col justify-between h-full'>
         <nav className='group grid items-start px-2 text-sm font-medium lg:px-4 py-4'>
-          {navs.map((nav) => (
-            <SidebarItem key={nav.label} nav={nav} isCollapsed={isCollapsed} />
-          ))}
+          {navs
+            .filter((nav) => nav.role.includes(role))
+            .map((nav) => (
+              <SidebarItem key={nav.label} nav={nav} isCollapsed={isCollapsed} />
+            ))}
         </nav>
-        <SettingsDialog
-          trigger={
-            <div className='p-4 lg:p-6'>
-              <div className='flex items-center gap-4 text-white'>
-                {!isCollapsed && (
-                  <>
-                    <img alt='icon' src={UserBoxIcon} draggable={false} />
-                    <h1 className='hidden text-base font-semibold lg:block'>Administrator</h1>
-                  </>
-                )}
-                <Settings size={24} role='button' className={cn('ml-auto', { 'm-auto': isCollapsed })} />
+        {role === 1 ? (
+          <SettingsDialog
+            trigger={
+              <div className='p-4 lg:p-6'>
+                <div className='flex items-center gap-4 text-white'>
+                  {!isCollapsed && (
+                    <>
+                      <img alt='icon' src={UserBoxIcon} draggable={false} />
+                      <h1 className='hidden text-base font-semibold lg:block'>{userName}</h1>
+                    </>
+                  )}
+                  <Settings size={24} role='button' className={cn('ml-auto', { 'm-auto': isCollapsed })} />
+                </div>
               </div>
-            </div>
-          }
-        />
+            }
+          />
+        ) : (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <div className='p-4 lg:p-6'>
+                <div className='flex items-center gap-4 text-white'>
+                  {!isCollapsed && (
+                    <>
+                      <img alt='icon' src={UserBoxIcon} draggable={false} />
+                      <h1 className='hidden text-base font-semibold lg:block'>{userName}</h1>
+                    </>
+                  )}
+                  <LogOut size={24} role='button' className={cn('ml-auto', { 'm-auto': isCollapsed })} />
+                </div>
+              </div>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Keluar Aplikasi</AlertDialogTitle>
+                <AlertDialogDescription>Anda yakin ingin keluar?</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction
+                  className={buttonVariants({ variant: 'destructive' })}
+                  onClick={() => {
+                    localStorage.clear()
+                    location.reload()
+                  }}
+                >
+                  Keluar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </ResizablePanel>
   )

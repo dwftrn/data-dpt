@@ -47,7 +47,7 @@ const SaksiPage = () => {
     <section className='flex flex-col gap-4'>
       <div className='flex items-center gap-9 justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Data Saksi</h1>
-        <SearchBar placeholder='Cari TPS...' />
+        <SearchBar placeholder='Cari Saksi...' />
         <div className='flex items-center gap-6 justify-end'>
           <SaksiImportDialog />
           <SaksiFormDialog triggerRef={formRef} />
