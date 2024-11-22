@@ -40,7 +40,6 @@ const MonitoringTable = () => {
             <TableHead>TPS</TableHead>
             <TableHead>Lokasi TPS</TableHead>
             <TableHead>Nama Petugas</TableHead>
-            <TableHead>Jabatan</TableHead>
             <TableHead>C1</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
@@ -74,7 +73,6 @@ const MonitoringTable = () => {
                   </div>
                 </TableCell>
                 <TableCell>{item.nama_petugas}</TableCell>
-                <TableCell>{item.jabatan}</TableCell>
                 <TableCell>
                   <C1Preview data={item} />
                 </TableCell>

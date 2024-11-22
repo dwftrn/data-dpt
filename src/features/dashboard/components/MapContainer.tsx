@@ -136,7 +136,7 @@ const MapContainer = () => {
                                   {total.current.toLocaleString('id')}
                                 </tspan>
                                 <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 24} className='fill-muted-foreground'>
-                                  Suara
+                                  Suara Sah
                                 </tspan>
                               </text>
                             )
