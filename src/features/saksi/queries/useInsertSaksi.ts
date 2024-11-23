@@ -11,7 +11,11 @@ const useInsertSaksi = () => {
       queryClient.invalidateQueries({ exact: false, queryKey: ['saksi'] })
       toast.success('Berhasil Menambah Saksi')
     },
-    onError: () => {
+    onError: (error) => {
+      if (error.message === 'Nomor Sudah Digunakan') {
+        toast.error(error.message)
+        return
+      }
       toast.error('Terjadi Kesalahan', { description: 'Coba lagi dalam beberapa saat' })
     }
   })
