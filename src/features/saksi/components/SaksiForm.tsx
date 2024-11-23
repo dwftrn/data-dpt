@@ -7,7 +7,7 @@ import useFetchSubdistricts from '@/features/dpt/queries/useFetchSubdistricts'
 import useFetchTps from '@/features/dpt/queries/useFetchTps'
 import useSearchParams from '@/hooks/useSearchParams'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -63,13 +63,36 @@ const getChangedFields = (current: FormType, original: Saksi | null) => {
   return Object.keys(changes).length > 0 ? changes : null
 }
 
+const getSaksiFromQueryData = (queryClient: QueryClient, id: string) => {
+  // Get all queries that start with 'saksi'
+  const results = queryClient.getQueriesData({ queryKey: ['saksi'] })
+
+  // Flatten all saksi data from different queries
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const allSaksiData = results.reduce((acc: Saksi[], [_, queryData]) => {
+    // Check if queryData is an array (multiple results) or single result
+    if (Array.isArray(queryData)) {
+      // Handle case where queryData is an array of results
+      const paginatedData = queryData[1] as PaginatedData<Saksi>
+      return [...acc, ...paginatedData.data]
+    } else {
+      // Handle case where queryData is a single paginated result
+      const paginatedData = queryData as PaginatedData<Saksi>
+      return [...acc, ...paginatedData.data]
+    }
+  }, [])
+
+  // Find the specific saksi by id
+  const initialData = allSaksiData.find((item) => item._id === id) || null
+
+  return initialData
+}
+
 const SaksiForm = ({ onClose }: { onClose(): void }) => {
   const [searchParams] = useSearchParams()
   const id = searchParams.get('id') || ''
   const queryClient = useQueryClient()
-  const results = queryClient.getQueriesData({ exact: false, queryKey: ['saksi'] })
-  const saksiList = (results[0][1] as PaginatedData<Saksi>).data
-  const initialData = saksiList.find((item) => item._id === id) || null
+  const initialData = getSaksiFromQueryData(queryClient, id)
 
   const { data: districts, isLoading: isLoadingDistricts } = useFetchAllDistricts()
   const { mutate: fetchSubdistricts, data: subdistricts, isPending: isLoadingSubdistricts } = useFetchSubdistricts()

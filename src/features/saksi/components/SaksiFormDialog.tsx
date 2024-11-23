@@ -16,8 +16,8 @@ import { RefObject, useState } from 'react'
 import SaksiForm from './SaksiForm'
 
 const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElement> }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const id = searchParams.get('id') || ''
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -36,8 +36,8 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
       </DialogTrigger>
       <DialogContent className='p-0 gap-0'>
         <DialogHeader className='py-4 px-6 border-b border-grey-500'>
-          <DialogTitle>Tambah Data Saksi</DialogTitle>
-          <DialogDescription className='sr-only'>Tambah Data Saksi</DialogDescription>
+          <DialogTitle>{id ? 'Sunting Data Saksi' : 'Tambah Data Saksi'}</DialogTitle>
+          <DialogDescription className='sr-only'>{id ? 'Sunting Data Saksi' : 'Tambah Data Saksi'}</DialogDescription>
         </DialogHeader>
 
         <div className='py-4 px-6'>
@@ -47,7 +47,7 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
         <DialogFooter className='py-4 px-6 sm:justify-between'>
           <DialogClose className={cn(buttonVariants({ variant: 'secondary' }), 'bg-grey-500/50')}>Batal</DialogClose>
           <Button form='saksi-form' className='bg-success-700 hover:bg-success-700/90'>
-            Tambah
+            {id ? 'Sunting' : 'Tambah'}
           </Button>
         </DialogFooter>
       </DialogContent>
