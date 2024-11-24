@@ -66,85 +66,93 @@ const SaksiPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody className='[&>tr:last-child>td:first-child]:rounded-bl-xl [&>tr:last-child>td:last-child]:rounded-br-xl'>
-          {saksi.map((item) => (
-            <TableRow key={item._id} className='bg-white hover:bg-white'>
-              <TableCell>
-                <div className='flex flex-col'>
-                  <span>{item.nama}</span>
-                  <span className='text-xs font-normal'>{item.nik}</span>
-                </div>
-              </TableCell>
-              <TableCell>{item.no_telepon}</TableCell>
-              <TableCell>
-                <div className='flex flex-col'>
-                  <span>{item.no_rek}</span>
-                  <span className='text-xs font-normal'>{item.nama_bank}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className='flex flex-col'>
-                  TPS {item.tps}
-                  <span>
-                    {item.kelurahan}, {item.kecamatan}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell>
-                {item.is_absen ? (
-                  <div className='flex items-center gap-2'>
-                    <img alt='icon' src={CheckIcon} draggable={false} className='size-6' />
-                    <div>
-                      <h1 className='font-semibold'>Sudah Absen</h1>
+          {saksi.length > 0 ? (
+            saksi.map((item) => (
+              <TableRow key={item._id} className='bg-white hover:bg-white'>
+                <TableCell>
+                  <div className='flex flex-col'>
+                    <span>{item.nama}</span>
+                    <span className='text-xs font-normal'>{item.nik}</span>
+                  </div>
+                </TableCell>
+                <TableCell>{item.no_telepon}</TableCell>
+                <TableCell>
+                  <div className='flex flex-col'>
+                    <span>{item.no_rek}</span>
+                    <span className='text-xs font-normal'>{item.nama_bank}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className='flex flex-col'>
+                    TPS {item.tps}
+                    <span>
+                      {item.kelurahan}, {item.kecamatan}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {item.is_absen ? (
+                    <div className='flex items-center gap-2'>
+                      <img alt='icon' src={CheckIcon} draggable={false} className='size-6' />
+                      <div>
+                        <h1 className='font-semibold'>Sudah Absen</h1>
 
-                      <p className='text-xs font-normal'>
-                        {Intl.DateTimeFormat('id', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        }).format(new Date(item.waktu_absen))}
-                      </p>
+                        <p className='text-xs font-normal'>
+                          {Intl.DateTimeFormat('id', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }).format(new Date(item.waktu_absen))}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className='flex items-center gap-2'>
-                    <img alt='icon' src={CloseIcon} draggable={false} className='size-6' />
-                    <h1 className='font-normal text-grey-700'>Belum Absen</h1>
-                  </div>
-                )}
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='outline' size='icon' className='rounded-full'>
-                      <MoreHorizontal />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      className='cursor-pointer'
-                      onClick={() => {
-                        setSearchParams({ id: item._id })
-                        formRef.current?.click()
-                      }}
-                    >
-                      Sunting
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className='cursor-pointer text-destructive'
-                      onClick={() => {
-                        toDeleteRef.current = item._id
-                        deleteAlertRef.current?.click()
-                      }}
-                    >
-                      Hapus
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  ) : (
+                    <div className='flex items-center gap-2'>
+                      <img alt='icon' src={CloseIcon} draggable={false} className='size-6' />
+                      <h1 className='font-normal text-grey-700'>Belum Absen</h1>
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant='outline' size='icon' className='rounded-full'>
+                        <MoreHorizontal />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        className='cursor-pointer'
+                        onClick={() => {
+                          setSearchParams({ id: item._id })
+                          formRef.current?.click()
+                        }}
+                      >
+                        Sunting
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className='cursor-pointer text-destructive'
+                        onClick={() => {
+                          toDeleteRef.current = item._id
+                          deleteAlertRef.current?.click()
+                        }}
+                      >
+                        Hapus
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow className='bg-white'>
+              <TableCell colSpan={6} className='text-center'>
+                {q ? 'Data tidak ditemukan' : 'Belum ada data'}
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
 
