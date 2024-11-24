@@ -125,7 +125,7 @@ const MapContainer = () => {
                       }))}
                       dataKey='jumlah_suara'
                       nameKey='label'
-                      innerRadius={60}
+                      innerRadius={65}
                       strokeWidth={5}
                     >
                       <LabelList
