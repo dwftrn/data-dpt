@@ -177,14 +177,14 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               </DialogDescription>
             </DialogHeader>
 
-            <div className='py-4 space-y-4 border-b border-b-gray-300 px-8 flex-shrink-0'>
+            <div className='py-4 space-y-4 border-b border-b-gray-300 px-8 flex-shrink-0 capitalize'>
               <div>
                 <h1 className='font-bold text-sm'>
-                  {data?.kelurahan} • {data?.kecamatan}
+                  {data?.kelurahan.toLowerCase()} • {data?.kecamatan.toLowerCase()}
                 </h1>
                 {data?.kota_kabupaten ? (
                   <p className='font-light text-sm'>
-                    Kota {data?.kota_kabupaten} • Provinsi {data?.provinsi}
+                    Kota {data?.kota_kabupaten.toLowerCase()} • Provinsi {data?.provinsi.toLowerCase()}
                   </p>
                 ) : (
                   <p className='font-light text-sm'>Provinsi {data?.provinsi}</p>

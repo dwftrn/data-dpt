@@ -1,3 +1,4 @@
+import { IdNameType } from '@/api/services'
 import PemiluLogo from '@/assets/pemilu-logo.svg'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,9 +12,11 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PemiluWithCandidate } from '@/features/pemilu/service/pemilu.service'
+import useSearchParams from '@/hooks/useSearchParams'
 import { compressImage } from '@/lib/compress-image'
 import { areArraysEqual } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { Plus, X } from 'lucide-react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -49,6 +52,26 @@ type FormType = z.infer<typeof formSchema>
 
 const VoteFormDialogContent = ({ data, pemilu, closeDialog, onLoadinChange }: Props) => {
   const isInitialized = useRef(false)
+
+  const [searchParams] = useSearchParams()
+  const provinceId = searchParams.get('province') || '0'
+  const cityId = searchParams.get('city') || '0'
+  const districtId = searchParams.get('district') || '0'
+  const subdistrictId = searchParams.get('subdistrict') || '0'
+
+  const queryClient = useQueryClient()
+
+  const provinces = queryClient.getQueryData<IdNameType[]>(['province'])
+  const province = provinces?.find((province) => province.id === provinceId)
+
+  const cities = queryClient.getQueryData<IdNameType[]>(['cities', provinceId])
+  const city = cities?.find((city) => city.id === cityId)
+
+  const districts = queryClient.getQueryData<IdNameType[]>(['districts', cityId])
+  const district = districts?.find((district) => district.id === districtId)
+
+  const subdistricts = queryClient.getQueryData<IdNameType[]>(['subdistricts', districtId])
+  const subdistrict = subdistricts?.find((subdistrict) => subdistrict.id === subdistrictId)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [fileBlobUrl, setFileBlobUrl] = useState('')
@@ -234,9 +257,9 @@ const VoteFormDialogContent = ({ data, pemilu, closeDialog, onLoadinChange }: Pr
   }, [isLoading, onLoadinChange])
 
   return (
-    <DialogContent withClose={false} className='max-w-3xl p-0 gap-0'>
+    <DialogContent withClose={false} className='max-w-3xl p-0 gap-0 max-h-[90vh] overflow-hidden'>
       <div className='grid grid-cols-2 h-full'>
-        <div className='p-4 cursor-pointer'>
+        <div className='p-4 cursor-pointer overflow-auto h-[calc(90vh-8rem)]'>
           {fileBlobUrl ? (
             <div className='relative size-full rounded-lg group'>
               <img
@@ -276,25 +299,27 @@ const VoteFormDialogContent = ({ data, pemilu, closeDialog, onLoadinChange }: Pr
             disabled={isLoading}
           />
         </div>
-        <div className='border-l flex flex-col'>
+        <div className='border-l flex flex-col h-[calc(90vh-8rem)]'>
           <DialogHeader className='p-4 flex items-center justify-between flex-row border-b border-b-gray-300 flex-shrink-0'>
             <div className='flex items-center gap-3'>
               <img alt='logo' src={PemiluLogo} className='size-8' />
               <DialogTitle className='text-base font-bold'>
-                {detail?.nama_tps}
+                {detail?.nama_tps || `TPS ${data.NO}`}
                 {/* <span className='text-xs  font-normal'>(DPT {detail?.jumlah_dpt_tps})</span> */}
               </DialogTitle>
             </div>
             <DialogDescription className='sr-only' />
           </DialogHeader>
 
-          <div className='p-4 border-b border-b-gray-300 flex-shrink-0'>
+          <div className='p-4 border-b border-b-gray-300 flex-shrink-0 capitalize'>
             <div className='space-y-1'>
               <h1 className='font-bold text-sm'>
-                {detail?.kelurahan} • {detail?.kecamatan}
+                {(detail?.kelurahan || subdistrict?.name)?.toLowerCase()} •{' '}
+                {(detail?.kecamatan || district?.name)?.toLowerCase()}
               </h1>
               <p className='font-light text-sm'>
-                Kota {detail?.kota_kabupaten} • Provinsi {detail?.provinsi}
+                Kota {(detail?.kota_kabupaten || city?.name)?.toLowerCase()} • Provinsi{' '}
+                {(detail?.provinsi || province?.name)?.toLowerCase()}
               </p>
             </div>
           </div>

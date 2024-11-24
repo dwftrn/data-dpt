@@ -1,7 +1,9 @@
 import { fetchDistricts } from '@/api/services'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const useFetchDistricts = () => {
+  const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: async (cityId: string) => {
       const response = await fetchDistricts(cityId)
@@ -9,6 +11,9 @@ const useFetchDistricts = () => {
       if (response.error) throw response
 
       return response.data
+    },
+    onSuccess: (data, cityId) => {
+      queryClient.setQueryData(['districts', cityId], data)
     }
   })
 }
