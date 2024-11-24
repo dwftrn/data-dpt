@@ -1,7 +1,7 @@
-import { useQueries } from '@tanstack/react-query'
-import { useLocation, useSearchParams } from 'react-router-dom'
-import { fetchCards, QuickCountCard, REGION_CODE } from '../services/dashboard.service'
 import { CommonResponse } from '@/api/services'
+import { useQueries } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
+import { fetchCards, QuickCountCard, REGION_CODE } from '../services/dashboard.service'
 
 export const DISTRICT_IDS = {
   DISTRICT1: '670ccae6fec682bd6c0bc8d3',
@@ -9,33 +9,45 @@ export const DISTRICT_IDS = {
   DISTRICT3: '670ccb03fec682bd6c0bc8d6'
 } as const
 
+type DistrictId = (typeof DISTRICT_IDS)[keyof typeof DISTRICT_IDS]
+
+interface District {
+  id: DistrictId
+  name: string
+}
+
+interface FetchCardsParams {
+  id_pemilu: string
+  id_wilayah: DistrictId
+  kode_wilayah: REGION_CODE
+}
+
 const useQuickCountQueries = () => {
   const [searchParams] = useSearchParams()
-  const { pathname } = useLocation()
   const idPemilu = searchParams.get('pemilu') || ''
 
-  const districts = [
+  const districts: District[] = [
     { id: DISTRICT_IDS.DISTRICT1, name: 'District 1' },
     { id: DISTRICT_IDS.DISTRICT2, name: 'District 2' },
     { id: DISTRICT_IDS.DISTRICT3, name: 'District 3' }
   ]
 
   const enabled = Boolean(idPemilu)
-  const shouldRefetch = pathname === '/' && enabled
 
   const results = useQueries({
-    // @ts-expect-error idk why tho
+    // @ts-expect-error pls help
     queries: districts.map((district) => ({
-      queryKey: ['quickCount-cards', idPemilu, district.id, REGION_CODE.DISTRICT] as const,
-      queryFn: () =>
-        fetchCards({
+      queryKey: ['quickCount-cards', idPemilu, district.id, REGION_CODE.DISTRICT],
+      queryFn: () => {
+        return fetchCards({
           id_pemilu: idPemilu,
           id_wilayah: district.id,
           kode_wilayah: REGION_CODE.DISTRICT
-        }),
+        } satisfies FetchCardsParams)
+      },
       enabled,
-      refetchInterval: shouldRefetch ? 15000 : false,
-      refetchIntervalInBackground: shouldRefetch,
+      refetchInterval: enabled ? (15000 as const) : false,
+      refetchIntervalInBackground: enabled,
       retry: enabled ? 3 : false,
       staleTime: 0
     }))
@@ -48,7 +60,7 @@ const useQuickCountQueries = () => {
       // Sort votes for each district by percentage in descending order
       const sortedData = responseData.map((district) => ({
         ...district,
-        votes: [...district.votes].sort((a, b) => b.persentase - a.persentase) // or use jumlah_suara: b.jumlah_suara - a.jumlah_suara
+        votes: [...district.votes].sort((a, b) => b.persentase - a.persentase)
       }))
       return [...acc, ...sortedData]
     }
