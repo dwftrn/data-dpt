@@ -37,7 +37,8 @@ export const ENDPOINTS = {
   },
   MONITORING: {
     FETCH_SUMMARY: BASE_URL + '/getsummonitor',
-    FETCH_UNVERIFIED: BASE_URL + '/getinsertsuaraunverif'
+    FETCH_UNVERIFIED: BASE_URL + '/getinsertsuaraunverif',
+    FETCH_GROUPED_TPS: BASE_URL + '/getgrouptps'
   },
   HISTORY: {
     FETCH_HISTORY: BASE_URL + '/gethistory'

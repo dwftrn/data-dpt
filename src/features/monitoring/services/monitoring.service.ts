@@ -3,6 +3,15 @@ import { ENDPOINTS } from '@/api/endpoints'
 import { CommonResponse } from '@/api/services'
 import { Vote } from '@/features/vote/service/vote.service'
 
+export interface GroupedTPS {
+  [key: string]: {
+    [key: string]: {
+      NO: number
+      id_tps: string
+    }[]
+  }[]
+}
+
 export const monitoringService = {
   fetchSummary: (params: {
     id_pemilu: string
@@ -37,5 +46,8 @@ export const monitoringService = {
     >
   > => {
     return fetcher(ENDPOINTS.MONITORING.FETCH_UNVERIFIED, params, 'POST')
+  },
+  fetchGroupedTPS: (params: { status: null | 0 | 1 | 2; id_pemilu: string }): Promise<CommonResponse<GroupedTPS[]>> => {
+    return fetcher(ENDPOINTS.MONITORING.FETCH_GROUPED_TPS, params, 'POST')
   }
 }
