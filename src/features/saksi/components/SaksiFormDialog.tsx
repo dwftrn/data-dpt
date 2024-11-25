@@ -19,11 +19,14 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
   const [searchParams, setSearchParams] = useSearchParams()
   const id = searchParams.get('id') || ''
   const [isOpen, setIsOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={(open) => {
+        if (!open && isSubmitting) return
+
         if (!open) setSearchParams({ id: '' })
         setIsOpen(open)
       }}
@@ -41,12 +44,17 @@ const SaksiFormDialog = ({ triggerRef }: { triggerRef?: RefObject<HTMLButtonElem
         </DialogHeader>
 
         <div className='py-4 px-6'>
-          <SaksiForm onClose={() => setIsOpen(false)} />
+          <SaksiForm onClose={() => setIsOpen(false)} isSubmitting={isSubmitting} setIsSubmitting={setIsSubmitting} />
         </div>
 
         <DialogFooter className='py-4 px-6 sm:justify-between'>
-          <DialogClose className={cn(buttonVariants({ variant: 'secondary' }), 'bg-grey-500/50')}>Batal</DialogClose>
-          <Button form='saksi-form' className='bg-success-700 hover:bg-success-700/90'>
+          <DialogClose
+            disabled={isSubmitting}
+            className={cn(buttonVariants({ variant: 'secondary' }), 'bg-grey-500/50')}
+          >
+            Batal
+          </DialogClose>
+          <Button form='saksi-form' disabled={isSubmitting} className='bg-success-700 hover:bg-success-700/90'>
             {id ? 'Sunting' : 'Tambah'}
           </Button>
         </DialogFooter>

@@ -53,7 +53,7 @@ const HistoryPage = () => {
                     </span>
                   </div>
                 </TableCell>
-                <TableCell>TPS 86</TableCell>
+                <TableCell>TPS {history.tps}</TableCell>
                 <TableCell>
                   <div className='flex flex-col'>
                     <span>

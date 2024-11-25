@@ -88,7 +88,15 @@ const getSaksiFromQueryData = (queryClient: QueryClient, id: string) => {
   return initialData
 }
 
-const SaksiForm = ({ onClose }: { onClose(): void }) => {
+const SaksiForm = ({
+  onClose,
+  isSubmitting,
+  setIsSubmitting
+}: {
+  onClose(): void
+  isSubmitting: boolean
+  setIsSubmitting: (value: boolean) => void
+}) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const id = searchParams.get('id') || ''
   const queryClient = useQueryClient()
@@ -121,6 +129,8 @@ const SaksiForm = ({ onClose }: { onClose(): void }) => {
 
   const onSubmit = async (values: FormType) => {
     console.log({ values })
+    if (isSubmitting) return
+    setIsSubmitting(true)
 
     try {
       if (!id) {
@@ -151,6 +161,8 @@ const SaksiForm = ({ onClose }: { onClose(): void }) => {
       setSearchParams({ id: '' })
     } catch (error) {
       console.log({ error })
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
