@@ -37,7 +37,7 @@ export type VoteDetail = {
   c1: string
   data_paslon: (VoteCandidate & { foto: string })[]
   data_petugas: {
-    jabatan: string
+    tps: number
     nama_petugas: string
     nomor_wa: string
   }

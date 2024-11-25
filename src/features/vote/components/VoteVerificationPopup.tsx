@@ -206,6 +206,11 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                   <UserRound className='fill-white stroke-none size-4' />
                 </div>
                 <div className='font-bold'>{data?.data_petugas.nama_petugas}</div>
+                {data?.data_petugas && (
+                  <>
+                    |<div className='font-bold'>TPS {data?.data_petugas.tps}</div>
+                  </>
+                )}
               </div>
             </div>
 
