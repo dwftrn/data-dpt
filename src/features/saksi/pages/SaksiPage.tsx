@@ -61,7 +61,9 @@ const SaksiPage = () => {
             <TableHead>No. Telepon</TableHead>
             <TableHead>No. Rekening</TableHead>
             <TableHead>TPS</TableHead>
-            <TableHead>Absen</TableHead>
+            <TableHead>
+              Absen ({data?.total_sudah_absen}/{data?.total_saksi})
+            </TableHead>
             <TableHead>Aksi</TableHead>
           </TableRow>
         </TableHeader>

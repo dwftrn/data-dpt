@@ -31,7 +31,7 @@ export const saksiService = {
     page: number
     per_page: number
     search?: string
-  }): Promise<CommonResponse<PaginatedData<Saksi>>> => {
+  }): Promise<CommonResponse<PaginatedData<Saksi> & { total_saksi: number; total_sudah_absen: number }>> => {
     return fetcher(
       ENDPOINTS.OPERATOR.FETCH_OPERATORS + `?page=${params.page}&per_page=${params.per_page}&search=${params.search}`,
       {},

@@ -6,6 +6,9 @@ const calcPercentage = (total: number, count: number) => {
 }
 
 const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
+  const total = quickCount.total_dpt - quickCount.total_suara_tidak_sah
+  const remaining = total - quickCount.calon_hasil.reduce((acc, curr) => acc + curr.jumlah_suara, 0)
+
   return (
     <div className='flex items-center w-full h-8 [&>div:first-child]:rounded-l-xl [&>div:last-child]:rounded-r-xl rounded-xl border-grey-500 border'>
       {quickCount.calon_hasil.map((item) => (
@@ -14,7 +17,7 @@ const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
             <div
               style={{
                 backgroundColor: item.warna,
-                width: calcPercentage(quickCount.total_dpt - quickCount.total_suara_tidak_sah, item.jumlah_suara) + '%',
+                width: calcPercentage(total, item.jumlah_suara) + '%',
                 height: '100%'
               }}
             ></div>
@@ -30,9 +33,9 @@ const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
                   {Number(item.jumlah_suara).toLocaleString('id')}{' '}
                   <span className='font-medium'>
                     (
-                    {Number(
-                      calcPercentage(quickCount.total_dpt - quickCount.total_suara_tidak_sah, item.jumlah_suara)
-                    ).toLocaleString('id', { maximumFractionDigits: 2 })}{' '}
+                    {Number(calcPercentage(total, item.jumlah_suara)).toLocaleString('id', {
+                      maximumFractionDigits: 2
+                    })}{' '}
                     %)
                   </span>
                 </p>
@@ -47,11 +50,7 @@ const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
           <div
             className='bg-grey-500 h-full'
             style={{
-              width:
-                calcPercentage(
-                  quickCount.total_dpt - quickCount.total_suara_tidak_sah,
-                  quickCount.total_dpt - quickCount.total_suara_tidak_sah - quickCount.total_suara_masuk
-                ) + '%'
+              width: calcPercentage(total, remaining) + '%'
             }}
           ></div>
         </TooltipTrigger>
@@ -61,18 +60,9 @@ const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
             <div className='flex flex-col gap-1'>
               <p>Suara Belum Masuk</p>
               <p>
-                {Number(
-                  quickCount.total_dpt - quickCount.total_suara_tidak_sah - quickCount.total_suara_masuk
-                ).toLocaleString('id')}{' '}
+                {Number(remaining).toLocaleString('id')}{' '}
                 <span className='font-medium'>
-                  (
-                  {Number(
-                    calcPercentage(
-                      quickCount.total_dpt - quickCount.total_suara_tidak_sah,
-                      quickCount.total_dpt - quickCount.total_suara_tidak_sah - quickCount.total_suara_masuk
-                    )
-                  ).toLocaleString('id', { maximumFractionDigits: 2 })}{' '}
-                  %)
+                  ({Number(calcPercentage(total, remaining)).toLocaleString('id', { maximumFractionDigits: 2 })} %)
                 </span>
               </p>
             </div>
