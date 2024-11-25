@@ -15,9 +15,7 @@ const useFetchGroupedTPS = (id: string, status: null | 0 | 1 | 2) => {
       return res.data
     },
     enabled,
-    retry: enabled ? 1 : false,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
+    retry: enabled ? 1 : false
   })
 }
 
