@@ -192,7 +192,7 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
               </div>
               <div
                 role='button'
-                className='rounded-full bg-gradient-to-b from-white to-gray-100 shadow-custom px-4 py-2.5 flex items-center gap-3 w-fit text-sm'
+                className='rounded-full bg-gradient-to-b from-white to-gray-100 shadow-custom px-4 py-2.5 flex items-center gap-3 w-fit text-sm max-w-[80%]'
                 onClick={() => {
                   if (data?.data_petugas.nama_petugas === 'ADMIN') return
                   if (!data?.data_petugas.nomor_wa) return
@@ -205,10 +205,10 @@ const VoteVerificationPopup = ({ unverified }: { unverified: Vote[] }) => {
                 <div className='rounded-full bg-gray-900 p-1'>
                   <UserRound className='fill-white stroke-none size-4' />
                 </div>
-                <div className='font-bold'>{data?.data_petugas.nama_petugas}</div>
-                {data?.data_petugas && (
+                <div className='font-bold truncate'>{data?.data_petugas.nama_petugas}</div>
+                {data?.data_petugas.tps && (
                   <>
-                    |<div className='font-bold'>TPS {data?.data_petugas.tps}</div>
+                    |<div className='font-bold shrink-0'>TPS {data?.data_petugas.tps}</div>
                   </>
                 )}
               </div>
