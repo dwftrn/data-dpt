@@ -89,7 +89,7 @@ const getSaksiFromQueryData = (queryClient: QueryClient, id: string) => {
 }
 
 const SaksiForm = ({ onClose }: { onClose(): void }) => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const id = searchParams.get('id') || ''
   const queryClient = useQueryClient()
   const initialData = getSaksiFromQueryData(queryClient, id)
@@ -148,6 +148,7 @@ const SaksiForm = ({ onClose }: { onClose(): void }) => {
       }
 
       onClose()
+      setSearchParams({ id: '' })
     } catch (error) {
       console.log({ error })
     }
