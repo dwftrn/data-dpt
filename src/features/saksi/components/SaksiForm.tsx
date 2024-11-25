@@ -8,7 +8,7 @@ import useFetchTps from '@/features/dpt/queries/useFetchTps'
 import useSearchParams from '@/hooks/useSearchParams'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { QueryClient, useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import useInsertSaksi from '../queries/useInsertSaksi'
@@ -101,6 +101,7 @@ const SaksiForm = ({
   const id = searchParams.get('id') || ''
   const queryClient = useQueryClient()
   const initialData = getSaksiFromQueryData(queryClient, id)
+  const isInitialized = useRef(false)
 
   const { data: districts, isLoading: isLoadingDistricts } = useFetchAllDistricts()
   const { mutate: fetchSubdistricts, data: subdistricts, isPending: isLoadingSubdistricts } = useFetchSubdistricts()
@@ -167,6 +168,7 @@ const SaksiForm = ({
   }
 
   useEffect(() => {
+    if (isInitialized.current) return
     if (!initialData) return
     if (districts?.length === 0) return
     if (subdistricts?.length === 0) return
@@ -183,6 +185,8 @@ const SaksiForm = ({
     form.setValue('address', initialData.alamat)
     form.setValue('subdistrict', initialData.id_kelurahan)
     form.setValue('tps', initialData.id_tps)
+
+    isInitialized.current = true
   }, [districts?.length, form, initialData, subdistricts?.length, tps?.length])
 
   const district = form.watch('district')
