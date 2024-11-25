@@ -21,7 +21,7 @@ const HistoryPage = () => {
 
   return (
     <section className='flex flex-col gap-4'>
-      <div className='flex items-center justify-between shrink-0'>
+      <div className='flex items-center justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Histori</h1>
         <SearchBar />
         <SelectPemilu />
