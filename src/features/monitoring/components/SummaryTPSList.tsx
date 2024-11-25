@@ -37,8 +37,7 @@ const SummaryTPSList = ({ status }: { status: 0 | 2 | 1 | null }) => {
   const [searchParams] = useSearchParams()
   const electionId = searchParams.get('pemilu') || ''
 
-  const parsedStatus = !isNaN(Number(status)) ? Number(status) : null
-  const { data, isLoading } = useFetchGroupedTPS(electionId, parsedStatus as 0 | 2 | 1 | null)
+  const { data, isLoading } = useFetchGroupedTPS(electionId, status)
 
   const filtered = filterEmptyArrays(data || [])
 
@@ -67,10 +66,10 @@ const SummaryTPSList = ({ status }: { status: 0 | 2 | 1 | null }) => {
                             svg.setAttribute('height', '32')
                           }}
                           className={cn({
-                            '[&_rect]:fill-special-orange': parsedStatus === 0,
-                            '[&_rect]:fill-success-700': parsedStatus === 1,
-                            '[&_rect]:fill-primary-red-700': parsedStatus === 2,
-                            '[&_rect]:fill-grey-700': parsedStatus === null
+                            '[&_rect]:fill-special-orange': status === 0,
+                            '[&_rect]:fill-success-700': status === 1,
+                            '[&_rect]:fill-primary-red-700': status === 2,
+                            '[&_rect]:fill-grey-700': status === null
                           })}
                         />
                         <h4 className='text-sm font-semibold'>TPS {item.NO}</h4>

@@ -38,7 +38,7 @@ const Summary = () => {
       <SummaryCard
         icon={BoxIcon}
         count={data?.count_unvote_tps || 0}
-        label='Belum Input'
+        label='Belum Masuk'
         className='border-grey-700'
         status={null}
       />
