@@ -15,6 +15,10 @@ import useInsertSaksi from '../queries/useInsertSaksi'
 import useUpdateSaksi from '../queries/useUpdateSaksi'
 import { Saksi } from '../services/saksi.service'
 
+type NoUndefined<T> = {
+  [P in keyof T]: Exclude<T[P], undefined>
+}
+
 const formSchema = z.object({
   name: z.string().min(1, 'Tidak boleh kosong!'),
   nik: z.string().min(1, 'Tidak boleh kosong!'),
@@ -61,6 +65,12 @@ const getChangedFields = (current: FormType, original: Saksi | null) => {
   }
 
   return Object.keys(changes).length > 0 ? changes : null
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const removeUndefined = <T extends object>(obj: T): NoUndefined<Partial<T>> => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== undefined)) as NoUndefined<Partial<T>>
 }
 
 const getSaksiFromQueryData = (queryClient: QueryClient, id: string) => {
@@ -149,11 +159,21 @@ const SaksiForm = ({
         })
       } else {
         const changes = getChangedFields(values, initialData)
-        console.log({ changes })
-        if (changes) {
+
+        const parsed = {
+          tps: changes?.id_tps,
+          kelurahan: changes?.id_kelurahan,
+          ...changes
+        }
+
+        const params = removeUndefined(parsed)
+
+        console.log({ params })
+
+        if (params) {
           await update({
             id,
-            ...changes
+            ...params
           })
         }
       }
@@ -168,45 +188,56 @@ const SaksiForm = ({
   }
 
   useEffect(() => {
-    if (isInitialized.current) return
-    if (!initialData) return
-    if (districts?.length === 0) return
-    if (subdistricts?.length === 0) return
-    if (tps?.length === 0) return
+    const initializeForm = async () => {
+      if (!initialData) return
 
-    form.setValue('bankAccount', initialData.no_rek)
-    form.setValue('bankName', initialData.nama_bank)
-    form.setValue('district', initialData.id_kecamatan)
-    form.setValue('name', initialData.nama)
-    form.setValue('nik', initialData.nik)
-    form.setValue('phone', initialData.no_telepon)
-    form.setValue('recommendation', initialData.rekomendasi)
-    form.setValue('rw', initialData.rw)
-    form.setValue('address', initialData.alamat)
-    form.setValue('subdistrict', initialData.id_kelurahan)
-    form.setValue('tps', initialData.id_tps)
+      // Set initial non-dependent fields first
+      form.reset({
+        bankAccount: initialData.no_rek,
+        bankName: initialData.nama_bank,
+        name: initialData.nama,
+        nik: initialData.nik,
+        phone: initialData.no_telepon,
+        recommendation: initialData.rekomendasi,
+        rw: initialData.rw,
+        address: initialData.alamat,
+        district: initialData.id_kecamatan,
+        subdistrict: initialData.id_kelurahan,
+        tps: initialData.id_tps
+      })
 
-    isInitialized.current = true
-  }, [districts?.length, form, initialData, subdistricts?.length, tps?.length])
+      isInitialized.current = true
+    }
+
+    if (!isInitialized.current) {
+      initializeForm()
+    }
+  }, [initialData, form, fetchSubdistricts, fetchTPS])
 
   const district = form.watch('district')
   const subdistrict = form.watch('subdistrict')
   useEffect(() => {
+    if (initialData && !isInitialized.current) return
     if (district) {
       fetchSubdistricts(district)
-      // Reset subdistrict and TPS when district changes
-      form.setValue('subdistrict', '')
-      form.setValue('tps', '')
+      // Only reset if the district has changed from the initial value
+      if (form.getValues('district') !== initialData?.id_kecamatan) {
+        form.setValue('subdistrict', '')
+        form.setValue('tps', '')
+      }
     }
-  }, [district, fetchSubdistricts, form])
+  }, [district, fetchSubdistricts, form, initialData])
 
   useEffect(() => {
+    if (initialData && !isInitialized.current) return
     if (subdistrict) {
       fetchTPS(subdistrict)
-      // Reset TPS when subdistrict changes
-      form.setValue('tps', '')
+      // Only reset if the subdistrict has changed from the initial value
+      if (form.getValues('subdistrict') !== initialData?.id_kelurahan) {
+        form.setValue('tps', '')
+      }
     }
-  }, [subdistrict, fetchTPS, form])
+  }, [subdistrict, fetchTPS, form, initialData])
 
   return (
     <Form {...form}>
@@ -367,83 +398,89 @@ const SaksiForm = ({
         </div>
 
         <div className='grid grid-cols-[1fr_1fr_auto] items-start gap-4 w-full [&_button]:bg-background [&_button]:border-grey-500'>
-          <FormField
-            control={form.control}
-            name='district'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Kecamatan TPS</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange} disabled={isLoading}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Pilih Kecamatan' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {districts?.map((item) => (
-                      <SelectItem key={item._id} value={item._id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          {districts && districts?.length > 0 && (
+            <FormField
+              control={form.control}
+              name='district'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kecamatan TPS</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange} disabled={isLoading}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Pilih Kecamatan' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {districts?.map((item) => (
+                        <SelectItem key={item._id} value={item._id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-          <FormField
-            control={form.control}
-            name='subdistrict'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Kelurahan TPS</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange} disabled={isLoading || !district}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Pilih Kelurahan' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {subdistricts?.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          {subdistricts && subdistricts.length > 0 && (
+            <FormField
+              control={form.control}
+              name='subdistrict'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kelurahan TPS</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange} disabled={isLoading || !district}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Pilih Kelurahan' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {subdistricts?.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-          <FormField
-            control={form.control}
-            name='tps'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>TPS</FormLabel>
-                <Select value={field.value} onValueChange={field.onChange} disabled={isLoading || !subdistrict}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Pilih TPS' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {tps?.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        TPS {item.NO}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          {tps && tps.length > 0 && (
+            <FormField
+              control={form.control}
+              name='tps'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>TPS</FormLabel>
+                  <Select value={field.value} onValueChange={field.onChange} disabled={isLoading || !subdistrict}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Pilih TPS' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {tps?.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          TPS {item.NO}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
         </div>
       </form>
     </Form>
