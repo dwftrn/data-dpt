@@ -6,7 +6,7 @@ const calcPercentage = (total: number, count: number) => {
 }
 
 const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
-  const total = quickCount.total_dpt - quickCount.total_suara_tidak_sah
+  const total = quickCount.total_suara_masuk
   const remaining = total - quickCount.calon_hasil.reduce((acc, curr) => acc + curr.jumlah_suara, 0)
 
   return (
@@ -48,7 +48,7 @@ const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <div
-            className='bg-grey-500 h-full'
+            className='bg-black h-full'
             style={{
               width: calcPercentage(total, remaining) + '%'
             }}
@@ -56,9 +56,9 @@ const ProgressStats = ({ quickCount }: { quickCount: QuickCount }) => {
         </TooltipTrigger>
         <TooltipContent>
           <div className='grid items-center grid-cols-[3px_1fr] gap-2'>
-            <div className='h-full rounded-lg bg-grey-500'></div>
+            <div className='h-full rounded-lg bg-black'></div>
             <div className='flex flex-col gap-1'>
-              <p>Suara Belum Masuk</p>
+              <p>Suara Tidak Sah</p>
               <p>
                 {Number(remaining).toLocaleString('id')}{' '}
                 <span className='font-medium'>
