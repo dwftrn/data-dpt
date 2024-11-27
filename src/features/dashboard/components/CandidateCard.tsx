@@ -19,9 +19,10 @@ const CandidateCard = ({ quickCount }: { quickCount: QuickCount }) => {
         <div className='bg-primary-blue-700 rounded-bl-xl text-white flex items-center justify-between px-8 py-4 gap-8 w-full h-full'>
           <span>Suara Masuk</span>
           <span className='text-xs font-extrabold text-end'>
-            {Number(quickCount.total_suara_masuk).toLocaleString('id')} /{' '}
+            {Number(quickCount.total_suara_masuk).toLocaleString('id')}
+            {/* {Number(quickCount.total_suara_masuk).toLocaleString('id')} /{' '}
             {Number(quickCount.total_dpt).toLocaleString('id')} (
-            {Number(quickCount.persentase_suara_masuk).toLocaleString('id', { maximumFractionDigits: 2 })}%)
+            {Number(quickCount.persentase_suara_masuk).toLocaleString('id', { maximumFractionDigits: 2 })}%) */}
           </span>
         </div>
         <div className='bg-light-green flex items-center justify-between px-8 py-4 h-full w-full'>
