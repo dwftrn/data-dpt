@@ -44,7 +44,7 @@ export type QuickCountCardParams = {
 export type QuickCountCard = {
   id_region: string
   name: string
-  rt_rw: string[] | null
+  rt_rw?: string[] | null
   votes: (Omit<QuickCountCandidate, 'foto' | 'nama' | 'nama_vice'> & { name: string; vice_name: string })[]
 }
 
