@@ -53,6 +53,27 @@ const VoteStatisticsCard = ({ data, region }: { data: QuickCountCard; region: RE
       onClick={handleClick}
     >
       <h1 className='text-sm font-semibold'>{data.name}</h1>
+      {data.rt_rw && (
+        <div className='flex items-center gap-2 h-10 bg-grey-50 -mx-4 px-4 !mt-0.5'>
+          <h1 className='text-xs font-bold shrink-0'>RT/RW</h1>
+          <div
+            className='flex-1 overflow-x-auto
+            [&::-webkit-scrollbar]:hidden 
+            [-ms-overflow-style]:none 
+            [scrollbar-width]:none 
+            flex items-center gap-1.5'
+          >
+            {data.rt_rw.map((item) => (
+              <div
+                key={item}
+                className='text-[10px] font-normal bg-white py-1.5 px-2 rounded-md border border-grey-500'
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className='space-y-2'>
         {data.votes
           .sort((a, b) => +a.no_urut - +b.no_urut)
