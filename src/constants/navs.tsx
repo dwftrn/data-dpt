@@ -1,4 +1,4 @@
-import { Box, CornerDownRight, History, LayoutDashboard, Tv, UsersRound, View } from 'lucide-react'
+import { Award, Box, CornerDownRight, History, LayoutDashboard, Tv, UsersRound, View } from 'lucide-react'
 
 export type TSidebarItem = {
   label: string
@@ -13,6 +13,12 @@ export const navs: TSidebarItem[] = [
     icon: <LayoutDashboard />,
     role: [1, 0],
     href: '/'
+  },
+  {
+    label: 'Peringkat RW',
+    icon: <Award />,
+    role: [1],
+    href: '/rw-rank'
   },
   {
     label: 'Data DPT',

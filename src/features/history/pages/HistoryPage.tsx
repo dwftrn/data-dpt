@@ -20,14 +20,14 @@ const HistoryPage = () => {
   const totalPage = data?.total_pages || 1
 
   return (
-    <section className='flex flex-col gap-4'>
+    <section className='flex flex-col gap-4 relative'>
       <div className='flex items-center justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Histori</h1>
         <SearchBar />
         <SelectPemilu />
       </div>
 
-      <Table className='mt-2'>
+      <Table className='mt-2 overflow-y-hidden'>
         <TableHeader>
           <TableRow className='bg-primary-blue-700 hover:bg-primary-blue-700 [&>*]:text-white [&>*:first-child]:rounded-tl-xl [&>*:last-child]:rounded-tr-xl'>
             <TableHead>Tanggal/Waktu</TableHead>

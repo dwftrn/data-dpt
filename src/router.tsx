@@ -3,6 +3,7 @@ import { lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 import HistoryPage from './features/history/pages/HistoryPage'
 import MonitoringPage from './features/monitoring/pages/MonitoringPage'
+import RwRankPage from './features/rw-rank/pages/RwRankPage'
 import SaksiPage from './features/saksi/pages/SaksiPage'
 
 const App = lazy(() => import('./App'))
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: '/saksi',
         element: <SaksiPage />
+      },
+      {
+        path: '/rw-rank',
+        element: <RwRankPage />
       }
     ]
   },

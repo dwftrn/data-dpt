@@ -44,7 +44,7 @@ const SaksiPage = () => {
   const totalPage = data?.total_pages || 1
 
   return (
-    <section className='flex flex-col gap-4'>
+    <section className='flex flex-col gap-4 relative'>
       <div className='flex items-center gap-9 justify-between h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
         <h1 className='font-semibold text-lg'>Data Saksi</h1>
         <SearchBar placeholder='Cari Saksi...' />
@@ -54,7 +54,7 @@ const SaksiPage = () => {
         </div>
       </div>
 
-      <Table className='mt-2'>
+      <Table className='mt-2 overflow-y-hidden'>
         <TableHeader>
           <TableRow className='bg-primary-blue-700 hover:bg-primary-blue-700 [&>*]:text-white [&>*:first-child]:rounded-tl-xl [&>*:last-child]:rounded-tr-xl'>
             <TableHead>Nama/NIK</TableHead>

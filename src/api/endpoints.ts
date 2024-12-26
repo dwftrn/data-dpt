@@ -55,6 +55,7 @@ export const ENDPOINTS = {
     IS_CAN_ABSEN: BASE_URL + '/cekiscanabsen',
     SET_IS_CAN_ABSEN: BASE_URL + '/iscanabsen',
     IS_CAN_INPUT: BASE_URL + '/cekiscaninput',
-    SET_IS_CAN_INPUT: BASE_URL + '/iscaninput'
+    SET_IS_CAN_INPUT: BASE_URL + '/iscaninput',
+    RANK_RW: BASE_URL + '/rangkingrw',
   }
 }

@@ -246,7 +246,7 @@ export default function DptPage() {
   }
 
   return (
-    <section className='flex flex-col gap-6'>
+    <section className='flex flex-col gap-6 relative'>
       {isLoading && <LoadingOverlay />}
 
       <div className='flex flex-col justify-center h-14 lg:h-[60px] -mt-4 md:-mt-6 2xl:-mt-8'>
@@ -348,7 +348,7 @@ export default function DptPage() {
               </div>
             </div>
             <div className='border rounded'>
-              <Table>
+              <Table className='overflow-y-hidden'>
                 <TableHeader>
                   <TableRow>
                     {table.getHeaderGroups().map((headerGroup) => (
